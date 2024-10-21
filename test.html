@@ -127,12 +127,19 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .switch {
+        position: absolute; /* Change to absolute positioning in mobile view */
+        top: 0; /* Aligns to the top of the container */
+        right: 20px; /* Keeps it aligned to the right */
+    }
+
     .course-section {
         padding: 15px;
     }
 
     h1 {
         font-size: 1.8em;
+        margin-top: 50px; /* Add margin to create space for the switch button */
     }
 
     .lesson-title {
@@ -144,6 +151,7 @@
         right: 10px;
         top: 5px; /* Space from the top in mobile view */
     }
+}
 
     /* Adjust switch button position for mobile */
     .switch {
@@ -151,23 +159,23 @@
     }
 }
 
-        /* Switch styles */
-        .switch {
-            position: fixed;
-            top: 50px; /* Adjusted space from the top */
-            right: 20px;
-            cursor: pointer;
-            padding: 10px 20px; /* Increased padding for more gap */
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
+/* Switch styles */
+.switch {
+    position: fixed; /* Keep the button fixed on larger screens */
+    top: 50px; /* Adjusted space from the top */
+    right: 20px;
+    cursor: pointer;
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
 
-        .switch:hover {
-            background-color: #388e3c;
-        }
+.switch:hover {
+    background-color: #388e3c;
+}
 
     </style>
 </head>

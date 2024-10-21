@@ -56,8 +56,10 @@
             margin-bottom: 10px;
         }
 
-        .full-playlist, .whatsapp-group, .dark-mode-container {
-            text-align: center;
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Adjust the spacing between buttons */
             margin-top: 30px;
         }
 
@@ -180,12 +182,14 @@
 
     <div id="lessons-container"></div>
 
-    <div class="full-playlist">
-        <a href="https://youtube.com/playlist?list=PL2QbfBWR8Il3OFI0rqs4X_7OOmOFHQbCa&si=cILHpBtSvbCaagkK" target="_blank">🎬 Access Full Playlist</a>
-    </div>
+    <div class="buttons-container">
+        <div class="full-playlist">
+            <a href="https://youtube.com/playlist?list=PL2QbfBWR8Il3OFI0rqs4X_7OOmOFHQbCa&si=cILHpBtSvbCaagkK" target="_blank">🎬 Access Full Playlist</a>
+        </div>
 
-    <div class="whatsapp-group">
-        <a href="https://chat.whatsapp.com/GMAIcfkZjDLLEoxFFSEf7g" target="_blank">🌟 Join WhatsApp Group</a>
+        <div class="whatsapp-group">
+            <a href="https://chat.whatsapp.com/GMAIcfkZjDLLEoxFFSEf7g" target="_blank">🌟 Join WhatsApp Group</a>
+        </div>
     </div>
 
     <script>

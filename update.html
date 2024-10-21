@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Update Lessons</title>
- <style>
+    <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f0f4f8;
@@ -53,7 +53,22 @@
 <body>
     <h1>Update Lesson Details</h1>
     <form id="lesson-form">
-        <!-- Form fields (same as before) -->
+        <div class="form-group">
+            <label for="lessonTitle">Lesson Title:</label>
+            <input type="text" id="lessonTitle" required>
+        </div>
+        <div class="form-group">
+            <label for="partTitle1">Part A Title:</label>
+            <input type="text" id="partTitle1" required>
+            <label for="link1">Part A Link:</label>
+            <input type="url" id="link1" required>
+        </div>
+        <div class="form-group">
+            <label for="partTitle2">Part B Title:</label>
+            <input type="text" id="partTitle2" required>
+            <label for="link2">Part B Link:</label>
+            <input type="url" id="link2" required>
+        </div>
         <button type="submit">Submit</button>
     </form>
 
@@ -62,7 +77,6 @@
         const repo = 'Learnarabicfree/Quran';  // Your repo
         const branch = 'main';  // Your branch name (usually 'main' or 'master')
         const path = 'lessons.json';  // Path to your JSON file in the repo
-
 
         document.getElementById('lesson-form').addEventListener('submit', function(e) {
             e.preventDefault();

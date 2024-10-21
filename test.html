@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Learn Quranic Arabic Free in Sinhalaa</title>
+    <title>Learn Quranic Arabic Free in Sinhala</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -56,12 +56,12 @@
             margin-bottom: 10px;
         }
 
-        .full-playlist, .whatsapp-group {
+        .full-playlist, .whatsapp-group, .dark-mode-container {
             text-align: center;
             margin-top: 30px;
         }
 
-        .full-playlist a, .whatsapp-group a {
+        .full-playlist a, .whatsapp-group a, .dark-mode-container button {
             display: inline-block;
             padding: 10px 20px;
             background-color: #4caf50;
@@ -72,7 +72,7 @@
             transition: background-color 0.3s ease;
         }
 
-        .full-playlist a:hover, .whatsapp-group a:hover {
+        .full-playlist a:hover, .whatsapp-group a:hover, .dark-mode-container button:hover {
             background-color: #388e3c;
         }
 
@@ -115,7 +115,7 @@
             color: #ff0000; /* Red text color */
             font-size: 0.8em;
             font-weight: bold;
-            text-transform: capitalize;
+            text-transform: uppercase;
             display: flex;
             align-items: center;
         }
@@ -125,63 +125,49 @@
             font-size: 1.2em;
         }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .switch {
-        position: absolute; /* Change to absolute positioning in mobile view */
-        top: 0; /* Aligns to the top of the container */
-        right: 20px; /* Keeps it aligned to the right */
-    }
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .course-section {
+                padding: 15px;
+            }
 
-    .course-section {
-        padding: 15px;
-    }
+            h1 {
+                font-size: 1.8em;
+            }
 
-    h1 {
-        font-size: 1.8em;
-        margin-top: 50px; /* Add margin to create space for the switch button */
-    }
+            .lesson-title {
+                font-size: 1.2em;
+            }
 
-    .lesson-title {
-        font-size: 1.2em;
-    }
+            /* Keep the badge in the right corner for mobile */
+            .new-badge {
+                right: 10px;
+                top: 5px; /* Space from the top in mobile view */
+            }
+        }
 
-    /* Keep the badge in the right corner for mobile */
-    .new-badge {
-        right: 10px;
-        top: 5px; /* Space from the top in mobile view */
-    }
-}
+        /* Switch styles */
+        .switch {
+            cursor: pointer;
+            padding: 10px 20px; /* Increased padding for more gap */
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
 
-    /* Adjust switch button position for mobile */
-    .switch {
-        top: 70px; /* Increased space from the top */
-    }
-}
-
-/* Switch styles */
-.switch {
-    position: fixed; /* Keep the button fixed on larger screens */
-    top: 50px; /* Adjusted space from the top */
-    right: 20px;
-    cursor: pointer;
-    padding: 10px 20px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-.switch:hover {
-    background-color: #388e3c;
-}
+        .switch:hover {
+            background-color: #388e3c;
+        }
 
     </style>
 </head>
 <body>
 
-    <button class="switch" id="darkModeSwitch" onclick="toggleDarkMode()">Switch Dark Mode</button>
+    <div class="dark-mode-container">
+        <button class="switch" id="darkModeSwitch" onclick="toggleDarkMode()">Switch Dark Mode</button>
+    </div>
 
     <h1>📚 Learn Quranic Arabic Free in Sinhala 🌙</h1>
 
@@ -223,7 +209,7 @@
                     if (index === 0) { // Assuming the first lesson is the latest
                         const newBadge = document.createElement('div');
                         newBadge.classList.add('new-badge');
-                        newBadge.innerHTML = '<i class="fas fa-star"></i> ✨New Lesson';
+                        newBadge.innerHTML = '<i class="fas fa-star"></i> New Lesson';
                         lessonSection.appendChild(newBadge);
                     }
 

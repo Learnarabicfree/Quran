@@ -197,44 +197,52 @@
         }
 		
 		// Fetch lessons from the JSON file and render them
-    fetch('lessons.json')
-        .then(response => response.json())
-        .then(data => {
-            const lessonsContainer = document.getElementById('lessons-container');
+        fetch('lessons.json')
+            .then(response => response.json())
+            .then(data => {
+                const lessonsContainer = document.getElementById('lessons-container');
 
-            data.forEach(lesson => {
-                const lessonSection = document.createElement('div');
-                lessonSection.classList.add('course-section');
+                data.forEach((lesson, index) => {
+                    const lessonSection = document.createElement('div');
+                    lessonSection.classList.add('course-section');
 
-                // Lesson Title
-                const title = document.createElement('h2');
-                title.classList.add('lesson-title');
-                title.textContent = lesson.lessonTitle;
-                lessonSection.appendChild(title);
+                    // Add the new badge to the first lesson
+                    if (index === 0) { // Assuming the first lesson is the latest
+                        const newBadge = document.createElement('div');
+                        newBadge.classList.add('new-badge');
+                        newBadge.innerHTML = '<i class="fas fa-star"></i> New';
+                        lessonSection.appendChild(newBadge);
+                    }
 
-                // Lesson Parts
-                lesson.parts.forEach(part => {
-                    const partDiv = document.createElement('div');
-                    partDiv.classList.add('lesson-part');
-                    
-                    const partTitle = document.createElement('p');
-                    partTitle.textContent = part.partTitle;
+                    // Lesson Title
+                    const title = document.createElement('h2');
+                    title.classList.add('lesson-title');
+                    title.textContent = lesson.lessonTitle;
+                    lessonSection.appendChild(title);
 
-                    const link = document.createElement('a');
-                    link.href = part.link;
-                    link.classList.add('video-link');
-                    link.textContent = "(Watch now)";
-                    link.target = "_blank";
+                    // Lesson Parts
+                    lesson.parts.forEach(part => {
+                        const partDiv = document.createElement('div');
+                        partDiv.classList.add('lesson-part');
+                        
+                        const partTitle = document.createElement('p');
+                        partTitle.textContent = part.partTitle;
 
-                    partTitle.appendChild(link);
-                    partDiv.appendChild(partTitle);
-                    lessonSection.appendChild(partDiv);
+                        const link = document.createElement('a');
+                        link.href = part.link;
+                        link.classList.add('video-link');
+                        link.textContent = "(Watch now)";
+                        link.target = "_blank";
+
+                        partTitle.appendChild(link);
+                        partDiv.appendChild(partTitle);
+                        lessonSection.appendChild(partDiv);
+                    });
+
+                    lessonsContainer.appendChild(lessonSection);
                 });
-
-                lessonsContainer.appendChild(lessonSection);
-            });
-        })
-        .catch(error => console.error('Error loading lessons:', error));
+            })
+            .catch(error => console.error('Error loading lessons:', error));
 		
     </script>
 

@@ -149,7 +149,7 @@
         /* Switch styles */
         .switch {
             position: fixed;
-            top: 20px;
+            top: 50px; /* Adjusted space from the top */
             right: 20px;
             cursor: pointer;
             padding: 10px 20px; /* Increased padding for more gap */
@@ -210,7 +210,7 @@
                     if (index === 0) { // Assuming the first lesson is the latest
                         const newBadge = document.createElement('div');
                         newBadge.classList.add('new-badge');
-                        newBadge.innerHTML = '<i class="fas fa-star"></i> New';
+                        newBadge.innerHTML = '<i class="fas fa-star"></i> ✨New Lesson';
                         lessonSection.appendChild(newBadge);
                     }
 

@@ -20,41 +20,6 @@
             color: #3f51b5;
         }
 
-        .header-buttons {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .dark-mode-container, .contact-us {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
-
-        .switch, .contact-button {
-            cursor: pointer;
-            padding: 5px 15px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-            font-size: 0.9em;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .switch:hover, .contact-button:hover {
-            background-color: #388e3c;
-        }
-
-        .contact-button i {
-            margin-right: 5px;
-            font-size: 1.2em;
-        }
-
         .course-section {
             max-width: 800px;
             margin: 0 auto;
@@ -91,12 +56,14 @@
             margin-bottom: 10px;
         }
 
-        .full-playlist, .whatsapp-group {
-            text-align: center;
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Adjust the spacing between buttons */
             margin-top: 30px;
         }
 
-        .full-playlist a, .whatsapp-group a {
+        .full-playlist a, .whatsapp-group a, .dark-mode-container button {
             display: inline-block;
             padding: 10px 20px;
             background-color: #4caf50;
@@ -107,7 +74,7 @@
             transition: background-color 0.3s ease;
         }
 
-        .full-playlist a:hover, .whatsapp-group a:hover {
+        .full-playlist a:hover, .whatsapp-group a:hover, .dark-mode-container button:hover {
             background-color: #388e3c;
         }
 
@@ -124,6 +91,22 @@
 
         body.dark h1, body.dark h2 {
             color: #bb86fc;
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .course-section {
+            animation: fadeInUp 0.5s ease-out;
         }
 
         /* New Badge */
@@ -164,60 +147,84 @@
                 top: 5px; /* Space from the top in mobile view */
             }
         }
+
+        /* Switch styles */
+        .dark-mode-container {
+            display: flex;
+            justify-content: flex-end;
+            padding: 10px;
+        }
+
+        .switch {
+            cursor: pointer;
+            padding: 5px 15px; /* Smaller padding */
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 0.9em; /* Smaller text */
+        }
+
+        .switch:hover {
+            background-color: #388e3c;
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="header-buttons">
-        <div class="contact-us">
-            <button class="contact-button" onclick="openWhatsAppChat()">
-                <i class="fab fa-whatsapp"></i>Contact Us
-            </button>
-        </div>
-        <div class="dark-mode-container">
-            <button class="switch" id="darkModeSwitch" onclick="toggleDarkMode()">Switch Dark Mode</button>
-        </div>
+    <div class="dark-mode-container">
+        <button class="switch" id="darkModeSwitch" onclick="toggleDarkMode()">Switch Dark Mode</button>
     </div>
 
     <h1>📚 Learn Quranic Arabic Free in Sinhala 🌙</h1>
 
     <div id="lessons-container"></div>
 
-    <div class="full-playlist">
-        <a href="https://youtube.com/playlist?list=PL2QbfBWR8Il3OFI0rqs4X_7OOmOFHQbCa&si=cILHpBtSvbCaagkK" target="_blank">🎬 Access Full Playlist</a>
-    </div>
+    <div class="buttons-container">
+        <div class="full-playlist">
+            <a href="https://youtube.com/playlist?list=PL2QbfBWR8Il3OFI0rqs4X_7OOmOFHQbCa&si=cILHpBtSvbCaagkK" target="_blank">🎬 Access Full Playlist</a>
+        </div>
 
-    <div class="whatsapp-group">
-        <a href="https://chat.whatsapp.com/GMAIcfkZjDLLEoxFFSEf7g" target="_blank">🌟 Join WhatsApp Group</a>
+        <div class="whatsapp-group">
+            <a href="https://chat.whatsapp.com/GMAIcfkZjDLLEoxFFSEf7g" target="_blank">🌟 Join WhatsApp Group</a>
+        </div>
     </div>
 
     <script>
-        // Load dark mode state from localStorage
-        document.addEventListener('DOMContentLoaded', () => {
-            const isDarkMode = localStorage.getItem('darkMode') === 'true';
-            if (isDarkMode) {
-                document.body.classList.add('dark');
-                document.getElementById('darkModeSwitch').textContent = 'Switch Light Mode';
-            }
-        });
-
-        function toggleDarkMode() {
-            const body = document.body;
-            const button = document.getElementById('darkModeSwitch');
-            body.classList.toggle('dark');
-
-            // Update button text based on mode
-            const isDarkMode = body.classList.contains('dark');
-            button.textContent = isDarkMode ? 'Switch Light Mode' : 'Switch Dark Mode';
-
-            // Save dark mode state to localStorage
-            localStorage.setItem('darkMode', isDarkMode);
+    // Load dark mode state from localStorage or default to dark mode
+    document.addEventListener('DOMContentLoaded', () => {
+        const isDarkMode = localStorage.getItem('darkMode');
+        
+        if (isDarkMode === null) {
+            // No user preference, default to dark mode
+            document.body.classList.add('dark');
+            document.getElementById('darkModeSwitch').textContent = 'Switch Light Mode';
+        } else if (isDarkMode === 'true') {
+            // User prefers dark mode
+            document.body.classList.add('dark');
+            document.getElementById('darkModeSwitch').textContent = 'Switch Light Mode';
+        } else {
+            // User prefers light mode
+            document.body.classList.remove('dark');
+            document.getElementById('darkModeSwitch').textContent = 'Switch Dark Mode';
         }
+    });
 
-        function openWhatsAppChat() {
-            window.open('https://wa.me/97455572153', '_blank');
-        }
+    function toggleDarkMode() {
+        const body = document.body;
+        const button = document.getElementById('darkModeSwitch');
+        body.classList.toggle('dark');
 
+        // Update button text based on mode
+        const isDarkMode = body.classList.contains('dark');
+        button.textContent = isDarkMode ? 'Switch Light Mode' : 'Switch Dark Mode';
+
+        // Save dark mode state to localStorage
+        localStorage.setItem('darkMode', isDarkMode);
+    }
+        
         // Fetch lessons from the JSON file and render them
         fetch('lessons.json')
             .then(response => response.json())
@@ -267,7 +274,5 @@
             .catch(error => console.error('Error loading lessons:', error));
     </script>
 
-    <!-- Include FontAwesome for icons -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Quranic Arabic Free in Sinhala</title>
+<style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            font-family: 'Georgia', serif;
+            color: #3f51b5;
+        }
+
+        .course-section {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .course-section:hover {
+            transform: translateY(-10px);
+        }
+
+        .lesson-title {
+            font-size: 1.5em;
+            color: #ff9800;
+        }
+
+        .video-link {
+            color: #3f51b5;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .video-link:hover {
+            color: #ff5722;
+            text-decoration: underline;
+        }
+
+        .lesson-part {
+            margin-bottom: 10px;
+        }
+
+        .full-playlist, .whatsapp-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .full-playlist a, .whatsapp-group a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .full-playlist a:hover, .whatsapp-group a:hover {
+            background-color: #388e3c;
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .course-section {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* New Badge */
+        .new-badge {
+            position: absolute;
+            top: 10px; /* Space from the top */
+            right: 15px;
+            color: #ff0000; /* Red text color */
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+        }
+
+        .new-badge i {
+            margin-right: 3px;
+            font-size: 1.2em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .course-section {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .lesson-title {
+                font-size: 1.2em;
+            }
+
+            /* Keep the badge in the right corner for mobile */
+            .new-badge {
+                right: 10px;
+                top: 5px; /* Space from the top in mobile view */
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>📚 Learn Quranic Arabic Free in Sinhala 🌙</h1>
+
+<div id="lessons-container"></div>
+
+<script>
+    // Fetch lessons from the JSON file and render them
+    fetch('lessons.json')
+        .then(response => response.json())
+        .then(data => {
+            const lessonsContainer = document.getElementById('lessons-container');
+
+            data.forEach(lesson => {
+                const lessonSection = document.createElement('div');
+                lessonSection.classList.add('course-section');
+
+                // Lesson Title
+                const title = document.createElement('h2');
+                title.classList.add('lesson-title');
+                title.textContent = lesson.lessonTitle;
+                lessonSection.appendChild(title);
+
+                // Lesson Parts
+                lesson.parts.forEach(part => {
+                    const partDiv = document.createElement('div');
+                    partDiv.classList.add('lesson-part');
+                    
+                    const partTitle = document.createElement('p');
+                    partTitle.textContent = part.partTitle;
+
+                    const link = document.createElement('a');
+                    link.href = part.link;
+                    link.classList.add('video-link');
+                    link.textContent = "(Watch now)";
+                    link.target = "_blank";
+
+                    partTitle.appendChild(link);
+                    partDiv.appendChild(partTitle);
+                    lessonSection.appendChild(partDiv);
+                });
+
+                lessonsContainer.appendChild(lessonSection);
+            });
+        })
+        .catch(error => console.error('Error loading lessons:', error));
+</script>
+
+</body>
+</html>

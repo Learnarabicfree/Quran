@@ -1,1 +1,212 @@
-=
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Lessons</title>
+<style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1, h2 {
+            text-align: center;
+            font-family: 'Georgia', serif;
+            color: #3f51b5;
+        }
+
+        .course-section {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .course-section:hover {
+            transform: translateY(-10px);
+        }
+
+        .lesson-title {
+            font-size: 1.5em;
+            color: #ff9800;
+        }
+
+        .video-link {
+            color: #3f51b5;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .video-link:hover {
+            color: #ff5722;
+            text-decoration: underline;
+        }
+
+        .lesson-part {
+            margin-bottom: 10px;
+        }
+
+        .full-playlist, .whatsapp-group {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .full-playlist a, .whatsapp-group a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .full-playlist a:hover, .whatsapp-group a:hover {
+            background-color: #388e3c;
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .course-section {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* New Badge */
+        .new-badge {
+            position: absolute;
+            top: 10px; /* Space from the top */
+            right: 15px;
+            color: #ff0000; /* Red text color */
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+        }
+
+        .new-badge i {
+            margin-right: 3px;
+            font-size: 1.2em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .course-section {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .lesson-title {
+                font-size: 1.2em;
+            }
+
+            /* Keep the badge in the right corner for mobile */
+            .new-badge {
+                right: 10px;
+                top: 5px; /* Space from the top in mobile view */
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Update Lesson Details</h1>
+    <form id="lesson-form">
+        <!-- Form fields (same as before) -->
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        const token = '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';  // Replace with your token
+        const repo = 'Learnarabicfree/Quran';  // Your repo
+        const branch = 'main';  // Your branch name (usually 'main' or 'master')
+        const path = 'lessons.json';  // Path to your JSON file in the repo
+
+
+        document.getElementById('lesson-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const lessonTitle = document.getElementById('lessonTitle').value;
+            const partTitle1 = document.getElementById('partTitle1').value;
+            const link1 = document.getElementById('link1').value;
+            const partTitle2 = document.getElementById('partTitle2').value;
+            const link2 = document.getElementById('link2').value;
+
+            const newLesson = {
+                "lessonTitle": lessonTitle,
+                "parts": [
+                    { "partTitle": partTitle1, "link": link1 },
+                    { "partTitle": partTitle2, "link": link2 }
+                ]
+            };
+
+            // Fetch the latest content from the file
+            fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+                headers: {
+                    Authorization: `token ${token}`
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const sha = data.sha;  // File SHA is needed for updates
+                const lessons = JSON.parse(atob(data.content));
+
+                // Add new lesson to the array
+                lessons.push(newLesson);
+
+                // Convert updated lessons back to base64 format
+                const updatedContent = btoa(JSON.stringify(lessons, null, 2));
+
+                // Prepare request body to update the file
+                const updateBody = {
+                    message: 'Updated lessons.json with a new lesson',
+                    content: updatedContent,
+                    sha: sha,  // Include SHA of the file we are updating
+                    branch: branch
+                };
+
+                // Send the update request to GitHub
+                return fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+                    method: 'PUT',
+                    headers: {
+                        Authorization: `token ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateBody)
+                });
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Lesson updated successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error updating the lesson.');
+            });
+        });
+    </script>
+</body>
+</html>

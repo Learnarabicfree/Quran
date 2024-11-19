@@ -225,7 +225,7 @@
     }
         
         // Fetch lessons from the JSON file and render them
-        fetch('lessons.json')
+        fetch('./lessons.json')
             .then(response => response.json())
             .then(data => {
                 const lessonsContainer = document.getElementById('lessons-container');

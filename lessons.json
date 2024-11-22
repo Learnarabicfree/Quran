@@ -1,6 +1,15 @@
 {
     "lessons": [
         {
+            "title": "Lesson 6: Number",
+            "parts": [
+                {
+                    "part_name": "Part A: Theory",
+                    "link": "https://youtu.be/oELj_ihY-rk"
+                }
+            ]
+        },
+        {
             "title": "Lesson 5: Flexibility",
             "parts": [
                 {

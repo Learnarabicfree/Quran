@@ -53,13 +53,22 @@
       justify-content: center;
       gap: 20px;
       font-size: 2rem;
+      flex-wrap: wrap; /* Ensures proper wrapping on smaller devices */
     }
 
     .countdown div {
       background: #f0f0f0;
-      padding: 20px;
+      padding: 15px;
       border-radius: 10px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: 70px; /* Ensures consistency on smaller screens */
+      text-align: center;
+    }
+
+    .countdown p {
+      font-size: 1rem;
+      margin: 0;
+      color: #555;
     }
 
     .countdown span {
@@ -83,13 +92,37 @@
       color: #007bff;
     }
 
+    /* Mobile-specific styles */
     @media (max-width: 600px) {
-      .countdown {
-        flex-direction: column;
+      body {
+        padding: 10px;
+      }
+
+      .coming-soon-container {
+        padding: 30px 20px;
+      }
+
+      .coming-soon-container h1 {
+        font-size: 2rem;
+      }
+
+      .coming-soon-container p {
+        font-size: 1rem;
+      }
+
+      .logo {
+        width: 80px;
+        height: 80px;
       }
 
       .countdown div {
-        margin-bottom: 10px;
+        padding: 10px;
+        width: auto; /* Adjust width to fit text dynamically */
+      }
+
+      .social-links a {
+        font-size: 1.2rem;
+        margin: 0 8px;
       }
     }
   </style>

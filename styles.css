@@ -1,6 +1,6 @@
 /* Theme Variables */
 :root {
-  --bg-color: #ffffff;
+  --bg-color: #ebf6f7;
   --text-color: #000000;
   --heading-color: #007bff; /* Vibrant blue */
   --card-bg-color: #ffffff;
@@ -35,6 +35,15 @@ body {
 }
 
 /* Lesson Card */
+
+.card-img-top {
+  max-width: 100%; /* Ensures responsiveness */
+  height: auto;    /* Maintains aspect ratio */
+  width: 60%;      /* Adjust size (90% of the card width, change as needed) */
+  margin: 0 auto;  /* Center the image */
+}
+
+
 .lesson-card {
   background-color: var(--card-bg-color);
   text-decoration: none;
@@ -48,6 +57,28 @@ body {
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
 }
 
+/* Light Mode Hover */
+[data-theme="light"] .lesson-card:hover {
+  background-color: #fcf4ff; /* Light gray */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark Mode Hover */
+[data-theme="dark"] .lesson-card:hover {
+  background-color: #313131; /* Dark gray */
+  box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2);
+}
+
+/* Text and Button Adjustments */
+[data-theme="dark"] .lesson-card:hover .card-title {
+  color: #ffc107; /* Yellow for titles in dark mode */
+}
+
+[data-theme="dark"] .lesson-card:hover .btn {
+  background-color: #ff6f61; /* Vibrant hover color for button */
+}
+
+
 /* Button */
 button {
   background-color: var(--btn-color);
@@ -55,6 +86,22 @@ button {
   color: var(--text-color);
   transition: background-color 0.3s ease;
 }
+
+.btn-sm {
+  font-size: 0.9rem; /* Smaller font size */
+  padding: 5px 10px; /* Adjust padding */
+  border-radius: 5px; /* Rounded edges */
+}
+
+.btn-danger {
+  background-color: #9d71fd; /* Red button color */
+  border: none; /* Remove border */
+}
+
+.btn-danger:hover {
+  background-color: #c82333; /* Darker red on hover */
+}
+
 
 .fade-in {
   animation: fade-in 1.5s ease-in-out;
@@ -70,3 +117,5 @@ button {
     transform: translateY(0);
   }
 }
+
+

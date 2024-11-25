@@ -102,6 +102,46 @@ button {
   background-color: #c82333; /* Darker red on hover */
 }
 
+@keyframes fallAndReturn {
+  0% {
+    transform: translateY(-100vh); /* Start above the viewport */
+  }
+  50% {
+    transform: translateY(100vh); /* Fall down out of view */
+  }
+  100% {
+    transform: translateY(0); /* Return to original position */
+  }
+}
+
+.logo {
+  width: 100px; /* Size of the logo */
+  height: 100px;
+  border-radius: 50%; /* Circular shape */
+  margin-bottom: 15px; /* Adds spacing below */
+  border: 3px solid #fec7af; /* Solid border for emphasis */
+  object-fit: cover; /* Keeps image proportionate */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4), 
+              inset 0 2px 4px rgba(255, 255, 255, 0.6); /* Inner glow for 3D */
+  background: linear-gradient(145deg, #ffffff, #dcdcdc); /* Light gradient effect */
+  transform: translateY(0); /* Ensure default position after animation */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer; /* Makes it clickable */
+}
+
+.logo.animate {
+  animation: fallAndReturn 1.5s ease-in-out; /* Animation for page load */
+}
+
+.logo:hover {
+  transform: scale(1.1); /* Slight enlargement on hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), 
+              inset 0 3px 6px rgba(255, 255, 255, 0.7); /* Enhanced shadow */
+}
+
+
+
+
 
 .fade-in {
   animation: fade-in 1.5s ease-in-out;

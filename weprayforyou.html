@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>We Pray for You</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="https://yt3.ggpht.com/VMUepA--NUaBmg7EwvWHBhRBTcnRPHA9PvEd_CZ7tNVIKEHpDDgMQWwfqNSKP2DYvBhA2b72DQ=s176-c-k-c0x00ffffff-no-rj" type="image/png">
+    
+    <style>
+        /* General Body Styles */
+        body {
+            font-family: 'Helvetica', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eafaf1; /* Light green background */
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, #4caf50, #2e8b57); /* Green gradient */
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            animation: slideIn 1s ease-out;
+        }
+
+        /* Logo in the Header with Breathing Animation */
+        header img {
+            width: 100px;  /* Adjust the logo size */
+            height: auto;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            animation: breathing 4s infinite ease-in-out;
+        }
+
+        @keyframes breathing {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin: 0;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        header p {
+            font-size: 1.2em;
+            margin-top: 10px;
+            animation: fadeInUp 1.5s ease-out;
+        }
+
+        /* Main Content Section */
+        main {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            animation: fadeInUp 2s ease-out;
+        }
+
+        /* Audio Section Styles */
+        .audio-section h2 {
+            font-size: 2em;
+            color: #388e3c; /* Dark green */
+            text-align: center;
+            animation: fadeInUp 1s ease-out;
+            margin-bottom: 15px; /* Reduced margin for tighter spacing */
+        }
+        
+        .audio-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .audio-card {
+            background: linear-gradient(135deg, #66bb6a, #388e3c); /* Green gradient for cards */
+            padding: 20px;
+            padding-top: 0px;
+            padding-right: 20px;
+            padding-bottom: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease;
+        }
+        
+        .audio-card:hover {
+            transform: scale(1.05); /* Slight scale effect on hover */
+        }
+        
+        .audio-card .audio-label {
+            font-size: 1.4em;
+            color: #fff;
+            font-weight: bold;
+            margin-bottom: 10px; /* Reduced margin between label and audio player */
+        }
+
+        .audio-card audio {
+            width: 100%;
+            height: 50px;
+            border-radius: 8px;
+            background-color: #fff;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 0; /* Remove default top margin */
+        }
+
+        /* Full-Screen Form Section */
+        .form-section {
+            text-align: center;
+            background-color: #388e3c; /* Green background */
+            padding: 20px 20px; /* Reduced padding to reduce gap */
+            border-radius: 12px;
+            color: white;
+            animation: fadeInUp 2s ease-out;
+        }
+        .form-section iframe {
+            width: 100%;
+            height: 100vh; /* Makes iframe take full viewport height */
+            border: none;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .form-section iframe:hover {
+            transform: scale(1.05); /* Slight zoom effect on iframe hover */
+        }
+
+        /* Footer Styles */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #2e8b57; /* Dark green footer */
+            color: white;
+            font-size: 1em;
+            animation: fadeInUp 2.5s ease-out;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            header {
+                padding: 40px 20px;
+            }
+            header h1 {
+                font-size: 2.5em;
+            }
+            .audio-section h2 {
+                font-size: 1.8em;
+            }
+            .audio-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <!-- Logo Image with Breathing Animation -->
+        <img src="https://yt3.ggpht.com/VMUepA--NUaBmg7EwvWHBhRBTcnRPHA9PvEd_CZ7tNVIKEHpDDgMQWwfqNSKP2DYvBhA2b72DQ=s176-c-k-c0x00ffffff-no-rj" alt="Logo">
+        <h1>We Pray for You</h1>
+        <p>Fill out the form below and let us pray for you.</p>
+    </header>
+
+    <!-- Main Content Section -->
+    <main>
+        
+        <!-- Audio Section -->
+        <section class="audio-section">
+            <h2>Why Fill the Form?</h2>
+            <div class="audio-container">
+                <!-- English Audio Card -->
+                <div class="audio-card">
+                    <p class="audio-label">English</p>
+                    <audio controls>
+                        <source src="https://www.slbayan.com/uploads/audios/cbb2af1d1b7c7bc505db4b66b99fc30f.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <!-- Sinhala Audio Card -->
+                <div class="audio-card">
+                    <p class="audio-label">Sinhala</p>
+                    <audio controls>
+                        <source src="https://www.slbayan.com/uploads/audios/cbb2af1d1b7c7bc505db4b66b99fc30f.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <!-- Tamil Audio Card -->
+                <div class="audio-card">
+                    <p class="audio-label">Tamil</p>
+                    <audio controls>
+                        <source src="https://www.slbayan.com/uploads/audios/cbb2af1d1b7c7bc505db4b66b99fc30f.mp3" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+            </div>
+        </section>
+
+        <!-- Full-Screen Form Section -->
+        <section class="form-section">
+            <h2>Fill Out the Form</h2>
+            <iframe src="https://forms.gle/mtAsb8x58m23jp1c8"></iframe>
+        </section>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 We Pray for You. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>

@@ -1,5 +1,18 @@
 {
     "lessons": [
+  {
+            "title": "📜 Lesson 8: Type",
+            "parts": [
+                {
+                    "part_name": "📖 Part A: Theory ",
+                    "link": "https://youtu.be/W0J3YMDb5Z8"
+                },
+                                {
+                    "part_name": "📖 Part B: Answer ",
+                    "link": "https://youtu.be/UCH-oPWvrA4"
+                },
+            ]
+        },
 		{
             "title": "📜 Lesson 7: Gender",
             "parts": [

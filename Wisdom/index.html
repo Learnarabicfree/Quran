@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Quranic Wisdom</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="img/logo.png" type="image/png">
+</head>
+
+<body>
+    <nav class="app-bar">
+        <div class="app-bar-content">
+            <div class="site-title">Quranic Wisdom</div>
+            <div class="search-container">
+                <div class="search-input-container">
+                    <input type="text" id="global-search" placeholder="Search lessons...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+
+                <select id="search-filter">
+                </select>                
+            </div>
+            <button class="nav-button" id="home-button">
+                <i class="fas fa-home"></i> <span class="nav-text">Home</span>
+            </button>  
+
+            <button class="nav-button" id="back-button">
+                <i class="fas fa-arrow-left"></i> <span class="nav-text">Go Back</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="search-container">
+        <div class="mobile-search-header">
+            <input type="text" id="global-search" placeholder="Search...">
+            <button class="filter-trigger">
+                <i class="fas fa-filter"></i>
+            </button>
+        </div>
+        <div class="mobile-filter-dropdown">
+            <select id="search-filter">
+            </select>
+        </div>
+    </div>
+
+    <!-- Add this at the bottom of the body -->
+    <div class="bottom-nav">
+        <button class="nav-button" id="mobile-back-button">
+            <i class="fas fa-arrow-left"></i> <span class="nav-text">Go Back</span>
+        </button>
+        <button class="nav-button" id="mobile-home-button">
+            <i class="fas fa-home"></i> <span class="nav-text">Home</span>
+        </button>       
+    </div>
+
+    <div class="container">
+        <!-- Language Selection -->
+        <div id="language-selection" class="selection-screen">
+            <div class="logo-container">
+                <img src="img/logo.png" alt="Logo" class="logo-image">
+            </div>
+            <h1>Choose Your Language</h1>
+            <div class="button-grid" id="languages-container"></div>
+        </div>
+        
+        <!-- Category Selection -->
+        <div id="category-selection" class="selection-screen hidden">
+            <div class="logo-container">
+                <img src="img/logo.png" alt="Logo" class="logo-image">
+            </div>
+            <h1>Choose Category</h1>
+            <div class="button-grid" id="categories-container"></div>
+        </div>
+        
+        <!-- Lesson List -->
+        <div id="lesson-list" class="hidden">
+            <div class="logo-container">
+                <img src="img/logo.png" alt="Logo" class="logo-image">
+            </div>
+            <h1 id="lesson-title"></h1>
+            <div class="lesson-grid" id="lessons-container"></div>
+        </div>
+        
+        <!-- Search Results -->
+        <div id="search-results" class="hidden">
+            <div class="logo-container">
+                <img src="img/logo.png" alt="Logo" class="logo-image">
+            </div>
+            <h2>Search Results</h2>
+            <div class="lesson-grid" id="results-container"></div>
+        </div>
+
+<!-- Add these before your script.js -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

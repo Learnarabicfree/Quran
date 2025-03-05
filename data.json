@@ -1,0 +1,112 @@
+{
+    "Tamil": {
+        "Al Quran": [
+            {
+                "title": "Lesson 1 : Recitation",
+                "parts": [
+                    { "name": "Part A: Theory", "youtube": "https://www.youtube.com/watch?v=VIDEO_ID1" },
+                    { "name": "Part B: Answer", "youtube": "https://www.youtube.com/watch?v=VIDEO_ID2" }
+                ]
+            },
+            {
+                "title": "Lesson 2 : Tafsir",
+                "parts": [
+                    { "name": "Part A: Explanation", "youtube": "https://www.youtube.com/watch?v=VIDEO_ID3" },
+                    { "name": "Part B: Summary", "youtube": "https://www.youtube.com/watch?v=VIDEO_ID4" }
+                ]
+            }
+        ],
+        "Hadith": [
+            {
+                "title": "Lesson 1 : Introduction",
+                "parts": [
+                    { "name": "Part A: Basics", "youtube": "https://www.youtube.com/watch?v=VIDEO_ID5" },
+                    { "name": "Part B: Examples", "youtube": "https://www.youtube.com/watch?v=VIDEO_ID6" }
+                ]
+            }
+        ]
+    },
+    "Sinhala": {
+        "Al Quran": [
+            {
+                "title": "Lesson 8: Type",
+                "parts": [
+                    { "name": "Part A: Theory", "youtube": "https://youtu.be/W0J3YMDb5Z8" },
+                    { "name": "Part B: Answer", "youtube": "https://youtu.be/UCH-oPWvrA4" }
+                ]
+            },
+            {
+                "title": "Lesson 7: Gender",
+                "parts": [
+                    { "name": "Part A: Theory", "youtube": "https://youtu.be/Z0sCSN1nIkM" },
+                    { "name": "Part B: Theory", "youtube": "https://youtu.be/u5tJ6khpeTI" },
+                    { "name": "Part C: Answers", "youtube": "https://youtu.be/SFi7odxEz8U" }
+                ]
+            },
+            {
+                "title": "Lesson 6: Number",
+                "parts": [
+                    { "name": "Part A: Theory", "youtube": "https://youtu.be/oELj_ihY-rk" },
+                    { "name": "Part B: Answers", "youtube": "https://youtu.be/2IuaptqGZeA" }
+                ]
+            },
+            {
+                "title": "Lesson 5: Flexibility",
+                "parts": [
+                    { "name": "Part A: Theory", "youtube": "https://youtu.be/pB_MF00bqiU" },
+                    { "name": "Part B: Theory", "youtube": "https://youtu.be/eWHD0b38Wrc" },
+                    { "name": "Part C: Answers", "youtube": "https://youtu.be/TDbMFy5lGZs" }
+                ]
+            },
+            {
+                "title": "Lesson 4: Light vs Heavy",
+                "parts": [
+                    { "name": "Part A: Theory", "youtube": "https://youtu.be/XqyFjFT0uO0?si=VcfOVKdEs0YBoceX" },
+                    { "name": "Part B: Answer", "youtube": "https://youtu.be/y6k9KgXPlDk?si=wmR8dbzV1T0gqKYt" }
+                ]
+            },
+            {
+                "title": "Lesson 3: Muslim Chart",
+                "parts": [
+                    { "name": "Part A: Theory", "youtube": "https://youtu.be/DD3vA5RBX5w" },
+                    { "name": "Part B: Theory", "youtube": "https://youtu.be/1Lkm4W7bLnU" },
+                    { "name": "Part C: Assignment - Answer", "youtube": "https://youtu.be/n8uPeZimSog" }
+                ]
+            },
+            {
+                "title": "Lesson 2: Ism Status",
+                "parts": [
+                    { "name": "Part A: Theory", "youtube": "https://youtu.be/O5H2dCAFnj8?si=UFy5ttfHsaDHt8qn" },
+                    { "name": "Part B: Answer", "youtube": "https://youtu.be/9BFRIx62dEY?si=-ob-fZzEmfbyom75" }
+                ]
+            },
+            {
+                "title": "Lesson 1: Ism, Fihl, Harf",
+                "parts": [
+                    { "name": "Part A: Theory", "youtube": "https://youtu.be/9O30ZIBXhuA?si=_DESr9N_A_yhHv0m" },
+                    { "name": "Part B: Answer", "youtube": "https://youtu.be/IfvWIwC4r7M?si=XYBFlLJTXUWfrdet" }
+                ]
+            }
+        ],
+        "Hadith": []
+    },
+    "English": {
+        "Al Quran": [],
+        "Hadith": [
+            {
+                "title": "Lesson 1 : Recitation",
+                "parts": [
+                    { "name": "Part A: Theory", "youtube": "https://www.youtube.com/watch?v=VIDEO_ID1" },
+                    { "name": "Part B: Answer", "youtube": "https://www.youtube.com/watch?v=VIDEO_ID2" }
+                ]
+            },
+            {
+                "title": "Lesson 2 : Tafsir",
+                "parts": [
+                    { "name": "Part A: Explanation", "youtube": "https://www.youtube.com/watch?v=VIDEO_ID3" },
+                    { "name": "Part B: Summary", "youtube": "https://www.youtube.com/watch?v=VIDEO_ID4" }
+                ]
+            }
+        ]
+    }
+}

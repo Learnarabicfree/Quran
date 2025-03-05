@@ -1,145 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learn Quranic Arabic</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="styles.css">
-  <link rel="icon" href="https://yt3.ggpht.com/VMUepA--NUaBmg7EwvWHBhRBTcnRPHA9PvEd_CZ7tNVIKEHpDDgMQWwfqNSKP2DYvBhA2b72DQ=s176-c-k-c0x00ffffff-no-rj" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Quranic Wisdom</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="img/logo.png" type="image/png">
 </head>
-<body data-theme="light">
-  <!-- Dark/Light Mode Toggle -->
-  <div class="toggle-container text-end p-3">
-    <button id="theme-toggle" class="btn btn-outline-primary btn-sm">Switch to Dark Mode</button>
-  </div>
 
-  <!-- Top Heading -->
-<header class="text-center p-4">
-  <img src="https://yt3.ggpht.com/VMUepA--NUaBmg7EwvWHBhRBTcnRPHA9PvEd_CZ7tNVIKEHpDDgMQWwfqNSKP2DYvBhA2b72DQ=s176-c-k-c0x00ffffff-no-rj" alt="Logo" class="logo">
-  <h1 class="display-4 fw-bold">📚 Learn Quranic Arabic Free</h1>
-  <p class="lead">Choose your favorite language lesson to learn and grow!</p>
-  <h2 class="mt-3 fw-bold special-heading">Multilingualism</h2>
-</header>
+<body>
+    <nav class="app-bar">
+        <div class="app-bar-content">
+            <div class="site-title">Quranic Wisdom</div>
+            <div class="search-container">
+                <div class="search-input-container">
+                    <input type="text" id="global-search" placeholder="Search lessons...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
 
-  <!-- Categories Section -->
-<section class="container my-5">
-  <div class="row g-4">
-        <!-- Sinhala Lesson -->
-    <div class="col-md-4">
-      <a href="https://learnarabicfree.github.io/Quran/lessons" target="_blank" class="card lesson-card fade-in">
-        <img src="https://arabicwithmaha.com/wp-content/uploads/2023/09/Live-Online-Arabic-Classes.png" class="card-img-top" alt="Sinhala Lesson">
-        <div class="card-body text-center">
-          <button class="btn btn-sm btn-danger">Sinhala Lessons</button>
+                <select id="search-filter">
+                </select>                
+            </div>
+            <button class="nav-button" id="home-button">
+                <i class="fas fa-home"></i> <span class="nav-text">Home</span>
+            </button>  
+
+            <button class="nav-button" id="back-button">
+                <i class="fas fa-arrow-left"></i> <span class="nav-text">Go Back</span>
+            </button>
         </div>
-      </a>
-    </div>
-    <!-- Tamil Lesson -->
-    <div class="col-md-4">
-      <a href="https://learnarabicfree.github.io/Quran/Tamil%20Lessons" target="_blank" class="card lesson-card fade-in">
-        <img src="https://arabicwithmaha.com/wp-content/uploads/2023/09/Live-Online-Arabic-Classes.png" class="card-img-top" alt="Tamil Lesson">
-        <div class="card-body text-center">
-          <button class="btn btn-sm btn-danger">Tamil Lessons</button>
+    </nav>
+
+    <div class="search-container">
+        <div class="mobile-search-header">
+            <input type="text" id="global-search" placeholder="Search...">
+            <button class="filter-trigger">
+                <i class="fas fa-filter"></i>
+            </button>
         </div>
-      </a>
-    </div>
-    <!-- English Lesson -->
-    <div class="col-md-4">
-      <a href="https://learnarabicfree.github.io/Quran/English%20Lessons" target="_blank" class="card lesson-card fade-in">
-        <img src="https://arabicwithmaha.com/wp-content/uploads/2023/09/Live-Online-Arabic-Classes.png" class="card-img-top" alt="English Lesson">
-        <div class="card-body text-center">
-          <button class="btn btn-sm btn-danger">English Lessons</button>
+        <div class="mobile-filter-dropdown">
+            <select id="search-filter">
+            </select>
         </div>
-      </a>
     </div>
-  </div>
-</section>
 
-  <!-- Footer -->
-  <footer class="text-center py-5">
-    <p>&copy; 2024 Learn Quranic Arabic Free. All Rights Reserved.</p>
-  </footer>
+    <!-- Add this at the bottom of the body -->
+    <div class="bottom-nav">
+        <button class="nav-button" id="mobile-back-button">
+            <i class="fas fa-arrow-left"></i> <span class="nav-text">Go Back</span>
+        </button>
+        <button class="nav-button" id="mobile-home-button">
+            <i class="fas fa-home"></i> <span class="nav-text">Home</span>
+        </button>       
+    </div>
 
-  <!-- Bootstrap Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <script> 
-const toggleButton = document.getElementById('theme-toggle');
-const body = document.body;
+    <div class="container">
+        <!-- Language Selection -->
+        <div id="language-selection" class="selection-screen">
+            <div class="logo-container">
+                <img src="img/logo.png" alt="Logo" class="logo-image">
+            </div>
+            <h1>Choose Your Language</h1>
+            <div class="button-grid" id="languages-container"></div>
+        </div>
+        
+        <!-- Category Selection -->
+        <div id="category-selection" class="selection-screen hidden">
+            <div class="logo-container">
+                <img src="img/logo.png" alt="Logo" class="logo-image">
+            </div>
+            <h1>Choose Category</h1>
+            <div class="button-grid" id="categories-container"></div>
+        </div>
+        
+        <!-- Lesson List -->
+        <div id="lesson-list" class="hidden">
+            <div class="logo-container">
+                <img src="img/logo.png" alt="Logo" class="logo-image">
+            </div>
+            <h1 id="lesson-title"></h1>
+            <div class="lesson-grid" id="lessons-container"></div>
+        </div>
+        
+        <!-- Search Results -->
+        <div id="search-results" class="hidden">
+            <div class="logo-container">
+                <img src="img/logo.png" alt="Logo" class="logo-image">
+            </div>
+            <h2>Search Results</h2>
+            <div class="lesson-grid" id="results-container"></div>
+        </div>
 
-// Function to set the theme
-function setTheme(theme) {
-  body.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme); // Save theme in localStorage
-  toggleButton.textContent = theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
-}
+<!-- Add these before your script.js -->
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+<script src="script.js"></script>
 
-// Check saved theme on page load
-window.addEventListener('DOMContentLoaded', () => {
-  const savedTheme = localStorage.getItem('theme') || 'light'; // Default to 'light' if no theme is saved
-  setTheme(savedTheme);
-});
-
-// Toggle theme on button click
-toggleButton.addEventListener('click', () => {
-  const currentTheme = body.getAttribute('data-theme');
-  const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-  setTheme(newTheme);
-});
-
-  </script>
-  
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const logo = document.querySelector('.logo');
-    
-    // Add the animation class when the page loads
-    logo.classList.add('animate');
-
-    // Remove the animation class after it's done
-    setTimeout(() => {
-      logo.classList.remove('animate');
-    }, 8500); // Match the animation duration (1.5 seconds)
-  });
-  
-    // Add a click event to refresh the page
-  logo.addEventListener('click', () => {
-    location.reload(); // Refreshes the page
-  });
-</script>
-
-<script>
-  const logo = document.querySelector('.logo');
-
-  // Trigger animation on page load
-  document.addEventListener("DOMContentLoaded", () => {
-    logo.classList.add('animate');
-    setTimeout(() => {
-      logo.classList.remove('animate'); // Reset animation class
-    }, 1500); // Match the animation duration
-  });
-
-  // Refresh the page when the logo is clicked
-  logo.addEventListener('click', () => {
-    location.reload(); // Refresh the page
-  });
-</script>
-
-
-<script>
-  const logo = document.querySelector('.logo');
-
-  // Pause the animation on click
-  logo.addEventListener('click', () => {
-    logo.style.animation = 'none'; // Stops animation
-    setTimeout(() => {
-      logo.style.animation = ''; // Restarts animation
-    }, 1000); // Restart after 1 second
-  });
-</script>
-
-
-
-  
 </body>
 </html>

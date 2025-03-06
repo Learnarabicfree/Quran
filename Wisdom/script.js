@@ -402,13 +402,13 @@ async function populateDropdown() {
         dropdown.innerHTML = `<option value="all">All Items</option>`;
 
         // Languages
-        dropdown.innerHTML += `<option disabled>Languages ????</option>`;
+        dropdown.innerHTML += `<option disabled>Languages 🎯</option>`;
         Object.keys(appData).forEach(language => {
             dropdown.innerHTML += `<option value="${language}">${language}</option>`;
         });
 
         // Categories
-        dropdown.innerHTML += `<option disabled>Categories ????</option>`;
+        dropdown.innerHTML += `<option disabled>Categories 🎯</option>`;
         const uniqueCategories = new Set();
         Object.values(appData).forEach(categories => {
             Object.keys(categories).forEach(category => {

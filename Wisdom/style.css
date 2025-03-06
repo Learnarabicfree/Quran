@@ -546,3 +546,78 @@ h1, h2 {
 }
 
 
+
+/* Container for title and dropdown on the same line */
+.lesson-header {
+    display: flex;
+    justify-content: space-between; /* Space between title and dropdown */
+    align-items: center; /* Vertically center the items */
+    width: 100%;
+    flex-wrap: wrap; /* Allow items to wrap on small screens */
+}
+
+/* Title Styling */
+#lesson-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+    flex-grow: 1; /* Allow the title to grow and take available space */
+    min-width: 0; /* Prevent overflow */
+    white-space: nowrap; /* Prevent the title from breaking onto a new line */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Show ellipsis if title overflows */
+}
+
+/* Container for the dropdown */
+.sort-dropdown-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 10px; /* Some spacing from the right edge */
+    flex-shrink: 0; /* Prevent dropdown from shrinking */
+}
+
+/* Dropdown Styling */
+.sort-dropdown {
+    background: var(--primary-color); /* Darker background */
+    color: var(--text-light); /* Light text color */
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Light border for definition */
+    outline: none;
+    appearance: none;
+}
+
+/* Hover and Focus States */
+.sort-dropdown:hover, .sort-dropdown:focus {
+    background: var(--secondary-color); /* Lighter green on hover/focus */
+    border-color: var(--secondary-color); /* Change border color */
+}
+
+/* Adjust Dropdown Size on Mobile */
+@media (max-width: 768px) {
+    .lesson-header {
+        flex-direction: row; /* Ensure it's on the same line */
+        align-items: center; /* Center items vertically */
+    }
+
+    #lesson-title {
+        font-size: 1.5rem; /* Smaller font size on mobile */
+        min-width: 0; /* Prevents title overflow */
+    }
+
+    .sort-dropdown {
+        padding: 0.6rem 1rem; /* Adjust padding for smaller view */
+        font-size: 0.9rem; /* Slightly smaller font size */
+    }
+}
+
+#home-title {
+    color: inherit; /* Inherit the color from the parent element */
+    text-decoration: none; /* Remove any underline */
+    font-weight: inherit; /* Keep the same font weight as the title */
+    cursor: pointer; /* Change the cursor to indicate it's clickable */
+}

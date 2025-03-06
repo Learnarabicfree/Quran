@@ -12,7 +12,9 @@
 <body>
     <nav class="app-bar">
         <div class="app-bar-content">
-            <div class="site-title">Quranic Wisdom</div>
+            <div class="site-title">
+                <a href="javascript:void(0);" id="home-title">Quranic Wisdom</a>
+            </div>            
             <div class="search-container">
                 <div class="search-input-container">
                     <input type="text" id="global-search" placeholder="Search lessons...">
@@ -79,10 +81,20 @@
             <div class="logo-container">
                 <img src="img/logo.png" alt="Logo" class="logo-image">
             </div>
-            <h1 id="lesson-title"></h1>
+            <div class="lesson-header">
+                <h1 id="lesson-title">Lessons</h1>
+                <div class="sort-dropdown-container">
+                    <select id="lesson-sort" class="sort-dropdown">
+                        <option value="recentlyViewed">Recently Viewed</option>
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="lessonNumber">Lesson Order</option>
+                    </select>
+                </div>
+            </div>
             <div class="lesson-grid" id="lessons-container"></div>
         </div>
-        
+
         <!-- Search Results -->
         <div id="search-results" class="hidden">
             <div class="logo-container">

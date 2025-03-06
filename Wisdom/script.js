@@ -63,6 +63,7 @@ function setupEventListeners() {
             currentState.category = null;
             updateNavigation();
             loadCategories();
+            document.querySelector(".site-title").addEventListener("click", goHome);
         }
     });
 
@@ -113,30 +114,66 @@ async function loadCategories() {
     }
 }
 
+function extractLessonNumber(title) {
+    const match = title.match(/\d+/); // Extract first number found
+    return match ? parseInt(match[0], 10) : 0; // Convert to integer
+}
+
 async function loadLessons() {
     try {
-        const lessons = appData[currentState.language][currentState.category];
+        let lessons = appData[currentState.language][currentState.category];
+
+        // Get selected sort order
+        const sortOrder = document.getElementById("lesson-sort").value;
+
+        if (sortOrder === "newest") {
+            lessons = [...lessons].reverse(); // Reverse order for newest first
+        } else if (sortOrder === "lessonNumber") {
+            lessons = [...lessons].sort((a, b) => {
+                return extractLessonNumber(a.title) - extractLessonNumber(b.title);
+            });
+        } else if (sortOrder === "recentlyViewed") {
+            const recentLessons = JSON.parse(localStorage.getItem("recentlyViewed")) || {};
+            lessons = [...lessons].sort((a, b) => {
+                return (recentLessons[b.title] || 0) - (recentLessons[a.title] || 0);
+            });
+        }
+
+        // Render sorted lessons
         const container = document.getElementById("lessons-container");
-        
         container.innerHTML = lessons.map(lesson => `
-            <div class="lesson-card">
+            <div class="lesson-card" data-title="${lesson.title}">
                 <h3>${lesson.title}</h3>
                 ${lesson.parts.map(part => `
                     <div class="lesson-part">
                         <p>${part.name}</p>
-                        <a href="${part.youtube}" class="button" target="_blank">
+                        <a href="${part.youtube}" class="button watch-video" data-title="${lesson.title}" target="_blank">
                             Watch <i class="fas fa-external-link-alt"></i>
                         </a>
                     </div>
                 `).join("")}
             </div>
         `).join("");
-        
+
         updateUI();
     } catch (error) {
         console.error("Error loading lessons:", error);
     }
 }
+
+
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("watch-video")) {
+        const lessonTitle = e.target.dataset.title;
+        let recentLessons = JSON.parse(localStorage.getItem("recentlyViewed")) || {};
+        recentLessons[lessonTitle] = Date.now(); // Store timestamp
+        localStorage.setItem("recentlyViewed", JSON.stringify(recentLessons));
+    }
+});
+
+
+document.getElementById("lesson-sort").addEventListener("change", loadLessons);
+
 
 async function performSearch(query) {
     if (!query) return clearSearch();
@@ -365,13 +402,13 @@ async function populateDropdown() {
         dropdown.innerHTML = `<option value="all">All Items</option>`;
 
         // Languages
-        dropdown.innerHTML += `<option disabled>Languages 🎯</option>`;
+        dropdown.innerHTML += `<option disabled>Languages ????</option>`;
         Object.keys(appData).forEach(language => {
             dropdown.innerHTML += `<option value="${language}">${language}</option>`;
         });
 
         // Categories
-        dropdown.innerHTML += `<option disabled>Categories 🎯</option>`;
+        dropdown.innerHTML += `<option disabled>Categories ????</option>`;
         const uniqueCategories = new Set();
         Object.values(appData).forEach(categories => {
             Object.keys(categories).forEach(category => {

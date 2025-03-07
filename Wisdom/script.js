@@ -6,6 +6,7 @@ const firebaseConfig = {
   // Initialize Firebase
   const app = firebase.initializeApp(firebaseConfig);
   const database = firebase.database(app);
+  const WATCHED_STORAGE_KEY = 'watchedLessons';
 
 let navigationStack = [];
 let currentPosition = -1;
@@ -66,6 +67,44 @@ function setupEventListeners() {
             document.querySelector(".site-title").addEventListener("click", goHome);
         }
     });
+
+    // Click handler for marking as watched
+document.addEventListener("click", (e) => {
+    const card = e.target.closest('.lesson-card');
+    if (card) {
+        const title = card.dataset.title;
+        const isNowWatched = toggleWatchedStatus(title);
+        
+        // Update UI
+        card.classList.toggle('watched', isNowWatched);
+        const marker = card.querySelector('.watched-marker');
+        
+        if (isNowWatched && !marker) {
+            const newMarker = document.createElement('div');
+            newMarker.className = 'watched-marker';
+            newMarker.innerHTML = `<i class="fas fa-check"></i> Watched`;
+            card.prepend(newMarker);
+        } else if (!isNowWatched && marker) {
+            marker.remove();
+        }
+    }
+});
+
+// Double-click handler for removing watched status
+document.addEventListener("dblclick", (e) => {
+    const card = e.target.closest('.lesson-card');
+    if (card) {
+        const title = card.dataset.title;
+        const watched = getWatchedLessons();
+        
+        if (watched[title]) {
+            delete watched[title];
+            localStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(watched));
+            card.classList.remove('watched');
+            card.querySelector('.watched-marker')?.remove();
+        }
+    }
+});
 
     // Add filter change listener
     document.getElementById("search-filter").addEventListener("change", (e) => {
@@ -141,19 +180,29 @@ async function loadLessons() {
 
         // Render sorted lessons
         const container = document.getElementById("lessons-container");
-        container.innerHTML = lessons.map(lesson => `
-            <div class="lesson-card" data-title="${lesson.title}">
-                <h3>${lesson.title}</h3>
-                ${lesson.parts.map(part => `
-                    <div class="lesson-part">
-                        <p>${part.name}</p>
-                        <a href="${part.youtube}" class="button watch-video" data-title="${lesson.title}" target="_blank">
-                            Watch <i class="fas fa-external-link-alt"></i>
-                        </a>
-                    </div>
-                `).join("")}
+        // Replace the existing container.innerHTML code with:
+container.innerHTML = lessons.map(lesson => `
+    <div class="lesson-card ${getWatchedLessons()[lesson.title] ? 'watched' : ''}" 
+         data-title="${lesson.title}">
+        ${getWatchedLessons()[lesson.title] ? `
+            <div class="watched-marker">
+                <i class="fas fa-check"></i>
+                Watched
             </div>
-        `).join("");
+        ` : ''}
+        <h3>${lesson.title}</h3>
+        ${lesson.parts.map(part => `
+            <div class="lesson-part">
+                <p>${part.name}</p>
+                <a href="${part.youtube}" class="button watch-video" data-title="${lesson.title}" target="_blank">
+                    Watch <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+        `).join("")}
+    </div>
+`).join("");
+
+        
 
         updateUI();
     } catch (error) {
@@ -223,7 +272,14 @@ async function performSearch(query) {
 function displaySearchResults(results) {
     const container = document.getElementById("results-container");
     container.innerHTML = results.length ? results.map(result => `
-        <div class="lesson-card">
+        <div class="lesson-card ${getWatchedLessons()[result.title] ? 'watched' : ''}" 
+             data-title="${result.title}">
+            ${getWatchedLessons()[result.title] ? `
+                <div class="watched-marker">
+                    <i class="fas fa-check"></i>
+                    Watched
+                </div>
+            ` : ''}
             <small class="search-meta">${result.language} / ${result.category}</small>
             <h3>${result.title}</h3>
             ${result.parts.map(part => `
@@ -430,3 +486,16 @@ async function populateDropdown() {
 }
 
 document.addEventListener("DOMContentLoaded", populateDropdown);
+
+// Get watched lessons from storage
+function getWatchedLessons() {
+    return JSON.parse(localStorage.getItem(WATCHED_STORAGE_KEY)) || {};
+}
+
+// Toggle watched status
+function toggleWatchedStatus(lessonTitle) {
+    const watched = getWatchedLessons();
+    watched[lessonTitle] = !watched[lessonTitle];
+    localStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(watched));
+    return watched[lessonTitle];
+}

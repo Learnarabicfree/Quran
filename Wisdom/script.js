@@ -68,10 +68,10 @@ function setupEventListeners() {
     });
 
     // Add filter change listener
-    document.getElementById("search-filter").addEventListener("change", () => {
-        if (currentState.searchQuery) {
-            performSearch(currentState.searchQuery);
-        }
+    document.getElementById("search-filter").addEventListener("change", (e) => {
+        const searchQuery = document.getElementById("global-search").value.trim();
+        currentState.searchQuery = searchQuery;
+        performSearch(searchQuery);
     });
     
 
@@ -176,53 +176,43 @@ document.getElementById("lesson-sort").addEventListener("change", loadLessons);
 
 
 async function performSearch(query) {
-    if (!query) return clearSearch();
-    
     try {
         const results = [];
         const filterValue = document.getElementById("search-filter").value;
 
-        if (filterValue === "all") {
-            Object.entries(appData).forEach(([lang, categories]) => {
-                Object.entries(categories).forEach(([cat, lessons]) => {
-                    lessons.forEach(lesson => {
-                        const matches = lesson.title.toLowerCase().includes(query.toLowerCase()) ||
-                            lesson.parts.some(part => 
-                                part.name.toLowerCase().includes(query.toLowerCase())
-                            );
-                        if (matches) {
-                            results.push({
-                                language: lang,
-                                category: cat,
-                                ...lesson
-                            });
-                        }
-                    });
-                });
-            });
-        } else {
-            Object.entries(appData).forEach(([lang, categories]) => {
-                if (['Sinhala', 'Tamil', 'English'].includes(filterValue) && lang !== filterValue) return;
-                Object.entries(categories).forEach(([cat, lessons]) => {
-                    if (['Al Quran', 'Hadith'].includes(filterValue) && cat !== filterValue) return;
-                    lessons.forEach(lesson => {
-                        const matches = lesson.title.toLowerCase().includes(query.toLowerCase()) ||
-                            lesson.parts.some(part => 
-                                part.name.toLowerCase().includes(query.toLowerCase())
-                            );
-                        if (matches) {
-                            results.push({
-                                language: lang,
-                                category: cat,
-                                ...lesson
-                            });
-                        }
-                    });
-                });
-            });
-        }
+        Object.entries(appData).forEach(([lang, categories]) => {
+            Object.entries(categories).forEach(([cat, lessons]) => {
+                // Apply filter based on dropdown selection
+                const matchesFilter = 
+                    filterValue === "all" ||
+                    (['Sinhala', 'Tamil', 'English'].includes(filterValue) && lang === filterValue) ||
+                    (['Al Quran', 'Hadith'].includes(filterValue) && cat === filterValue);
 
+                if (!matchesFilter) return;
+
+                lessons.forEach(lesson => {
+                    // Apply search query if exists
+                    const matchesQuery = !query || 
+                        lesson.title.toLowerCase().includes(query.toLowerCase()) ||
+                        lesson.parts.some(part => 
+                            part.name.toLowerCase().includes(query.toLowerCase())
+                        );
+
+                    if (matchesQuery) {
+                        results.push({
+                            language: lang,
+                            category: cat,
+                            ...lesson
+                        });
+                    }
+                });
+            });
+        });
+
+        // Always show results when filter is active
         displaySearchResults(results);
+        document.getElementById("search-results").classList.remove("hidden");
+        updateUI();
     } catch (error) {
         console.error("Search error:", error);
     }
@@ -253,9 +243,9 @@ function displaySearchResults(results) {
 
 function clearSearch() {
     document.getElementById("global-search").value = "";
-    document.getElementById("search-results").classList.add("hidden");
     currentState.searchQuery = null;
-    updateUI();
+    // Show all results for current filter
+    performSearch("");
 }
 
 function updateNavigation() {
@@ -306,16 +296,17 @@ function loadState() {
 }
 
 function updateUI() {
-    // Show/hide sections
+    // Reset all containers first
     document.querySelectorAll(".selection-screen, #lesson-list, #search-results")
            .forEach(el => el.classList.add("hidden"));
 
-    if (currentState.searchQuery) {
+    const hasActiveSearch = document.getElementById("search-filter").value !== "all" || 
+                          currentState.searchQuery;
+
+    if (hasActiveSearch) {
         document.getElementById("search-results").classList.remove("hidden");
     } else if (currentState.category) {
         document.getElementById("lesson-list").classList.remove("hidden");
-        document.getElementById("lesson-title").textContent = 
-            `${currentState.language} / ${currentState.category}`;
     } else if (currentState.language) {
         document.getElementById("category-selection").classList.remove("hidden");
     } else {
@@ -367,12 +358,27 @@ function navigateBack() {
 
 
 function goHome() {
+    // Reset all states and filters
     navigationStack = [];
     currentPosition = -1;
-    currentState = { language: null, category: null, searchQuery: null };
+    currentState = { 
+        language: null, 
+        category: null, 
+        searchQuery: null 
+    };
+    
+    // Clear UI elements
+    document.getElementById("global-search").value = "";
+    document.getElementById("search-filter").value = "all";
+    document.getElementById("search-results").classList.add("hidden");
+    
+    // Reset to initial state
     localStorage.removeItem("navigationState");
-    clearSearch();
+    populateLanguages(Object.keys(appData));
     updateUI();
+    
+    // Optional: Scroll to top
+    window.scrollTo(0, 0);
 }
 
 function debounce(func, wait) {
@@ -422,6 +428,5 @@ async function populateDropdown() {
         console.error("Error loading dropdown:", error);
     }
 }
-
 
 document.addEventListener("DOMContentLoaded", populateDropdown);

@@ -621,3 +621,36 @@ h1, h2 {
     font-weight: inherit; /* Keep the same font weight as the title */
     cursor: pointer; /* Change the cursor to indicate it's clickable */
 }
+
+
+/* Add these styles at the bottom of your CSS file */
+.watched-marker {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #2B6D4F;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.watched-marker i {
+    font-size: 0.7rem;
+}
+
+.lesson-card.watched {
+    background: #f0fff4;
+    border: 2px solid #2B6D4F;
+    position: relative;
+}
+
+.lesson-card.watched::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(43, 109, 79, 0.1) 0%, transparent 100%);
+}

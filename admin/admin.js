@@ -1,3 +1,27 @@
+const languageTranslations = {
+    'Sinhala': 'සිංහල',
+    'Tamil': 'தமிழ்',
+    'English': 'English'
+};
+
+const categoryTranslations = {
+    'Sinhala': {
+        'Courses': 'පාඨමාලා',
+        'Surah': 'සූරා',
+        'Arabic': 'අරාබි'
+    },
+    'Tamil': {
+        'Courses': 'பாடநெறிகள்',
+        'Surah': 'ஸூரா',
+        'Arabic': 'அரபு'
+    },
+    'English': {
+        'Courses': 'Courses',
+        'Surah': 'Surah',
+        'Arabic': 'Arabic'
+    }
+};
+
 const firebaseConfig = {
     databaseURL: "https://quranic-wisdom-default-rtdb.firebaseio.com",
 };
@@ -40,12 +64,26 @@ function switchTab(tabNumber) {
     if(tabNumber > 1) {
         const language = ['Sinhala', 'Tamil', 'English'][tabNumber-2];
         loadAllLessons(language);
+        
+        // Update category filter options
+        const filterCategoryId = `filterCategory${language}`;
+        const filterSelect = document.getElementById(filterCategoryId);
+        if (filterSelect) {
+            const categories = categoryTranslations[language];
+            filterSelect.innerHTML = '<option value="">All Categories</option>';
+            Object.entries(categories).forEach(([key, label]) => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = label;
+                filterSelect.appendChild(option);
+            });
+        }
     }
 }
 // Modified loadAllLessons function for language tabs
 async function loadAllLessons(language) {
     try {
-        const categories = ['Al Quran', 'Hadith'];
+        const categories = ['Courses', 'Surah', 'Arabic'];
         let allLessons = [];
 
         for(const category of categories) {
@@ -68,9 +106,11 @@ async function loadAllLessons(language) {
 // Render lessons for language tabs
 function renderLanguageLessons(language, lessons) {
     const container = document.getElementById(`${language.toLowerCase()}Lessons`);
-    container.innerHTML = lessons.map((lesson, index) => `
+    container.innerHTML = lessons.map((lesson, index) => {
+        const categoryName = categoryTranslations[lesson.language][lesson.category];
+        return `
         <div class="lesson-card" data-category="${lesson.category}" data-title="${lesson.title.toLowerCase()}">
-            <h3>${lesson.title} (${lesson.category})</h3>
+            <h3>${lesson.title} (${categoryName})</h3>
             ${lesson.parts.map(part => `
                 <p>${part.name}: ${part.youtube}</p>
             `).join('')}
@@ -79,7 +119,7 @@ function renderLanguageLessons(language, lessons) {
                 <button onclick="deleteLanguageLesson('${language}', '${lesson.category}', ${index})" class="danger">Delete</button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 }
 
 // Filter function for language tabs
@@ -104,7 +144,7 @@ async function editLanguageLesson(language, category, index, element) {
 
     const formHtml = `
         <div class="edit-form-container">
-            <h3>Edit Lesson (${language} - ${category})</h3>
+            <h3>Edit Lesson (${languageTranslations[language]} - ${categoryTranslations[language][category]})</h3>
             <div class="form-group">
                 <label>Title:</label>
                 <input id="editTitle-${language}" value="${lesson.title}">
@@ -160,7 +200,8 @@ async function deleteLanguageLesson(language, category, index) {
 
 async function saveLanguageLesson(language, category, index, element) {
     const title = document.getElementById(`editTitle-${language}`).value;
-    const parts = Array.from(element.parentElement.parentElement.querySelectorAll('.part-inputs')).map(div => {
+    const partsContainer = document.getElementById(`partsContainer-${language}`);
+    const parts = Array.from(partsContainer.querySelectorAll('.part-inputs')).map(div => {
         const inputs = div.querySelectorAll('input');
         return {
             name: inputs[0].value,
@@ -186,20 +227,25 @@ async function saveLanguageLesson(language, category, index, element) {
         lessons[index] = { title, parts, category };
         await ref.set(lessons);
         loadAllLessons(language);
+        showToast('Lesson updated successfully!');
     } catch (error) {
         console.error('Error saving lesson:', error);
-        alert('Error saving lesson. Please check console.');
+        showToast('Error saving lesson. Please check console.', true);
     }
 }
 
 // UI Functions
 function loadCategories() {
     const language = document.getElementById('languageSelect').value;
-    document.getElementById('categorySelect').innerHTML = `
-        <option value="">Select Category</option>
-        <option value="Al Quran">Al Quran</option>
-        <option value="Hadith">Hadith</option>
-    `;
+    const translations = categoryTranslations[language] || {};
+    const categorySelect = document.getElementById('categorySelect');
+    categorySelect.innerHTML = '<option value="">Select Category</option>';
+    Object.entries(translations).forEach(([key, label]) => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = label;
+        categorySelect.appendChild(option);
+    });
     loadLessons();
 }
 

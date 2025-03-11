@@ -654,3 +654,46 @@ h1, h2 {
     inset: 0;
     background: linear-gradient(135deg, rgba(43, 109, 79, 0.1) 0%, transparent 100%);
 }
+
+/* Add new styles for learning status */
+.learning-marker {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #FFD54F;
+    color: var(--text-dark);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.lesson-card.learning {
+    background: #fff8e1;
+    border: 2px solid #FFD54F;
+}
+
+.lesson-card.learning::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 213, 79, 0.1) 0%, transparent 100%);
+}
+
+/* Add these to your style.css */
+.language-card h3 {
+    font-family: 'Noto Sans Tamil', 'Noto Sans Sinhala', sans-serif;
+    font-size: 1.8rem;
+}
+
+.search-meta {
+    font-family: 'Noto Sans Tamil', 'Noto Sans Sinhala', sans-serif;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+/* Add font imports in HTML head */
+

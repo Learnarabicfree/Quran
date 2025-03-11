@@ -8,12 +8,12 @@
   "theme_color": "#2B6D4F",
   "icons": [
     {
-      "src": "/Quran/img/logo.png",
+      "src": "/Quran/img/logo-app.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/Quran/img/logo.png",
+      "src": "/Quran/img/logo-app.png",
       "sizes": "512x512",
       "type": "image/png"
     }

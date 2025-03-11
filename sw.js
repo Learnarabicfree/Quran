@@ -1,11 +1,11 @@
-const CACHE_NAME = 'quranic-wisdom-v1';
+const CACHE_NAME = 'quranic-wisdom-v2';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/script.js',
-  '/img/logo.png',
-  // Add other important assets you want to cache
+  '/Quran/',
+  '/Quran/index.html',
+  '/Quran/style.css',
+  '/Quran/script.js',
+  '/Quran/img/logo.png',
+  // Add other assets with full paths
 ];
 
 self.addEventListener('install', (event) => {

@@ -13,19 +13,14 @@
 </head>
 
 <body>
-    <div id="installPopup" class="install-popup hidden">
-        <div class="install-content">
-          <img src="img/logo.png" alt="App Logo" class="install-logo">
-          <h2>Install Quranic Wisdom</h2>
-          <p>Get quick access to Islamic teachings on your home screen!</p>
-          <div class="install-buttons">
-            <button id="installButton" class="install-button">Install Now</button>
-            <button onclick="document.getElementById('installPopup').classList.add('hidden')" 
-                    class="install-cancel">Not Now</button>
-          </div>
-        </div>
-      </div>
-
+<div id="install-prompt" class="install-prompt hidden">
+    <div class="prompt-container">
+        <img src="https://learnarabicfree.github.io/Quran/img/logo.png" alt="Quranic Wisdom" class="prompt-logo">
+        <p class="prompt-text">Add Quranic Wisdom to your Home Screen for a better experience!</p>
+        <button id="install-button" class="install-button">Add to Home Screen</button>
+        <button id="close-button" class="close-button">&times;</button>
+    </div>
+</div>
     <nav class="app-bar">
         <div class="app-bar-content">
             <div class="site-title">

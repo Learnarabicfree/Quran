@@ -8,6 +8,31 @@ const firebaseConfig = {
   const database = firebase.database(app);
   const WATCHED_STORAGE_KEY = 'watchedLessons';
 
+  // Add these after firebaseConfig
+const languageTranslations = {
+    'Sinhala': 'සිංහල',
+    'Tamil': 'தமிழ்',
+    'English': 'English'
+};
+
+const categoryTranslations = {
+    'Sinhala': {
+        'Courses': 'පාඨමාලා',
+        'Surah': 'සූරා',
+        'Arabic': 'අරාබි'
+    },
+    'Tamil': {
+        'Courses': 'பாடநெறிகள்',
+        'Surah': 'ஸூரா',
+        'Arabic': 'அரபு'
+    },
+    'English': {
+        'Courses': 'Courses',
+        'Surah': 'Surah',
+        'Arabic': 'Arabic'
+    }
+};
+
 let navigationStack = [];
 let currentPosition = -1;
 let currentState = {
@@ -40,17 +65,19 @@ function populateLanguages(languages) {
     container.innerHTML = languages.map(language => `
         <div class="card language-card" data-language="${language}">
             <i class="flag fas fa-globe"></i>
-            <h3>${language}</h3>
+            <h3>${languageTranslations[language]}</h3>
         </div>
     `).join("");
 }
 
 function populateCategories(categories) {
     const container = document.getElementById("categories-container");
+    const currentLang = currentState.language;
+    
     container.innerHTML = categories.map(category => `
         <div class="card category-card" data-category="${category}">
             <i class="fas fa-book card-icon"></i>
-            <h3>${category}</h3>
+            <h3>${categoryTranslations[currentLang][category]}</h3>
         </div>
     `).join("");
 }
@@ -178,6 +205,9 @@ async function loadLessons() {
             });
         }
 
+        document.getElementById("lesson-title").textContent = 
+    `${languageTranslations[currentState.language]} - ${categoryTranslations[currentState.language][currentState.category]}`;
+
         // Render sorted lessons
         const container = document.getElementById("lessons-container");
         // Replace the existing container.innerHTML code with:
@@ -235,7 +265,7 @@ async function performSearch(query) {
                 const matchesFilter = 
                     filterValue === "all" ||
                     (['Sinhala', 'Tamil', 'English'].includes(filterValue) && lang === filterValue) ||
-                    (['Al Quran', 'Hadith'].includes(filterValue) && cat === filterValue);
+                    (['Courses', 'Surah', 'Arabic'].includes(filterValue) && cat === filterValue);
 
                 if (!matchesFilter) return;
 
@@ -280,7 +310,7 @@ function displaySearchResults(results) {
                     Watched
                 </div>
             ` : ''}
-            <small class="search-meta">${result.language} / ${result.category}</small>
+            <small class="search-meta">${languageTranslations[result.language]} / ${categoryTranslations[result.language][result.category]}</small>
             <h3>${result.title}</h3>
             ${result.parts.map(part => `
                 <div class="lesson-part">
@@ -466,7 +496,7 @@ async function populateDropdown() {
         // Languages
         dropdown.innerHTML += `<option disabled>Languages 🎯</option>`;
         Object.keys(appData).forEach(language => {
-            dropdown.innerHTML += `<option value="${language}">${language}</option>`;
+            dropdown.innerHTML += `<option value="${language}">${languageTranslations[language]}</option>`;
         });
 
         // Categories
@@ -478,7 +508,7 @@ async function populateDropdown() {
             });
         });
         uniqueCategories.forEach(category => {
-            dropdown.innerHTML += `<option value="${category}">${category}</option>`;
+            dropdown.innerHTML += `<option value="${category}">${categoryTranslations['English'][category]}</option>`;
         });
     } catch (error) {
         console.error("Error loading dropdown:", error);

@@ -119,5 +119,48 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 <script src="script.js"></script>
 
+         <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(registration => {
+                    console.log('Service Worker registered:', registration);
+                })
+                .catch(error => {
+                    console.log('Service Worker registration failed:', error);
+                });
+        });
+    }
+</script>
+
+    <script>
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (event) => {
+    event.preventDefault();
+    deferredPrompt = event;
+    document.getElementById('install-prompt').classList.remove('hidden');
+});
+
+document.getElementById('install-button').addEventListener('click', () => {
+    if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the install prompt');
+            } else {
+                console.log('User dismissed the install prompt');
+            }
+            deferredPrompt = null;
+        });
+    }
+    document.getElementById('install-prompt').classList.add('hidden');
+});
+
+document.getElementById('close-button').addEventListener('click', () => {
+    document.getElementById('install-prompt').classList.add('hidden');
+});
+</script>
+
 </body>
 </html>

@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quranic Wisdom Admin</title>
-    <link rel="icon" href="img/logo.png" type="image/png">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <link rel="stylesheet" href="admin/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="img/logo.png" type="image/png">
 </head>
 <body>
     <div id="login-page" class="login-page">
@@ -44,9 +44,9 @@
         </h1>
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab(1)">Submit New Lessons</button>
-            <button class="tab-btn" onclick="switchTab(2)">Sinhala Lessons</button>
-            <button class="tab-btn" onclick="switchTab(3)">Tamil Lessons</button>
-            <button class="tab-btn" onclick="switchTab(4)">English Lessons</button>
+            <button class="tab-btn" onclick="switchTab(2)">සිංහල</button>
+            <button class="tab-btn" onclick="switchTab(3)">தமிழ்</button>
+            <button class="tab-btn" onclick="switchTab(4)">English</button>
         </div>
 
         <!-- Tab 1: Submit New Lessons -->
@@ -54,15 +54,16 @@
             <div class="controls">
                 <select id="languageSelect">
                     <option value="">Select Language</option>
-                    <option value="Tamil">Tamil</option>
-                    <option value="Sinhala">Sinhala</option>
+                    <option value="Sinhala">සිංහල</option>
+                    <option value="Tamil">தமிழ்</option>
                     <option value="English">English</option>
                 </select>
 
                 <select id="categorySelect">
                     <option value="">Select Category</option>
-                    <option value="Al Quran">Al Quran</option>
-                    <option value="Hadith">Hadith</option>
+                    <option value="Courses">Courses</option>
+                    <option value="Surah">Surah</option>
+                    <option value="Arabic">Arabic</option>
                 </select>
             </div>
             <div id="lessonList" class="lesson-list">
@@ -90,8 +91,8 @@
                     
                     <div class="actions">
                         <button onclick="addPart()">Add Part</button>
-                        <button onclick="saveLesson()">Save Lesson</button>
                         <button onclick="clearForm()">Clear Form</button>
+                        <button onclick="saveLesson()">Submit Lesson</button>
                     </div>
                 </div>
             </div>
@@ -102,8 +103,9 @@
             <div class="filter-controls">
                 <select id="filterCategorySinhala" onchange="filterLessons('Sinhala')">
                     <option value="">All Categories</option>
-                    <option value="Al Quran">Al Quran</option>
-                    <option value="Hadith">Hadith</option>
+                    <option value="Courses">Courses</option>
+                    <option value="Surah">Surah</option>
+                    <option value="Arabic">Arabic</option>
                 </select>
                 <input type="text" id="searchSinhala" placeholder="Search..." onkeyup="filterLessons('Sinhala')">
             </div>
@@ -115,8 +117,9 @@
             <div class="filter-controls">
                 <select id="filterCategoryTamil" onchange="filterLessons('Tamil')">
                     <option value="">All Categories</option>
-                    <option value="Al Quran">Al Quran</option>
-                    <option value="Hadith">Hadith</option>
+                    <option value="Courses">Courses</option>
+                    <option value="Surah">Surah</option>
+                    <option value="Arabic">Arabic</option>
                 </select>
                 <input type="text" id="searchTamil" placeholder="Search..." onkeyup="filterLessons('Tamil')">
             </div>
@@ -128,8 +131,9 @@
             <div class="filter-controls">
                 <select id="filterCategoryEnglish" onchange="filterLessons('English')">
                     <option value="">All Categories</option>
-                    <option value="Al Quran">Al Quran</option>
-                    <option value="Hadith">Hadith</option>
+                    <option value="Courses">Courses</option>
+                    <option value="Surah">Surah</option>
+                    <option value="Arabic">Arabic</option>
                 </select>
                 <input type="text" id="searchEnglish" placeholder="Search..." onkeyup="filterLessons('English')">
             </div>

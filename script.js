@@ -49,40 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupEventListeners();
     populateDropdown();
 });
-
-// Register Service Worker
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => console.log('SW registered'))
-        .catch(err => console.log('SW registration failed'));
-    });
-  }
   
-  let deferredPrompt;
-  const installButton = document.getElementById('installButton');
-  
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    showInstallPromotion();
-  });
-  
-  function showInstallPromotion() {
-    const installPopup = document.getElementById('installPopup');
-    installPopup.classList.remove('hidden');
-    
-    installButton.addEventListener('click', async () => {
-      installPopup.classList.add('hidden');
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        console.log('User accepted install');
-      }
-      deferredPrompt = null;
-    });
-  }
-
 async function fetchData() {
     try {
         const snapshot = await database.ref('/').once('value');
@@ -562,3 +529,37 @@ function toggleWatchedStatus(lessonTitle) {
     localStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(watched));
     return watched[lessonTitle];
 }
+
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => console.log('SW registered'))
+        .catch(err => console.log('SW registration failed'));
+    });
+  }
+  
+  // Install Prompt
+  let deferredPrompt;
+  const installButton = document.getElementById('installButton');
+  
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallPromotion();
+  });
+  
+  function showInstallPromotion() {
+    const installPopup = document.getElementById('installPopup');
+    installPopup.classList.remove('hidden');
+    
+    installButton.addEventListener('click', async () => {
+      installPopup.classList.add('hidden');
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('User accepted install');
+      }
+      deferredPrompt = null;
+    });
+  }

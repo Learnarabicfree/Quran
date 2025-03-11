@@ -6,11 +6,26 @@
     <title>Quranic Wisdom</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala&family=Noto+Sans+Tamil&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#2B6D4F">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="img/logo.png" type="image/png">
 </head>
 
 <body>
+    <div id="installPopup" class="install-popup hidden">
+        <div class="install-content">
+          <img src="img/logo.png" alt="App Logo" class="install-logo">
+          <h2>Install Quranic Wisdom</h2>
+          <p>Get quick access to Islamic teachings on your home screen!</p>
+          <div class="install-buttons">
+            <button id="installButton" class="install-button">Install Now</button>
+            <button onclick="document.getElementById('installPopup').classList.add('hidden')" 
+                    class="install-cancel">Not Now</button>
+          </div>
+        </div>
+      </div>
+
     <nav class="app-bar">
         <div class="app-bar-content">
             <div class="site-title">

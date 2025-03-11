@@ -13,14 +13,19 @@
 </head>
 
 <body>
-<div id="install-prompt" class="install-prompt hidden">
-    <div class="prompt-container">
-        <img src="https://learnarabicfree.github.io/Quran/img/logo.png" alt="Quranic Wisdom" class="prompt-logo">
-        <p class="prompt-text">Add Quranic Wisdom to your Home Screen for a better experience!</p>
-        <button id="install-button" class="install-button">Add to Home Screen</button>
-        <button id="close-button" class="close-button">&times;</button>
-    </div>
-</div>
+    <div id="installPopup" class="install-popup hidden">
+        <div class="install-content">
+          <img src="img/logo.png" alt="App Logo" class="install-logo">
+          <h2>Install Quranic Wisdom</h2>
+          <p>Get quick access to Islamic teachings on your home screen!</p>
+          <div class="install-buttons">
+            <button id="installButton" class="install-button">Install Now</button>
+            <button onclick="document.getElementById('installPopup').classList.add('hidden')" 
+                    class="install-cancel">Not Now</button>
+          </div>
+        </div>
+      </div>
+
     <nav class="app-bar">
         <div class="app-bar-content">
             <div class="site-title">
@@ -118,49 +123,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 <script src="script.js"></script>
-
-         <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then(registration => {
-                    console.log('Service Worker registered:', registration);
-                })
-                .catch(error => {
-                    console.log('Service Worker registration failed:', error);
-                });
-        });
-    }
-</script>
-
-    <script>
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (event) => {
-    event.preventDefault();
-    deferredPrompt = event;
-    document.getElementById('install-prompt').classList.remove('hidden');
-});
-
-document.getElementById('install-button').addEventListener('click', () => {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-            if (choiceResult.outcome === 'accepted') {
-                console.log('User accepted the install prompt');
-            } else {
-                console.log('User dismissed the install prompt');
-            }
-            deferredPrompt = null;
-        });
-    }
-    document.getElementById('install-prompt').classList.add('hidden');
-});
-
-document.getElementById('close-button').addEventListener('click', () => {
-    document.getElementById('install-prompt').classList.add('hidden');
-});
-</script>
 
 </body>
 </html>

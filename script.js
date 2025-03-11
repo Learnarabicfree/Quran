@@ -530,36 +530,41 @@ function toggleWatchedStatus(lessonTitle) {
     return watched[lessonTitle];
 }
 
-// Register Service Worker
+// Updated Service Worker registration
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(registration => console.log('SW registered'))
-        .catch(err => console.log('SW registration failed'));
-    });
-  }
-  
-  // Install Prompt
-  let deferredPrompt;
-  const installButton = document.getElementById('installButton');
-  
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    showInstallPromotion();
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/Quran/sw.js')
+      .then(registration => console.log('SW registered'))
+      .catch(err => console.log('SW registration failed:', err));
   });
-  
-  function showInstallPromotion() {
-    const installPopup = document.getElementById('installPopup');
+}
+
+// Install Prompt with path correction
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallPromotion();
+});
+
+function showInstallPromotion() {
+  const installPopup = document.getElementById('installPopup');
+  if (installPopup && deferredPrompt) {
     installPopup.classList.remove('hidden');
-    
-    installButton.addEventListener('click', async () => {
-      installPopup.classList.add('hidden');
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        console.log('User accepted install');
-      }
-      deferredPrompt = null;
-    });
   }
+}
+
+// Add click handler for install button
+document.getElementById('installButton').addEventListener('click', async () => {
+  const installPopup = document.getElementById('installPopup');
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      console.log('User accepted install');
+    }
+    installPopup.classList.add('hidden');
+    deferredPrompt = null;
+  }
+});

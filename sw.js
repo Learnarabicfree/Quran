@@ -4,7 +4,7 @@ const ASSETS = [
   '/Quran/index.html',
   '/Quran/style.css',
   '/Quran/script.js',
-  '/Quran/img/logo.png',
+  '/Quran/img/logo-app.png',
   // Add other assets with full paths
 ];
 

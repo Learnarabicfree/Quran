@@ -624,12 +624,17 @@ h1, h2 {
 
 
 /* Add these styles at the bottom of your CSS file */
-.watched-marker {
+
+
+.watched-marker i {
+    font-size: 0.7rem;
+}
+
+/* Add new status styles */
+.status-marker {
     position: absolute;
     top: 8px;
     right: 8px;
-    background: #2B6D4F;
-    color: white;
     padding: 4px 8px;
     border-radius: 12px;
     font-size: 0.8rem;
@@ -638,21 +643,24 @@ h1, h2 {
     gap: 4px;
 }
 
-.watched-marker i {
-    font-size: 0.7rem;
+.status-marker.studying {
+    background: #FFD54F;
+    color: var(--text-dark);
 }
 
-.lesson-card.watched {
+.status-marker.completed {
+    background: #2B6D4F;
+    color: white;
+}
+
+.lesson-card.studying {
+    background: #fff8e1;
+    border: 2px solid #FFD54F;
+}
+
+.lesson-card.completed {
     background: #f0fff4;
     border: 2px solid #2B6D4F;
-    position: relative;
-}
-
-.lesson-card.watched::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(43, 109, 79, 0.1) 0%, transparent 100%);
 }
 
 /* Add new styles for learning status */

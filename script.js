@@ -95,65 +95,51 @@ function setupEventListeners() {
         }
     });
 
-// Replace the existing click handler for lesson cards
+    // Click handler for marking as watched
 document.addEventListener("click", (e) => {
     const card = e.target.closest('.lesson-card');
-    if (card && !e.target.closest('.watch-video')) {
+    if (card) {
         const title = card.dataset.title;
-        const totalVideos = parseInt(card.dataset.totalVideos);
-        const watched = getWatchedLessons();
+        const isNowWatched = toggleWatchedStatus(title);
         
-        // Toggle between Studying and reset
-        if (!watched[title] || watched[title] === 0) {
-            watched[title] = 1;
-        } else {
-            watched[title] = watched[title] === totalVideos ? 0 : 1;
+        // Update UI
+        card.classList.toggle('watched', isNowWatched);
+        const marker = card.querySelector('.watched-marker');
+        
+        if (isNowWatched && !marker) {
+            const newMarker = document.createElement('div');
+            newMarker.className = 'watched-marker';
+            newMarker.innerHTML = `<i class="fas fa-check"></i> Watched`;
+            card.prepend(newMarker);
+        } else if (!isNowWatched && marker) {
+            marker.remove();
         }
-        
-        localStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(watched));
-        updateCardUI(card);
     }
 });
 
-// Update double-click handler
+// Double-click handler for removing watched status
 document.addEventListener("dblclick", (e) => {
     const card = e.target.closest('.lesson-card');
     if (card) {
         const title = card.dataset.title;
         const watched = getWatchedLessons();
-        delete watched[title];
-        localStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(watched));
-        updateCardUI(card);
+        
+        if (watched[title]) {
+            delete watched[title];
+            localStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(watched));
+            card.classList.remove('watched');
+            card.querySelector('.watched-marker')?.remove();
+        }
     }
 });
 
-// Add this helper function
-function updateCardUI(card) {
-    const title = card.dataset.title;
-    const totalVideos = parseInt(card.dataset.totalVideos);
-    const watched = getWatchedLessons();
-    const count = watched[title] || 0;
+    // Add filter change listener
+    document.getElementById("search-filter").addEventListener("change", (e) => {
+        const searchQuery = document.getElementById("global-search").value.trim();
+        currentState.searchQuery = searchQuery;
+        performSearch(searchQuery);
+    });
     
-    // Clear existing markers
-    card.querySelector('.status-marker')?.remove();
-    card.classList.remove('studying', 'completed');
-    
-    if (count >= totalVideos) {
-        card.classList.add('completed');
-        card.insertAdjacentHTML('afterbegin', `
-            <div class="status-marker completed">
-                <i class="fas fa-check"></i> Completed
-            </div>
-        `);
-    } else if (count > 0) {
-        card.classList.add('studying');
-        card.insertAdjacentHTML('afterbegin', `
-            <div class="status-marker studying">
-                <i class="fas fa-book"></i> Studying
-            </div>
-        `);
-    }
-}
 
     // Category selection
     document.addEventListener("click", (e) => {
@@ -164,43 +150,6 @@ function updateCardUI(card) {
             loadLessons();
         }
     });
-
-    // Update video link click handler
-    document.addEventListener("click", (e) => {
-    const videoLink = e.target.closest('.watch-video');
-    if (videoLink) {
-        const lessonTitle = videoLink.dataset.title;
-        const card = videoLink.closest('.lesson-card');
-        const totalVideos = parseInt(card.dataset.totalVideos);
-        const watched = getWatchedLessons();
-        
-        // Increment video count
-        watched[lessonTitle] = (watched[lessonTitle] || 0) + 1;
-        if (watched[lessonTitle] > totalVideos) {
-            watched[lessonTitle] = totalVideos;
-        }
-        
-        localStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(watched));
-        updateCardUI(card);
-        
-        // Update recent viewed
-        let recentLessons = JSON.parse(localStorage.getItem("recentlyViewed")) || {};
-        recentLessons[lessonTitle] = Date.now();
-        localStorage.setItem("recentlyViewed", JSON.stringify(recentLessons));
-    }
-});
-
-
-
-    // Add filter change listener
-    document.getElementById("search-filter").addEventListener("change", (e) => {
-        const searchQuery = document.getElementById("global-search").value.trim();
-        currentState.searchQuery = searchQuery;
-        performSearch(searchQuery);
-    });
-    
-
-
 
     // Search functionality
     document.getElementById("global-search").addEventListener("input", 
@@ -262,21 +211,26 @@ async function loadLessons() {
         // Render sorted lessons
         const container = document.getElementById("lessons-container");
         // Replace the existing container.innerHTML code with:
-        container.innerHTML = lessons.map(lesson => `
-            <div class="lesson-card" 
-                 data-title="${lesson.title}" 
-                 data-total-videos="${lesson.parts.length}">
-                <h3>${lesson.title}</h3>
-                ${lesson.parts.map(part => `
-                    <div class="lesson-part">
-                        <p>${part.name}</p>
-                        <a href="${part.youtube}" class="button watch-video" data-title="${lesson.title}" target="_blank">
-                            Watch <i class="fas fa-external-link-alt"></i>
-                        </a>
-                    </div>
-                `).join("")}
+container.innerHTML = lessons.map(lesson => `
+    <div class="lesson-card ${getWatchedLessons()[lesson.title] ? 'watched' : ''}" 
+         data-title="${lesson.title}">
+        ${getWatchedLessons()[lesson.title] ? `
+            <div class="watched-marker">
+                <i class="fas fa-check"></i>
+                Watched
             </div>
-        `).join("");
+        ` : ''}
+        <h3>${lesson.title}</h3>
+        ${lesson.parts.map(part => `
+            <div class="lesson-part">
+                <p>${part.name}</p>
+                <a href="${part.youtube}" class="button watch-video" data-title="${lesson.title}" target="_blank">
+                    Watch <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+        `).join("")}
+    </div>
+`).join("");
 
         
 
@@ -287,7 +241,14 @@ async function loadLessons() {
 }
 
 
-
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("watch-video")) {
+        const lessonTitle = e.target.dataset.title;
+        let recentLessons = JSON.parse(localStorage.getItem("recentlyViewed")) || {};
+        recentLessons[lessonTitle] = Date.now(); // Store timestamp
+        localStorage.setItem("recentlyViewed", JSON.stringify(recentLessons));
+    }
+});
 
 
 document.getElementById("lesson-sort").addEventListener("change", loadLessons);

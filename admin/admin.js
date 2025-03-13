@@ -80,7 +80,7 @@ function switchTab(tabNumber) {
         }
     }
 }
-// Modified loadAllLessons function for language tabs
+// In admin.js, update the loadAllLessons function
 async function loadAllLessons(language) {
     try {
         const categories = ['Courses', 'Surah', 'Arabic'];
@@ -89,9 +89,10 @@ async function loadAllLessons(language) {
         for(const category of categories) {
             const snapshot = await database.ref(`${language}/${category}`).once('value');
             const lessons = snapshot.val() || [];
-            lessons.forEach(lesson => {
+            lessons.forEach((lesson, originalIndex) => { // Add originalIndex here
                 lesson.category = category;
                 lesson.language = language;
+                lesson.originalIndex = originalIndex; // Store original index
                 allLessons.push(lesson);
             });
         }
@@ -103,10 +104,10 @@ async function loadAllLessons(language) {
     }
 }
 
-// Render lessons for language tabs
+// In admin.js, update the renderLanguageLessons function
 function renderLanguageLessons(language, lessons) {
     const container = document.getElementById(`${language.toLowerCase()}Lessons`);
-    container.innerHTML = lessons.map((lesson, index) => {
+    container.innerHTML = lessons.map((lesson) => {
         const categoryName = categoryTranslations[lesson.language][lesson.category];
         return `
         <div class="lesson-card" data-category="${lesson.category}" data-title="${lesson.title.toLowerCase()}">
@@ -115,8 +116,8 @@ function renderLanguageLessons(language, lessons) {
                 <p>${part.name}: ${part.youtube}</p>
             `).join('')}
             <div class="actions">
-                <button onclick="editLanguageLesson('${language}', '${lesson.category}', ${index}, this)">Edit</button>
-                <button onclick="deleteLanguageLesson('${language}', '${lesson.category}', ${index})" class="danger">Delete</button>
+                <button onclick="editLanguageLesson('${lesson.language}', '${lesson.category}', ${lesson.originalIndex}, this)">Edit</button>
+                <button onclick="deleteLanguageLesson('${lesson.language}', '${lesson.category}', ${lesson.originalIndex})" class="danger">Delete</button>
             </div>
         </div>
     `}).join('');

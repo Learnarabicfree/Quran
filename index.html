@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Quranic Wisdom</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala&family=Noto+Sans+Tamil&display=swap" rel="stylesheet">
+    <link rel="manifest" href="/Quran/manifest.json">
+    <meta name="theme-color" content="#2B6D4F">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="img/logo-app.png" type="image/png">
+</head>
+
+<body>
+    <div id="installPopup" class="install-popup hidden">
+        <div class="install-content">
+            <img src="img/logo-app.png" alt="App Logo" class="install-logo">
+            <h2>Install Quranic Wisdom</h2>
+            <p>📱 Install the app for a smoother and faster experience. Enjoy seamless access to Islamic teachings!</p>
+            <div class="install-buttons">
+                <button id="installButton" class="install-button">
+                    <i class="fas fa-download"></i> Install
+                </button>
+                <button onclick="this.parentElement.parentElement.parentElement.classList.add('hidden')" 
+                        class="install-cancel">
+                    Maybe Later
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="app-bar">
+        <div class="app-bar-content">
+            <div class="site-title">
+                <a href="javascript:void(0);" id="home-title">Quranic Wisdom</a>
+            </div>            
+            <button class="nav-button" id="home-button">
+                <i class="fas fa-home"></i> <span class="nav-text">Home</span>
+            </button>
+            <button class="nav-button" id="back-button">
+                <i class="fas fa-arrow-left"></i> <span class="nav-text">Go Back</span>
+            </button>
+        </div>
+    </nav>
+
+    <div id="loading-indicator" class="loading-overlay hidden">
+        <div class="loading-content">
+            <img src="img/loading.gif" alt="Loading..." class="loading-image">
+            <div class="loading-text">
+                <span class="bismillah">Bismillah<span class="dots">...</span></span>
+                <span class="preparing-text">Preparing Content for You</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <button class="nav-button" id="mobile-home-button">
+            <i class="fas fa-home"></i> <span class="nav-text">Home</span>
+        </button>       
+        <button class="nav-button" id="mobile-back-button">
+            <i class="fas fa-arrow-left"></i> <span class="nav-text">Go Back</span>
+        </button>
+    </div>
+
+    <div class="container">
+        <!-- Language Selection -->
+        <div id="language-selection" class="selection-screen">
+            <div class="logo-container">
+                <img src="img/logo.png" alt="Logo" class="logo-image">
+            </div>
+            <h1>Choose Your Language</h1>
+            <div class="button-grid" id="languages-container"></div>
+        </div>
+        
+        <!-- Category Selection -->
+        <div id="category-selection" class="selection-screen hidden">
+            <div class="logo-container">
+                <img src="img/logo.png" alt="Logo" class="logo-image">
+            </div>
+            <div class="category-header">
+                <h1 id="category-title">Choose Category</h1>
+            </div>
+            <div class="button-grid" id="categories-container"></div>
+            <div class="button-grid" id="subcategories-container"></div>
+        </div>
+        
+        <!-- Lesson List -->
+        <div id="lesson-list" class="hidden">
+            <div class="logo-container">
+                <img src="img/logo.png" alt="Logo" class="logo-image">
+            </div>
+            <div class="lesson-header">
+                <h1 id="lesson-title">Lessons</h1>
+                <div class="sort-dropdown-container">
+                    <select id="lesson-sort" class="sort-dropdown">
+                        <option value="recentlyViewed">Recently Viewed</option>
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="lessonNumber">Lesson Order</option>
+                    </select>
+                </div>
+            </div>
+            <div class="lesson-grid" id="lessons-container"></div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

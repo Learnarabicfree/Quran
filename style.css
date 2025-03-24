@@ -141,6 +141,7 @@ body {
     position: relative;
     overflow: hidden;
     margin-top: 15px;
+    position: relative;
 }
 
 /* Smooth hover effect */
@@ -960,4 +961,24 @@ h1, h2 {
     opacity: 0;
     transform: translateX(-10px);
     pointer-events: none; /* Prevent clicks on hidden buttons */
+}
+
+.new-lesson-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #ff4444;
+    color: white;
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }

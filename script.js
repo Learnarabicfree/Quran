@@ -531,15 +531,15 @@ function updateNavigation() {
     history.pushState({ state: currentState }, "", `#${currentState.language || "home"}`);
 }
 
+// Replace the existing popstate listener with this corrected version
 window.addEventListener("popstate", (event) => {
-    if (event.state) {
+    if (event.state.state) { // Access nested state property
         currentState = event.state.state;
-        updateUI(); // Update UI based on the restored state
+        updateUI();
     } else {
-        goHome(); // If no history, reset to the home screen
+        goHome();
     }
 });
-
 
 function saveState() {
     localStorage.setItem("navigationState", JSON.stringify({

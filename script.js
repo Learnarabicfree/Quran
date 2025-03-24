@@ -755,41 +755,29 @@ if ('serviceWorker' in navigator) {
 // Install Prompt with path correction
 let deferredPrompt;
 
-// Handle install prompt
 window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    showInstallPrompt();
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallPromotion();
 });
 
-// Show install prompt
-function showInstallPrompt() {
-    const installPopup = document.getElementById('installPopup');
-    if (installPopup && deferredPrompt) {
-        installPopup.classList.add('visible');
-        
-        // Close button handler
-        installPopup.querySelector('.install-close').addEventListener('click', () => {
-            installPopup.classList.remove('visible');
-        });
-    }
+function showInstallPromotion() {
+  const installPopup = document.getElementById('installPopup');
+  if (installPopup && deferredPrompt) {
+    installPopup.classList.remove('hidden');
+  }
 }
 
-// Install button handler
+// Add click handler for install button
 document.getElementById('installButton').addEventListener('click', async () => {
-    if (deferredPrompt) {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if (outcome === 'accepted') {
-            console.log('User accepted install');
-        }
-        document.getElementById('installPopup').classList.remove('visible');
-        deferredPrompt = null;
+  const installPopup = document.getElementById('installPopup');
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      console.log('User accepted install');
     }
-});
-
-// Track PWA installation
-window.addEventListener('appinstalled', () => {
-    console.log('PWA installed successfully');
-    document.getElementById('installPopup').classList.remove('visible');
+    installPopup.classList.add('hidden');
+    deferredPrompt = null;
+  }
 });

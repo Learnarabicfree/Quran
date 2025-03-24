@@ -566,107 +566,136 @@ h1, h2 {
     font-family: 'Noto Sans Tamil', 'Noto Sans Sinhala', sans-serif;
     font-size: 1.8rem;
 }
-
-/* PWA Install Popup */
-/* Updated Install Popup Styles */
-.install-popup {
+/* PWA Install Prompt - Cyberpunk Style */
+#installPopup {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a1a;
+    border: 1px solid #00ffcc;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 255, 150, 0.4);
+    padding: 20px;
     display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    z-index: 2000;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.install-popup.visible {
-    opacity: 1;
-    visibility: visible;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+    animation: fadeIn 0.5s ease-in-out;
+    max-width: 320px;
+    width: 90%;
 }
 
 .install-content {
-    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
-    max-width: 500px;
-    border-radius: 24px 24px 0 0;
-    padding: 2rem;
-    text-align: center;
-    transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.1);
-    position: relative;
-}
-
-.install-popup.visible .install-content {
-    transform: translateY(0);
 }
 
 .install-logo {
-    width: 80px;
-    height: 80px;
-    margin: -60px auto 1rem;
-    border: 4px solid white;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 15px rgba(0, 255, 150, 0.5);
+    animation: breathe 2s infinite alternate;
+    margin-bottom: 15px;
 }
 
 .install-content h2 {
-    color: var(--primary-color);
-    margin-bottom: 0.5rem;
-    font-size: 1.5rem;
+    color: #00ffcc;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 .install-content p {
-    color: #666;
-    line-height: 1.5;
-    margin-bottom: 1.5rem;
+    color: #fff;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 15px;
+    line-height: 1.4;
 }
 
 .install-buttons {
     display: flex;
-    gap: 1rem;
+    gap: 10px;
+    width: 100%;
     justify-content: center;
 }
 
 .install-button {
-    background: var(--primary-color);
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 50px;
+    background: linear-gradient(90deg, #00ffcc, #ff00cc);
+    color: #fff;
     border: none;
+    border-radius: 10px;
+    padding: 12px 25px;
     cursor: pointer;
     font-size: 1rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: transform 0.2s ease, background 0.3s ease;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
 }
 
 .install-button:hover {
-    background: #235943;
-    transform: translateY(-2px);
+    background: linear-gradient(90deg, #ff00cc, #00ffcc);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 0, 204, 0.5);
 }
 
 .install-cancel {
-    background: #f0f0f0;
-    color: #666;
-    padding: 1rem 2rem;
-    border-radius: 50px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    color: #fff;
     border: none;
+    font-size: 1.5rem;
     cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.2s ease;
+    transition: color 0.2s ease;
 }
 
 .install-cancel:hover {
-    background: #e0e0e0;
+    color: #ff0000;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+@keyframes breathe {
+    from {
+        box-shadow: 0 0 15px rgba(0, 255, 150, 0.5);
+    }
+    to {
+        box-shadow: 0 0 25px rgba(0, 255, 150, 1);
+    }
+}
+
+@media (max-width: 480px) {
+    #installPopup {
+        bottom: 10px;
+        padding: 15px;
+    }
+    
+    .install-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .install-content h2 {
+        font-size: 1.1rem;
+    }
 }
   
   .hidden {

@@ -1,6 +1,6 @@
 
 const firebaseConfig = {
-projectId: "quranic-wisdom",
+    projectId: "quranic-wisdom",
 };
 
 // Initialize Firebase
@@ -396,7 +396,10 @@ async function loadLessons() {
 
 function renderLessons(lessons) {
     const container = document.getElementById("lessons-container");
-    container.innerHTML = lessons.map(lesson => `
+    container.innerHTML = lessons.map(lesson => {
+        const isNew = isLessonNew(lesson.createdAt?.toDate());
+
+        return `
         <div class="lesson-card ${getWatchedLessons()[lesson.title] ? 'watched' : ''}" 
              data-title="${lesson.title}">
             ${getWatchedLessons()[lesson.title] ? `
@@ -406,6 +409,7 @@ function renderLessons(lessons) {
                 </div>
             ` : ''}
             <h3>${lesson.title}</h3>
+            ${isNew ? '<span class="new-lesson-badge">✨New Lesson</span>' : ''}
             <small class="search-meta">
                 ${languageTranslations[currentState.language]} / 
                 ${categoryTranslations[currentState.language][currentState.category]}
@@ -420,7 +424,8 @@ function renderLessons(lessons) {
                 </div>
             `).join("")}
         </div>
-    `).join("");
+        `;
+    }).join("");
 
     // Update watched status for videos
     document.querySelectorAll(".watch-video").forEach(button => {
@@ -432,6 +437,15 @@ function renderLessons(lessons) {
         });
     });
 }
+
+// Helper function to check if lesson is new (less than 1 week old)
+function isLessonNew(createdAt) {
+    if (!createdAt) return false;
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    return createdAt > oneWeekAgo;
+}
+
 
 
 
@@ -519,7 +533,7 @@ function updateNavigation() {
 
 window.addEventListener("popstate", (event) => {
     if (event.state) {
-        currentState = event.state.state;
+        currentState = event;
         updateUI(); // Update UI based on the restored state
     } else {
         goHome(); // If no history, reset to the home screen

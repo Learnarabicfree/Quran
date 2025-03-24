@@ -754,27 +754,38 @@ if ('serviceWorker' in navigator) {
 
 // Install Prompt with path correction
 let deferredPrompt;
-let installPromptShown = false;
+let isInstallable = false;
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(registration => {
+      console.log('SW registered:', registration);
+    })
+    .catch(error => {
+      console.log('SW registration failed:', error);
+    });
+}
 
 window.addEventListener('beforeinstallprompt', (e) => {
-  if (installPromptShown) return;
+  if (isInstallable) return;
   
   e.preventDefault();
   deferredPrompt = e;
-  installPromptShown = true;
+  isInstallable = true;
   
-  // Show prompt after 5 seconds
-  setTimeout(showInstallPrompt, 5000);
+  // Delay prompt display for better UX
+  setTimeout(showInstallPrompt, 3000);
 });
 
 function showInstallPrompt() {
+  if (!deferredPrompt) return;
+  
   const installPopup = document.getElementById('installPopup');
-  if (!installPopup || !deferredPrompt) return;
-
   installPopup.classList.add('visible');
   
-  // Reset position for mobile
-  if (/Mobi|Android/i.test(navigator.userAgent)) {
+  // Reset for mobile viewports
+  if (window.innerWidth <= 768) {
     installPopup.style.bottom = '20px';
   }
 }
@@ -782,48 +793,58 @@ function showInstallPrompt() {
 document.getElementById('installButton').addEventListener('click', async () => {
   if (!deferredPrompt) return;
 
-  deferredPrompt.prompt();
-  const { outcome } = await deferredPrompt.userChoice;
-  
-  if (outcome === 'accepted') {
-    console.log('PWA installed');
-    localStorage.setItem('pwaInstalled', 'true');
+  try {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      console.log('User accepted install');
+      localStorage.setItem('pwa-installed', 'true');
+    }
+  } catch (error) {
+    console.error('Installation failed:', error);
+  } finally {
+    document.getElementById('installPopup').classList.remove('visible');
+    deferredPrompt = null;
+    isInstallable = false;
   }
-  
-  document.getElementById('installPopup').classList.remove('visible');
-  deferredPrompt = null;
 });
 
 document.querySelector('.install-close').addEventListener('click', () => {
   document.getElementById('installPopup').classList.remove('visible');
-  localStorage.setItem('pwaDismissed', 'true');
+  localStorage.setItem('pwa-dismissed', 'true');
+  isInstallable = false;
 });
 
-// Check if already installed
-window.addEventListener('appinstalled', () => {
-  localStorage.setItem('pwaInstalled', 'true');
-  document.getElementById('installPopup').classList.remove('visible');
-});
-
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('pwaInstalled') || 
-      localStorage.getItem('pwaDismissed')) {
-    return;
-  }
-  
-  // For iOS devices
-  if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-    showIOSInstallPrompt();
+// Clear installation state on new session
+window.addEventListener('load', () => {
+  if (!sessionStorage.getItem('session-active')) {
+    localStorage.removeItem('pwa-dismissed');
+    sessionStorage.setItem('session-active', 'true');
   }
 });
 
+// iOS-specific handling
 function showIOSInstallPrompt() {
-  const iosPrompt = document.createElement('div');
-  iosPrompt.innerHTML = `
-    <div class="ios-prompt">
-      <p>Install this app: tap <img src="share-icon.png"> and 'Add to Home Screen'</p>
-    </div>
-  `;
-  document.body.appendChild(iosPrompt);
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isSafari = navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome');
+
+  if ((isIOS || isSafari) && !window.navigator.standalone) {
+    const iosPrompt = document.createElement('div');
+    iosPrompt.className = 'ios-prompt';
+    iosPrompt.innerHTML = `
+      <p>For full experience:<br>
+      1. Tap <img src="img/share-icon.png" class="share-icon"><br>
+      2. Select "Add to Home Screen"</p>
+    `;
+    document.body.appendChild(iosPrompt);
+  }
 }
+
+// Initialize after DOM load
+document.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('pwa-installed')) return;
+  if (localStorage.getItem('pwa-dismissed')) return;
+  
+  showIOSInstallPrompt();
+});

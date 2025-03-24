@@ -1,3 +1,62 @@
+// Install Prompt with path correction
+let deferredPrompt;
+const installPopup = document.getElementById('installPopup');
+const installButton = document.getElementById('installButton');
+
+// Modified beforeinstallprompt handler
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallPromotion();
+    
+    // Optional: Log for debugging
+    console.log('beforeinstallprompt event fired');
+});
+
+// Modified install button handler
+installButton.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+        console.log('User accepted install');
+        trackInstallEvent(); // Optional: Add analytics tracking
+    }
+    
+    // Reset the deferred prompt variable
+    deferredPrompt = null;
+    installPopup.classList.add('hidden');
+});
+
+// New function to track installations
+function trackInstallEvent() {
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'install', {
+            'event_category': 'PWA',
+            'event_label': 'App Installation'
+        });
+    }
+}
+
+// Modified show promotion function
+function showInstallPromotion() {
+    if (deferredPrompt && !isAppInstalled()) {
+        installPopup.classList.remove('hidden');
+        // Set timeout to auto-hide after 30 seconds
+        setTimeout(() => {
+            installPopup.classList.add('hidden');
+        }, 30000);
+    }
+}
+
+// New installation check function
+function isAppInstalled() {
+    return window.matchMedia('(display-mode: standalone)').matches || 
+           window.navigator.standalone ||
+           document.referrer.includes('android-app://');
+}
 
 const firebaseConfig = {
     projectId: "quranic-wisdom",
@@ -743,41 +802,17 @@ function toggleWatchedStatus(lessonTitle) {
     return watched[lessonTitle];
 }
 
-// Updated Service Worker registration
+// Update your service worker registration
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/Quran/sw.js')
-      .then(registration => console.log('SW registered'))
-      .catch(err => console.log('SW registration failed:', err));
-  });
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/Quran/sw.js')
+            .then(registration => {
+                console.log('SW registered:', registration);
+                // Optional: Check for updates
+                registration.update();
+            })
+            .catch(err => console.log('SW registration failed:', err));
+    });
 }
 
-// Install Prompt with path correction
-let deferredPrompt;
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  showInstallPromotion();
-});
-
-function showInstallPromotion() {
-  const installPopup = document.getElementById('installPopup');
-  if (installPopup && deferredPrompt) {
-    installPopup.classList.remove('hidden');
-  }
-}
-
-// Add click handler for install button
-document.getElementById('installButton').addEventListener('click', async () => {
-  const installPopup = document.getElementById('installPopup');
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      console.log('User accepted install');
-    }
-    installPopup.classList.add('hidden');
-    deferredPrompt = null;
-  }
-});

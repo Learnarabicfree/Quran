@@ -755,28 +755,41 @@ if ('serviceWorker' in navigator) {
 // Install Prompt with path correction
 let deferredPrompt;
 
+// Handle install prompt
 window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  showInstallPromotion();
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallPrompt();
 });
 
-function showInstallPromotion() {
+// Show install prompt
+function showInstallPrompt() {
     const installPopup = document.getElementById('installPopup');
     if (installPopup && deferredPrompt) {
-      installPopup.classList.remove('hidden');
+        installPopup.classList.add('visible');
+        
+        // Close button handler
+        installPopup.querySelector('.install-close').addEventListener('click', () => {
+            installPopup.classList.remove('visible');
+        });
     }
-  }
-  
-  document.getElementById('installButton').addEventListener('click', async () => {
-    const installPopup = document.getElementById('installPopup');
+}
+
+// Install button handler
+document.getElementById('installButton').addEventListener('click', async () => {
     if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        console.log('User accepted install');
-      }
-      installPopup.classList.add('hidden');
-      deferredPrompt = null;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            console.log('User accepted install');
+        }
+        document.getElementById('installPopup').classList.remove('visible');
+        deferredPrompt = null;
     }
-  });
+});
+
+// Track PWA installation
+window.addEventListener('appinstalled', () => {
+    console.log('PWA installed successfully');
+    document.getElementById('installPopup').classList.remove('visible');
+});

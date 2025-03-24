@@ -754,30 +754,76 @@ if ('serviceWorker' in navigator) {
 
 // Install Prompt with path correction
 let deferredPrompt;
+let installPromptShown = false;
 
 window.addEventListener('beforeinstallprompt', (e) => {
+  if (installPromptShown) return;
+  
   e.preventDefault();
   deferredPrompt = e;
-  showInstallPromotion();
+  installPromptShown = true;
+  
+  // Show prompt after 5 seconds
+  setTimeout(showInstallPrompt, 5000);
 });
 
-function showInstallPromotion() {
+function showInstallPrompt() {
   const installPopup = document.getElementById('installPopup');
-  if (installPopup && deferredPrompt) {
-    installPopup.classList.remove('hidden');
+  if (!installPopup || !deferredPrompt) return;
+
+  installPopup.classList.add('visible');
+  
+  // Reset position for mobile
+  if (/Mobi|Android/i.test(navigator.userAgent)) {
+    installPopup.style.bottom = '20px';
   }
 }
 
-// Add click handler for install button
 document.getElementById('installButton').addEventListener('click', async () => {
-  const installPopup = document.getElementById('installPopup');
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      console.log('User accepted install');
-    }
-    installPopup.classList.add('hidden');
-    deferredPrompt = null;
+  if (!deferredPrompt) return;
+
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  
+  if (outcome === 'accepted') {
+    console.log('PWA installed');
+    localStorage.setItem('pwaInstalled', 'true');
+  }
+  
+  document.getElementById('installPopup').classList.remove('visible');
+  deferredPrompt = null;
+});
+
+document.querySelector('.install-close').addEventListener('click', () => {
+  document.getElementById('installPopup').classList.remove('visible');
+  localStorage.setItem('pwaDismissed', 'true');
+});
+
+// Check if already installed
+window.addEventListener('appinstalled', () => {
+  localStorage.setItem('pwaInstalled', 'true');
+  document.getElementById('installPopup').classList.remove('visible');
+});
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('pwaInstalled') || 
+      localStorage.getItem('pwaDismissed')) {
+    return;
+  }
+  
+  // For iOS devices
+  if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+    showIOSInstallPrompt();
   }
 });
+
+function showIOSInstallPrompt() {
+  const iosPrompt = document.createElement('div');
+  iosPrompt.innerHTML = `
+    <div class="ios-prompt">
+      <p>Install this app: tap <img src="share-icon.png"> and 'Add to Home Screen'</p>
+    </div>
+  `;
+  document.body.appendChild(iosPrompt);
+}

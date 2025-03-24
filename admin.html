@@ -25,6 +25,13 @@
                 <div class="input-group">
                     <input type="password" id="password" name="password" placeholder="Password" required>
                 </div>
+                <div class="remember-me-container">
+                    <label class="remember-me">
+                      <input type="checkbox" id="rememberMe">
+                      <span class="checkmark"></span>
+                      <span class="remember-text">Remember my username</span>
+                    </label>
+                  </div>
                 <button type="submit">Login</button>
                 <p id="login-error">Invalid username or password</p>
             </form>
@@ -132,6 +139,11 @@
                     <option value="Arabic">Arabic</option>
                 </select>
                 <input type="text" id="searchSinhala" placeholder="Search..." onkeyup="filterLessons('Sinhala')">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="newOnlyEnglish" onchange="filterLessons('English')">
+                    <span class="slider"></span>
+                    <span>New Only</span>
+                </label>
             </div>
             <div id="sinhalaLessons" class="lesson-list"></div>
         </div>
@@ -146,6 +158,11 @@
                     <option value="Arabic">Arabic</option>
                 </select>
                 <input type="text" id="searchTamil" placeholder="Search..." onkeyup="filterLessons('Tamil')">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="newOnlyEnglish" onchange="filterLessons('English')">
+                    <span class="slider"></span>
+                    <span>New Only</span>
+                </label>
             </div>
             <div id="tamilLessons" class="lesson-list"></div>
         </div>
@@ -160,6 +177,11 @@
                     <option value="Arabic">Arabic</option>
                 </select>
                 <input type="text" id="searchEnglish" placeholder="Search..." onkeyup="filterLessons('English')">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="newOnlyEnglish" onchange="filterLessons('English')">
+                    <span class="slider"></span>
+                    <span>New Only</span>
+                </label>
             </div>
             <div id="englishLessons" class="lesson-list"></div>
         </div>

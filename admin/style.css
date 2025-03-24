@@ -432,3 +432,145 @@
 .hidden {
     display: none;
 }
+
+/* Add to admin/style.css */
+.new-lesson-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #ff4444;
+    color: white;
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.lesson-card {
+    position: relative; /* Needed for badge positioning */
+}
+
+/* Add to admin/style.css */
+.toggle-switch {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2B6D4F;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Custom checkbox styling */
+.remember-me-container {
+    margin: 15px 0;
+  }
+  
+  .remember-me {
+    display: flex;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    padding-left: 28px;
+    height: 20px;
+  }
+  
+  .remember-me input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background-color: #f5f5f5;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+  
+  .remember-me:hover input ~ .checkmark {
+    border-color: #2B6D4F;
+  }
+  
+  .remember-me input:checked ~ .checkmark {
+    background-color: #2B6D4F;
+    border-color: #2B6D4F;
+  }
+  
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  
+  .remember-me input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  .remember-text {
+    margin-left: 8px;
+    font-size: 14px;
+    color: #555;
+    transition: color 0.3s ease;
+  }
+  
+  .remember-me:hover .remember-text {
+    color: #333;
+  }

@@ -1,19 +1,19 @@
 {
   "name": "Quranic Wisdom",
   "short_name": "Quran",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/Quran/",
+  "scope": "/Quran/",
   "display": "standalone",
   "background_color": "#2B6D4F",
   "theme_color": "#2B6D4F",
   "icons": [
     {
-      "src": "/img/logo-app.png",
+      "src": "/Quran/img/logo-app.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/img/logo-app.png",
+      "src": "/Quran/img/logo-app.png",
       "sizes": "512x512",
       "type": "image/png"
     }

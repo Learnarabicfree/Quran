@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <div id="installPopup" class="install-popup hidden">
+    <div id="installPopup" class="install-popup">
         <div class="install-content">
             <img src="img/logo-app.png" alt="App Logo" class="install-logo">
             <h2>Install Quranic Wisdom</h2>
@@ -22,7 +22,7 @@
                 <button id="installButton" class="install-button">
                     <i class="fas fa-download"></i> Install
                 </button>
-                <button onclick="this.parentElement.parentElement.parentElement.classList.add('hidden')" 
+                <button onclick="document.getElementById('installPopup').classList.remove('visible')" 
                         class="install-cancel">
                     Maybe Later
                 </button>

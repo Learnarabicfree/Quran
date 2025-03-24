@@ -1,6 +1,6 @@
 {
   "name": "Quranic Wisdom",
-  "short_name": "Quran",
+  "short_name": "Quranic Wisdom",
   "start_url": "/Quran/",
   "scope": "/Quran/",
   "display": "standalone",
@@ -17,6 +17,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "orientation": "portrait"
+  ]
 }

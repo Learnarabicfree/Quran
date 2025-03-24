@@ -532,8 +532,8 @@ function updateNavigation() {
 }
 
 window.addEventListener("popstate", (event) => {
-    if (state) {
-        currentState = event.state.state;
+    if (event.state) {
+        currentState = event;
         updateUI(); // Update UI based on the restored state
     } else {
         goHome(); // If no history, reset to the home screen
@@ -745,122 +745,39 @@ function toggleWatchedStatus(lessonTitle) {
 
 // Updated Service Worker registration
 if ('serviceWorker' in navigator) {
-  // Register from the correct path and set scope
-  navigator.serviceWorker.register('/Quran/sw.js', {
-    scope: '/Quran/' // Must match directory
-  })
-  .then(reg => {
-    console.log('SW registered for scope:', reg.scope);
-    
-    // Force activation immediately after registration
-    reg.update().then(() => window.location.reload());
-
-    // Listen for the updatefound event to handle activation
-    reg.addEventListener('updatefound', () => {
-      const newWorker = reg.installing;
-      newWorker.addEventListener('statechange', () => {
-        if (newWorker.state === 'activated') {
-          window.location.reload();
-        }
-      });
-    });
-  })
-  .catch(err => console.error('SW registration failed:', err));
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/Quran/sw.js')
+      .then(registration => console.log('SW registered'))
+      .catch(err => console.log('SW registration failed:', err));
+  });
 }
 
 // Install Prompt with path correction
 let deferredPrompt;
-let isInstallable = false;
-
-// Service Worker Registration
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js')
-    .then(registration => {
-      console.log('SW registered:', registration);
-    })
-    .catch(error => {
-      console.log('SW registration failed:', error);
-    });
-}
 
 window.addEventListener('beforeinstallprompt', (e) => {
-  if (isInstallable) return;
-  
   e.preventDefault();
   deferredPrompt = e;
-  isInstallable = true;
-  
-  // Delay prompt display for better UX
-  setTimeout(showInstallPrompt, 3000);
+  showInstallPromotion();
 });
 
-function showInstallPrompt() {
-  if (!deferredPrompt) return;
-  
+function showInstallPromotion() {
   const installPopup = document.getElementById('installPopup');
-  installPopup.classList.add('visible');
-  
-  // Reset for mobile viewports
-  if (window.innerWidth <= 768) {
-    installPopup.style.bottom = '20px';
+  if (installPopup && deferredPrompt) {
+    installPopup.classList.remove('hidden');
   }
 }
 
+// Add click handler for install button
 document.getElementById('installButton').addEventListener('click', async () => {
-  if (!deferredPrompt) return;
-
-  try {
+  const installPopup = document.getElementById('installPopup');
+  if (deferredPrompt) {
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
-    
     if (outcome === 'accepted') {
       console.log('User accepted install');
-      localStorage.setItem('pwa-installed', 'true');
     }
-  } catch (error) {
-    console.error('Installation failed:', error);
-  } finally {
-    document.getElementById('installPopup').classList.remove('visible');
+    installPopup.classList.add('hidden');
     deferredPrompt = null;
-    isInstallable = false;
   }
-});
-
-document.querySelector('.install-close').addEventListener('click', () => {
-  document.getElementById('installPopup').classList.remove('visible');
-  localStorage.setItem('pwa-dismissed', 'true');
-  isInstallable = false;
-});
-
-// Clear installation state on new session
-window.addEventListener('load', () => {
-  if (!sessionStorage.getItem('session-active')) {
-    localStorage.removeItem('pwa-dismissed');
-    sessionStorage.setItem('session-active', 'true');
-  }
-});
-
-// iOS-specific handling
-function showIOSInstallPrompt() {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-  const isSafari = navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome');
-
-  if ((isIOS || isSafari) && !window.navigator.standalone) {
-    const iosPrompt = document.createElement('div');
-    iosPrompt.className = 'ios-prompt';
-    iosPrompt.innerHTML = `
-      <p>For full experience:<br>
-      1. Tap <img src="img/share-icon.png" class="share-icon"><br>
-      2. Select "Add to Home Screen"</p>
-    `;
-    document.body.appendChild(iosPrompt);
-  }
-}
-
-// Initialize after DOM load
-document.addEventListener('DOMContentLoaded', () => {
-  if (localStorage.getItem('pwa-installed')) return;
-  if (localStorage.getItem('pwa-dismissed')) return;
-  
-  showIOSInstallPrompt();
 });

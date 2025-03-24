@@ -6,30 +6,29 @@
     <title>Quranic Wisdom</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala&family=Noto+Sans+Tamil&display=swap" rel="stylesheet">
-    <link rel="manifest" href="/Quran/manifest.json" crossorigin="use-credentials">
+    <link rel="manifest" href="/Quran/manifest.json">
     <meta name="theme-color" content="#2B6D4F">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="img/logo-app.png" type="image/png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="/img/logo-app-180.png">
 </head>
 
 <body>
-    
-    <div id="installPopup">
-  <div class="install-content">
-    <img src="img/logo-app.png" alt="App Logo" class="install-logo">
-    <h2>Install Quranic Wisdom</h2>
-    <p>📱 Get full experience with offline access!</p>
-    <div class="install-buttons">
-      <button id="installButton" class="install-button">
-        <i class="fas fa-download"></i> Install App
-      </button>
+    <div id="installPopup" class="install-popup hidden">
+        <div class="install-content">
+            <img src="img/logo-app.png" alt="App Logo" class="install-logo">
+            <h2>Install Quranic Wisdom</h2>
+            <p>📱 Install the app for a smoother and faster experience. Enjoy seamless access to Islamic teachings!</p>
+            <div class="install-buttons">
+                <button id="installButton" class="install-button">
+                    <i class="fas fa-download"></i> Install
+                </button>
+                <button onclick="this.parentElement.parentElement.parentElement.classList.add('hidden')" 
+                        class="install-cancel">
+                    Maybe Later
+                </button>
+            </div>
+        </div>
     </div>
-    <button class="install-close">&times;</button>
-  </div>
-</div>
 
     <nav class="app-bar">
         <div class="app-bar-content">

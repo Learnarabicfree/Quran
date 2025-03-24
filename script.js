@@ -745,21 +745,27 @@ function toggleWatchedStatus(lessonTitle) {
 
 // Updated Service Worker registration
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js', { scope: '/' }) // Full absolute path
-    .then(reg => {
-      console.log('SW registered:', reg);
-      // Force activate immediately
-      reg.update();
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'activated') {
-            window.location.reload();
-          }
-        });
+  // Register from the correct path and set scope
+  navigator.serviceWorker.register('/Quran/sw.js', {
+    scope: '/Quran/' // Must match directory
+  })
+  .then(reg => {
+    console.log('SW registered for scope:', reg.scope);
+    
+    // Force activation immediately after registration
+    reg.update().then(() => window.location.reload());
+
+    // Listen for the updatefound event to handle activation
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'activated') {
+          window.location.reload();
+        }
       });
-    })
-    .catch(err => console.error('SW registration failed:', err));
+    });
+  })
+  .catch(err => console.error('SW registration failed:', err));
 }
 
 // Install Prompt with path correction

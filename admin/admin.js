@@ -23,7 +23,7 @@ const categoryTranslations = {
 };
 
 const firebaseConfig = {
-projectId: "quranic-wisdom",
+    projectId: "quranic-wisdom",
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -245,10 +245,11 @@ async function loadAllLessons(language) {
     }
 }
 
-// In admin.js, update the renderLanguageLessons function
+// Modify the renderLanguageLessons function in admin.js
 function renderLanguageLessons(language, lessons) {
     const container = document.getElementById(`${language.toLowerCase()}Lessons`);
     container.innerHTML = lessons.map((lesson) => {
+        const isNew = isLessonNew(lesson.createdAt?.toDate());
         const categoryName = categoryTranslations[lesson.language][lesson.category];
         const subCatText = lesson.isSubcategory ? ` - ${lesson.subCategory}` : '';
         
@@ -259,6 +260,7 @@ function renderLanguageLessons(language, lessons) {
             data-title="${lesson.title.toLowerCase()}">
             
             <h3>${lesson.title} (${categoryName}${subCatText})</h3>
+            ${isNew ? '<span class="new-lesson-badge">✨New Lesson</span>' : ''}
             
             ${lesson.parts.map(part => `
                 <p>${part.name}: ${part.youtube}</p>
@@ -287,17 +289,41 @@ function renderLanguageLessons(language, lessons) {
     }).join('');
 }
 
+// Add this helper function to admin.js (same as in script.js)
+function isLessonNew(createdAt) {
+    if (!createdAt) return false;
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    return createdAt > oneWeekAgo;
+}
+
 async function saveLessonEdit(language, category, lessonId, isSubcategory, subCategory) {
     try {
-        const title = document.getElementById(`edit-title-${lessonId}`).value;
+        let title = document.getElementById(`edit-title-${lessonId}`).value.trim();
         const partsContainer = document.getElementById(`parts-container-${lessonId}`);
         
-        // Collect all parts
+        // Add emoji to title if missing
+        if (!title.startsWith('📜 ')) {
+            title = '📜 ' + title;
+        }
+
+        // Process parts with emojis for name and YouTube URL
         const parts = Array.from(partsContainer.querySelectorAll('.part-inputs')).map(partDiv => {
             const inputs = partDiv.querySelectorAll('input');
+            let partName = inputs[0].value.trim();
+            let youtubeUrl = inputs[1].value.trim();
+
+            // Add emojis to part name and YouTube URL if missing
+            if (!partName.startsWith('📖 ')) {
+                partName = '📖 ' + partName;
+            }
+            if (!youtubeUrl.startsWith('🔗 ')) {
+                youtubeUrl = '🔗 ' + youtubeUrl;
+            }
+
             return {
-                name: inputs[0].value,
-                youtube: inputs[1].value
+                name: partName,
+                youtube: youtubeUrl
             };
         });
 
@@ -324,7 +350,7 @@ async function saveLessonEdit(language, category, lessonId, isSubcategory, subCa
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        // Get correct reference
+        // Get correct reference for updating the lesson
         let lessonRef;
         if (isSubcategory) {
             lessonRef = db.collection(language)
@@ -340,7 +366,7 @@ async function saveLessonEdit(language, category, lessonId, isSubcategory, subCa
                 .doc(lessonId);
         }
 
-        // Update document
+        // Update document in Firestore
         await lessonRef.update(updateData);
         showToast('Lesson updated successfully!');
         loadAllLessons(language);
@@ -351,19 +377,23 @@ async function saveLessonEdit(language, category, lessonId, isSubcategory, subCa
     }
 }
 
+
 // Filter function for language tabs
 function filterLessons(language) {
     const searchTerm = document.getElementById(`search${language}`).value.toLowerCase();
     const categoryFilter = document.getElementById(`filterCategory${language}`).value;
+    const newOnly = document.getElementById(`newOnly${language}`).checked;
     const container = document.getElementById(`${language.toLowerCase()}Lessons`);
 
     Array.from(container.getElementsByClassName('lesson-card')).forEach(card => {
         const matchesCategory = !categoryFilter || card.dataset.category === categoryFilter;
         const matchesSearch = card.dataset.title.includes(searchTerm);
-        card.style.display = (matchesCategory && matchesSearch) ? 'block' : 'none';
+        const isNew = card.querySelector('.new-lesson-badge') !== null;
+        const matchesNewFilter = !newOnly || isNew;
+        
+        card.style.display = (matchesCategory && matchesSearch && matchesNewFilter) ? 'block' : 'none';
     });
 }
-
 // Modified edit function for language tabs
 async function editLanguageLesson(language, category, lessonId, isSubcategory, subCategory, element) {
     try {
@@ -727,13 +757,29 @@ async function saveLesson(lessonId = null) {
         showToast("Could not find title input field", true);
         return;
     }
-    const title = titleInput.value;
+    let title = titleInput.value.trim();
+
+    // Add emoji to title if missing
+    if (!title.startsWith('📜 ')) {
+        title = '📜 ' + title;
+    }
 
     const parts = Array.from(document.querySelectorAll('#partsContainer .part-inputs')).map(div => {
         const inputs = div.querySelectorAll('input');
+        let partName = inputs[0].value.trim();
+        let youtubeUrl = inputs[1].value.trim();
+
+        // Add emojis to part name and YouTube URL
+        if (!partName.startsWith('📖 ')) {
+            partName = '📖 ' + partName;
+        }
+        if (!youtubeUrl.startsWith('🔗 ')) {
+            youtubeUrl = '🔗 ' + youtubeUrl;
+        }
+
         return {
-            name: inputs[0].value,
-            youtube: inputs[1].value
+            name: partName,
+            youtube: youtubeUrl
         };
     });
 
@@ -752,7 +798,8 @@ async function saveLesson(lessonId = null) {
         const lessonData = {
             title,
             parts,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(), // Store creation timestamp
+            isNew: true // Flag to mark the lesson as new
         };
 
         if (subCategory) {
@@ -771,20 +818,22 @@ async function saveLesson(lessonId = null) {
         }
 
         if (lessonId) {
-            await lessonRef.doc(lessonId).update(lessonData);
+            await lessonRef.doc(lessonId).update(lessonData); // Update existing lesson
             showToast('Lesson updated successfully!');
         } else {
-            await lessonRef.add(lessonData);
+            await lessonRef.add(lessonData); // Create a new lesson
             showToast('Lesson saved successfully!');
         }
 
-        clearForm();
-        loadLessons();
+        clearForm(); // Clear the form after saving the lesson
+        loadLessons(); // Load updated lessons
     } catch (error) {
         console.error('Error saving lesson:', error);
         showToast('Error saving lesson. Please check console.', true);
     }
 }
+
+
 
 function clearForm() {
     document.getElementById('editTitle').value = '';
@@ -1006,5 +1055,54 @@ function updateUI() {
         }
     }
 }
+
+// Add this function to your admin.js or a separate utility file
+async function updateNewLessonStatus() {
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    
+    const languages = ['Sinhala', 'Tamil', 'English'];
+    const categories = ['Courses', 'Surah', 'Arabic'];
+    
+    for (const language of languages) {
+        for (const category of categories) {
+            // Update main category lessons
+            const lessonsSnapshot = await db.collection(language)
+                .doc(category)
+                .collection('lessons')
+                .where('isNew', '==', true)
+                .where('createdAt', '<=', oneWeekAgo)
+                .get();
+                
+            const batch = db.batch();
+            lessonsSnapshot.docs.forEach(doc => {
+                batch.update(doc.ref, { isNew: false });
+            });
+            await batch.commit();
+            
+            // Update subcategory lessons
+            const subCategoriesSnapshot = await db.collection(language)
+                .doc(category)
+                .collection('subCategories')
+                .get();
+                
+            for (const subCatDoc of subCategoriesSnapshot.docs) {
+                const subLessonsSnapshot = await subCatDoc.ref.collection('lessons')
+                    .where('isNew', '==', true)
+                    .where('createdAt', '<=', oneWeekAgo)
+                    .get();
+                    
+                const subBatch = db.batch();
+                subLessonsSnapshot.docs.forEach(doc => {
+                    subBatch.update(doc.ref, { isNew: false });
+                });
+                await subBatch.commit();
+            }
+        }
+    }
+}
+
+// Run this function periodically (e.g., once a day)
+// You can set this up in your admin panel or as a Firebase scheduled function
 
 switchTab(1);

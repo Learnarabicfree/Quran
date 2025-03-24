@@ -764,7 +764,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 function showInstallPromotion() {
     const installPopup = document.getElementById('installPopup');
     if (installPopup && deferredPrompt) {
-      installPopup.classList.add('visible');
+      installPopup.classList.remove('hidden');
     }
   }
   
@@ -776,7 +776,7 @@ function showInstallPromotion() {
       if (outcome === 'accepted') {
         console.log('User accepted install');
       }
-      installPopup.classList.remove('visible');
+      installPopup.classList.add('hidden');
       deferredPrompt = null;
     }
   });

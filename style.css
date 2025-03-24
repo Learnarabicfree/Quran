@@ -566,7 +566,7 @@ h1, h2 {
     font-family: 'Noto Sans Tamil', 'Noto Sans Sinhala', sans-serif;
     font-size: 1.8rem;
 }
-/* PWA Install Prompt - Cyberpunk Style */
+/* Install Prompt Styles */
 #installPopup {
     position: fixed;
     bottom: 20px;
@@ -585,6 +585,14 @@ h1, h2 {
     animation: fadeIn 0.5s ease-in-out;
     max-width: 320px;
     width: 90%;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+#installPopup.visible {
+    visibility: visible;
+    opacity: 1;
 }
 
 .install-content {
@@ -592,6 +600,7 @@ h1, h2 {
     flex-direction: column;
     align-items: center;
     width: 100%;
+    position: relative;
 }
 
 .install-logo {
@@ -626,7 +635,7 @@ h1, h2 {
     justify-content: center;
 }
 
-.install-button {
+#installButton {
     background: linear-gradient(90deg, #00ffcc, #ff00cc);
     color: #fff;
     border: none;
@@ -640,13 +649,13 @@ h1, h2 {
     text-transform: uppercase;
 }
 
-.install-button:hover {
+#installButton:hover {
     background: linear-gradient(90deg, #ff00cc, #00ffcc);
     transform: scale(1.05);
     box-shadow: 0 0 15px rgba(255, 0, 204, 0.5);
 }
 
-.install-cancel {
+.install-close {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -658,7 +667,7 @@ h1, h2 {
     transition: color 0.2s ease;
 }
 
-.install-cancel:hover {
+.install-close:hover {
     color: #ff0000;
 }
 
@@ -688,7 +697,7 @@ h1, h2 {
         padding: 15px;
     }
     
-    .install-button {
+    #installButton {
         padding: 10px 20px;
         font-size: 0.9rem;
     }

@@ -762,22 +762,21 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 function showInstallPromotion() {
-  const installPopup = document.getElementById('installPopup');
-  if (installPopup && deferredPrompt) {
-    installPopup.classList.remove('hidden');
-  }
-}
-
-// Add click handler for install button
-document.getElementById('installButton').addEventListener('click', async () => {
-  const installPopup = document.getElementById('installPopup');
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      console.log('User accepted install');
+    const installPopup = document.getElementById('installPopup');
+    if (installPopup && deferredPrompt) {
+      installPopup.classList.add('visible');
     }
-    installPopup.classList.add('hidden');
-    deferredPrompt = null;
   }
-});
+  
+  document.getElementById('installButton').addEventListener('click', async () => {
+    const installPopup = document.getElementById('installPopup');
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('User accepted install');
+      }
+      installPopup.classList.remove('visible');
+      deferredPrompt = null;
+    }
+  });

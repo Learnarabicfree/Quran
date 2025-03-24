@@ -533,7 +533,7 @@ function updateNavigation() {
 
 window.addEventListener("popstate", (event) => {
     if (state) {
-        currentState = event.state;
+        currentState = event.state.state;
         updateUI(); // Update UI based on the restored state
     } else {
         goHome(); // If no history, reset to the home screen

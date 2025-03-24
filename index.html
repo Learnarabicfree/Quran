@@ -13,17 +13,21 @@
 </head>
 
 <body>
-    <div id="installPopup">
+    
+    <div id="installPopup" class="install-popup hidden">
         <div class="install-content">
             <img src="img/logo-app.png" alt="App Logo" class="install-logo">
             <h2>Install Quranic Wisdom</h2>
-            <p>📱 Install the app for a smoother &amp; and faster experience.!</p>
+            <p>📱 Install the app for a smoother and faster experience. Enjoy seamless access to Islamic teachings!</p>
             <div class="install-buttons">
                 <button id="installButton" class="install-button">
-                    <i class="fas fa-rocket"></i> Install
+                    <i class="fas fa-download"></i> Install
+                </button>
+                <button onclick="this.parentElement.parentElement.parentElement.classList.add('hidden')" 
+                        class="install-cancel">
+                    Maybe Later
                 </button>
             </div>
-            <button class="install-close">&times;</button>
         </div>
     </div>
 

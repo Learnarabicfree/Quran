@@ -119,9 +119,24 @@
                             <button onclick="removePart(this)" class="remove-part danger">Remove Part</button>
                         </div>
                     </div>
+
+                    <div id="attachmentsContainer">
+                        <div class="attachment-inputs" style="display: none;">
+                            <div class="form-group">
+                                <label>Attachment Name:</label>
+                                <input>
+                            </div>
+                            <div class="form-group">
+                                <label>Download Link:</label>
+                                <input>
+                            </div>
+                            <button onclick="removeAttachment(this)" class="remove-attachment danger">Remove Attachment</button>
+                        </div>
+                    </div>
         
                     <div class="actions">
                         <button onclick="addPart()">Add Part</button>
+                        <button onclick="addAttachment()">Add Attachment</button>
                         <button onclick="clearForm()">Clear Form</button>
                         <button onclick="saveLesson()">Submit Lesson</button>
                     </div>

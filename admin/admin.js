@@ -56,6 +56,24 @@ function showToast(message, isError = false) {
 
 // Tab switching function
 function switchTab(tabNumber) {
+    // Clear existing dynamic content when switching to form tab
+    if(tabNumber === 1) {
+        const partsContainer = document.getElementById('partsContainer');
+        const attachmentsContainer = document.getElementById('attachmentsContainer');
+        
+        // Reset parts to initial state (keep first part only)
+        while(partsContainer.children.length > 1) {
+            partsContainer.lastChild.remove();
+        }
+        
+        // Reset attachments to template only
+        Array.from(attachmentsContainer.children).forEach(el => {
+            if(!el.style.display || el.style.display !== 'none') {
+                el.remove();
+            }
+        });
+    }
+
     document.querySelectorAll('.tab-content').forEach(content => {
         content.classList.remove('active');
     });
@@ -65,40 +83,55 @@ function switchTab(tabNumber) {
     document.getElementById(`tab${tabNumber}`).classList.add('active');
     document.querySelectorAll('.tab-btn')[tabNumber-1].classList.add('active');
     
-    if(tabNumber === 5) { // New subcategories tab
+    if(tabNumber === 5) {
         loadSubcategoriesTab();
     } else if(tabNumber > 1 && tabNumber < 5) {
         const language = ['Sinhala', 'Tamil', 'English'][tabNumber-2];
         loadAllLessons(language);
     } else {
-        // Clear any lesson list content when on form tab
-        document.getElementById('lessonList').innerHTML = `
-            <div class="lesson-card">
-                <h3>Add New Lesson</h3>
-                <div class="form-group">
-                    <label>Title:</label>
-                    <input id="editTitle">
-                </div>
-                <div id="partsContainer">
-                    <div class="part-inputs">
-                        <div class="form-group">
-                            <label>Part Name:</label>
-                            <input>
-                        </div>
-                        <div class="form-group">
-                            <label>YouTube URL:</label>
-                            <input>
-                        </div>
-                        <button onclick="removePart(this)" class="remove-part danger">Remove Part</button>
+        // Only reset form if needed
+        if(!document.getElementById('editTitle')) {
+            document.getElementById('lessonList').innerHTML = `
+                <div class="lesson-card">
+                    <h3>Add New Lesson</h3>
+                    <div class="form-group">
+                        <label>Title:</label>
+                        <input id="editTitle">
                     </div>
-                </div>
-                <div class="actions">
-                    <button onclick="addPart()">Add Part</button>
-                    <button onclick="clearForm()">Clear Form</button>
-                    <button onclick="saveLesson()">Submit Lesson</button>
-                </div>
-            </div>
-        `;
+                    <div id="partsContainer">
+                        <div class="part-inputs">
+                            <div class="form-group">
+                                <label>Part Name:</label>
+                                <input>
+                            </div>
+                            <div class="form-group">
+                                <label>YouTube URL:</label>
+                                <input>
+                            </div>
+                            <button onclick="removePart(this)" class="remove-part danger">Remove Part</button>
+                        </div>
+                    </div>
+                    <div id="attachmentsContainer">
+                        <div class="attachment-inputs" style="display: none;">
+                            <div class="form-group">
+                                <label>Attachment Name:</label>
+                                <input>
+                            </div>
+                            <div class="form-group">
+                                <label>Download Link:</label>
+                                <input>
+                            </div>
+                            <button onclick="removeAttachment(this)" class="remove-attachment danger">Remove Attachment</button>
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button onclick="addPart()">Add Part</button>
+                        <button onclick="addAttachment()">Add Attachment</button>
+                        <button onclick="clearForm()">Clear Form</button>
+                        <button onclick="saveLesson()">Submit Lesson</button>
+                    </div>
+                </div>`;
+        }
     }
 }
 
@@ -132,6 +165,31 @@ async function loadSubcategoriesTab() {
         console.error('Error loading subcategories:', error);
         showToast('Error loading subcategories', true);
     }
+}
+
+function populateSubCategories(category) {
+    const subContainer = document.getElementById("subcategories-container");
+    const currentLang = currentState.language;
+    const categoryData = appData[currentLang][category];
+
+    // Remove any existing content
+    subContainer.innerHTML = '';
+
+    // Only create subcategory cards
+    categoryData.subCategories.forEach(subCat => {
+        const subcategoryCard = document.createElement('div');
+        subcategoryCard.className = 'card subcategory-card';
+        subcategoryCard.dataset.category = category;
+        subcategoryCard.dataset.subcategory = subCat.id;
+        
+        subcategoryCard.innerHTML = `
+            <i class="fas fa-folder"></i>
+            <h3>${subCat.name}</h3>
+            <span class="lesson-count">${subCat.lessonCount} lessons</span>
+        `;
+        
+        subContainer.appendChild(subcategoryCard);
+    });
 }
 
 async function toggleSubcategory(subcatId) {
@@ -301,8 +359,9 @@ async function saveLessonEdit(language, category, lessonId, isSubcategory, subCa
     try {
         let title = document.getElementById(`edit-title-${lessonId}`).value.trim();
         const partsContainer = document.getElementById(`parts-container-${lessonId}`);
-        
-        // Add emoji to title if missing
+        const attachmentsContainer = document.getElementById(`attachments-container-${lessonId}`);
+
+        // Ensure title has the correct emoji
         if (!title.startsWith('📜 ')) {
             title = '📜 ' + title;
         }
@@ -313,7 +372,6 @@ async function saveLessonEdit(language, category, lessonId, isSubcategory, subCa
             let partName = inputs[0].value.trim();
             let youtubeUrl = inputs[1].value.trim();
 
-            // Add emojis to part name and YouTube URL if missing
             if (!partName.startsWith('📖 ')) {
                 partName = '📖 ' + partName;
             }
@@ -321,18 +379,28 @@ async function saveLessonEdit(language, category, lessonId, isSubcategory, subCa
                 youtubeUrl = '🔗 ' + youtubeUrl;
             }
 
-            return {
-                name: partName,
-                youtube: youtubeUrl
-            };
+            return { name: partName, youtube: youtubeUrl };
         });
+
+        // Process attachments with emojis
+        const attachments = Array.from(attachmentsContainer.querySelectorAll('.attachment-inputs')).map(attDiv => {
+            const inputs = attDiv.querySelectorAll('input');
+            let attachmentName = inputs[0].value.trim();
+            let downloadLink = inputs[1].value.trim();
+        
+            if (attachmentName && !attachmentName.startsWith('📎 ')) {
+                attachmentName = '📎 ' + attachmentName;
+            }
+        
+            return { name: attachmentName, link: downloadLink };
+        }).filter(att => att.name && att.link);
 
         // Validation
         if (!title) {
             showToast('Title is required', true);
             return;
         }
-        
+
         if (parts.length === 0) {
             showToast('At least one part is required', true);
             return;
@@ -347,10 +415,11 @@ async function saveLessonEdit(language, category, lessonId, isSubcategory, subCa
         const updateData = {
             title,
             parts,
+            attachments,
             lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        // Get correct reference for updating the lesson
+        // Get the correct Firestore reference
         let lessonRef;
         if (isSubcategory) {
             lessonRef = db.collection(language)
@@ -366,16 +435,17 @@ async function saveLessonEdit(language, category, lessonId, isSubcategory, subCa
                 .doc(lessonId);
         }
 
-        // Update document in Firestore
+        // Update Firestore document
         await lessonRef.update(updateData);
         showToast('Lesson updated successfully!');
         loadAllLessons(language);
-        
+
     } catch (error) {
         console.error('Save error:', error);
         showToast('Error saving changes', true);
     }
 }
+
 
 
 // Filter function for language tabs
@@ -424,14 +494,16 @@ async function editLanguageLesson(language, category, lessonId, isSubcategory, s
         }
 
         const lesson = docSnap.data();
-        
-        // Generate form HTML
+
+        // Generate form HTML with updated function names
         const formHtml = `
             <div class="edit-form-container">
                 <h3>Edit Lesson</h3>
                 <div class="form-group">
                     <label>Title:</label>
-                    <input value="${lesson.title}" id="edit-title-${lessonId}" class="full-width">
+                    <input value="${lesson.title.replace(/^📜\s*/g, '')}" 
+                           id="edit-title-${lessonId}" 
+                           class="full-width">
                 </div>
 
                 <div id="parts-container-${lessonId}">
@@ -439,25 +511,48 @@ async function editLanguageLesson(language, category, lessonId, isSubcategory, s
                         <div class="part-inputs">
                             <div class="form-group">
                                 <label>Part ${index + 1} Name:</label>
-                                <input value="${part.name}" class="full-width">
+                                <input value="${part.name.replace(/^📖\s*/g, '')}">
                             </div>
                             <div class="form-group">
                                 <label>YouTube URL:</label>
-                                <input value="${part.youtube}" class="full-width">
+                                <input value="${part.youtube.replace(/^🔗\s*/g, '')}">
                             </div>
-                            <button onclick="removePart(this)" class="remove-part danger">
+                            <button onclick="removePart(this)" 
+                                    class="remove-part danger">
                                 Remove Part
                             </button>
                         </div>
                     `).join('')}
                 </div>
 
+                <div id="attachments-container-${lessonId}">
+                    ${(lesson.attachments || []).map((att, index) => `
+                        <div class="attachment-inputs">
+                            <div class="form-group">
+                                <label>Attachment ${index + 1} Name:</label>
+                                <input value="${att.name.replace(/^📎\s*/g, '')}">
+                            </div>
+                            <div class="form-group">
+                                <label>Download Link:</label>
+                                <input value="${att.link}">
+                            </div>
+                            <button onclick="removeAttachment(this)" 
+                                    class="remove-attachment danger">
+                                Remove Attachment
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+
                 <div class="actions">
-                    <button onclick="addPart('${lessonId}')">Add New Part</button>
-                    <button onclick="saveLessonEdit('${language}', '${category}', '${lessonId}', ${isSubcategory}, '${subCategory}')" class="save-btn">
+                    <button onclick="addPartToLesson('${lessonId}')">Add New Part</button>
+                    <button onclick="addAttachmentToLesson('${lessonId}')">Add New Attachment</button>
+                    <button onclick="saveLessonEdit('${language}', '${category}', '${lessonId}', ${isSubcategory}, '${subCategory}')" 
+                            class="save-btn">
                         Save Changes
                     </button>
-                    <button onclick="loadAllLessons('${language}')" class="cancel-btn">
+                    <button onclick="loadAllLessons('${language}')" 
+                            class="cancel-btn">
                         Cancel
                     </button>
                 </div>
@@ -472,30 +567,112 @@ async function editLanguageLesson(language, category, lessonId, isSubcategory, s
     }
 }
 
+function addPartToLesson(lessonId) {
+    const container = document.getElementById(`parts-container-${lessonId}`);
+    if (!container) return;
+
+    const newPart = document.createElement('div');
+    newPart.className = 'part-inputs';
+    newPart.innerHTML = `
+        <div class="form-group">
+            <label>Part Name:</label>
+            <input>
+        </div>
+        <div class="form-group">
+            <label>YouTube URL:</label>
+            <input>
+        </div>
+        <button onclick="removePart(this)" 
+                class="remove-part danger">
+            Remove Part
+        </button>
+    `;
+    
+    container.appendChild(newPart);
+}
+
+function addAttachmentToLesson(lessonId) {
+    const container = document.getElementById(`attachments-container-${lessonId}`);
+    if (!container) return;
+
+    const newAttachment = document.createElement('div');
+    newAttachment.className = 'attachment-inputs';
+    newAttachment.innerHTML = `
+        <div class="form-group">
+            <label>Attachment Name:</label>
+            <input>
+        </div>
+        <div class="form-group">
+            <label>Download Link:</label>
+            <input>
+        </div>
+        <button onclick="removeAttachment(this)" 
+                class="remove-attachment danger">
+            Remove Attachment
+        </button>
+    `;
+    
+    container.appendChild(newAttachment);
+}
 
 // Updated addPart function to work with edit forms
 function addPart(lessonId = '') {
     const containerId = lessonId ? `parts-container-${lessonId}` : 'partsContainer';
     const container = document.getElementById(containerId);
     
-    const partHtml = `
-        <div class="part-inputs">
-            <div class="form-group">
-                <label>Part Name:</label>
-                <input class="full-width">
-            </div>
-            <div class="form-group">
-                <label>YouTube URL:</label>
-                <input class="full-width">
-            </div>
-            <button onclick="removePart(this)" class="remove-part danger">
-                Remove Part
-            </button>
+    if (!container) {
+        console.error('Parts container not found');
+        return;
+    }
+
+    const newPart = document.createElement('div');
+    newPart.className = 'part-inputs';
+    newPart.innerHTML = `
+        <div class="form-group">
+            <label>Part Name:</label>
+            <input>
         </div>
+        <div class="form-group">
+            <label>YouTube URL:</label>
+            <input>
+        </div>
+        <button onclick="removePart(this)" class="remove-part danger">
+            Remove Part
+        </button>
     `;
     
-    container.insertAdjacentHTML('beforeend', partHtml);
+    container.appendChild(newPart);
 }
+
+// Updated addAttachment function to work with edit forms
+function addAttachment(lessonId = '') {
+    const containerId = lessonId ? `attachments-container-${lessonId}` : 'attachmentsContainer';
+    const container = document.getElementById(containerId);
+    
+    if (!container) {
+        console.error('Attachments container not found');
+        return;
+    }
+
+    const newAttachment = document.createElement('div');
+    newAttachment.className = 'attachment-inputs';
+    newAttachment.innerHTML = `
+        <div class="form-group">
+            <label>Attachment Name:</label>
+            <input>
+        </div>
+        <div class="form-group">
+            <label>Download Link:</label>
+            <input>
+        </div>
+        <button onclick="removeAttachment(this)" class="remove-attachment danger">
+            Remove Attachment
+        </button>
+    `;
+    
+    container.appendChild(newAttachment);
+}
+
 
 // Modified delete function for language tabs
 async function deleteLanguageLesson(language, category, lessonId, isSubcategory, subCategory) {
@@ -679,7 +856,49 @@ async function deleteLesson(lessonId) {
     }
 }
 
-// Update the showAddForm function
+function addAttachment() {
+    const container = document.getElementById('attachmentsContainer');
+    const template = container.querySelector('.attachment-inputs');
+    
+    // Clone the hidden template
+    const newAttachment = template.cloneNode(true);
+    newAttachment.style.display = 'block';
+    
+    // Make remove button visible
+    const removeBtn = newAttachment.querySelector('.remove-attachment');
+    removeBtn.style.display = 'block';
+    
+    container.appendChild(newAttachment);
+}
+
+function addPart() {
+    const container = document.getElementById('partsContainer');
+    const newPart = document.createElement('div');
+    newPart.className = 'part-inputs';
+    
+    newPart.innerHTML = `
+        <div class="form-group">
+            <label>Part Name:</label>
+            <input>
+        </div>
+        <div class="form-group">
+            <label>YouTube URL:</label>
+            <input>
+        </div>
+        <button onclick="removePart(this)" class="remove-part danger">Remove Part</button>
+    `;
+    
+    container.appendChild(newPart);
+}
+
+function removeAttachment(button) {
+    const attachmentInputs = button.closest('.attachment-inputs');
+    if (attachmentInputs) {
+        attachmentInputs.remove();
+    }
+}
+
+// Update showAddForm to include attachments
 function showAddForm(lesson = null) {
     const isEdit = lesson !== null;
     
@@ -709,8 +928,27 @@ function showAddForm(lesson = null) {
                 `).join('')}
             </div>
             
+            <div id="attachmentsContainer">
+                ${(isEdit && lesson.attachments ? lesson.attachments : [{ name: '', link: '' }]).map((att, i) => `
+                    <div class="attachment-inputs">
+                        <div class="form-group">
+                            <label>Attachment Name:</label>
+                            <input value="${att.name}">
+                        </div>
+                        <div class="form-group">
+                            <label>Download Link:</label>
+                            <input value="${att.link}">
+                        </div>
+                        ${(isEdit && lesson.attachments ? lesson.attachments.length > 1 : i > 0) ? `
+                            <button onclick="removeAttachment(this)" class="remove-part danger">Remove Attachment</button>
+                        ` : ''}
+                    </div>
+                `).join('')}
+            </div>
+            
             <div class="actions">
                 <button onclick="addPart()">Add Part</button>
+                <button onclick="addAttachment()">Add Attachment</button>
                 <button onclick="saveLesson('${isEdit ? lesson.id : ''}')">Save</button>
                 <button onclick="loadLessons()">Cancel</button>
             </div>
@@ -738,100 +976,101 @@ function addPart(language = '') {
 }
 
 function removePart(button) {
-    button.closest('.part-inputs').remove();
+    const partInputs = button.closest('.part-inputs');
+    if (partInputs) {
+        partInputs.remove();
+    }
 }
 
 async function saveLesson(lessonId = null) {
-    const language = document.getElementById('languageSelect').value;
-    const category = document.getElementById('categorySelect').value;
-    const subCategory = document.getElementById('subCategorySelect').value;
-    
+    const language = document.getElementById('languageSelect').value.trim();
+    const category = document.getElementById('categorySelect').value.trim();
+    const subCategory = document.getElementById('subCategorySelect')?.value.trim() || null;
+
     if (!language || !category) {
-        showToast("Please select language and category", true);
+        showToast("Please select a language and category.", true);
         return;
     }
 
-    // Get title input from the correct form
+    // Get lesson title
     const titleInput = document.getElementById('editTitle');
     if (!titleInput) {
-        showToast("Could not find title input field", true);
+        showToast("Title input field not found.", true);
         return;
     }
-    let title = titleInput.value.trim();
 
-    // Add emoji to title if missing
-    if (!title.startsWith('📜 ')) {
-        title = '📜 ' + title;
+    let title = titleInput.value.trim();
+    if (!title) {
+        showToast("Please enter a lesson title.", true);
+        return;
     }
 
+    // Ensure title formatting
+    if (!title.startsWith('📜 ')) title = '📜 ' + title;
+
+    // Collect Parts
     const parts = Array.from(document.querySelectorAll('#partsContainer .part-inputs')).map(div => {
         const inputs = div.querySelectorAll('input');
-        let partName = inputs[0].value.trim();
-        let youtubeUrl = inputs[1].value.trim();
+        let partName = inputs[0].value.trim().replace(/^📖\s*/g, '');
+        let youtubeUrl = inputs[1].value.trim().replace(/^🔗\s*/g, '');
 
-        // Add emojis to part name and YouTube URL
-        if (!partName.startsWith('📖 ')) {
-            partName = '📖 ' + partName;
-        }
-        if (!youtubeUrl.startsWith('🔗 ')) {
-            youtubeUrl = '🔗 ' + youtubeUrl;
-        }
+        return (partName && youtubeUrl) ? { name: '📖 ' + partName, youtube: '🔗 ' + youtubeUrl } : null;
+    }).filter(Boolean); // Remove empty entries
 
-        return {
-            name: partName,
-            youtube: youtubeUrl
-        };
-    });
-
-    if (!title) {
-        showToast("Please enter a title for the lesson", true);
+    if (parts.length === 0) {
+        showToast("Please add at least one part with a valid name and YouTube URL.", true);
         return;
     }
 
-    if (parts.some(part => !part.name || !part.youtube)) {
-        showToast("Please fill in all part fields", true);
-        return;
-    }
+    // Collect Attachments
+    const attachments = Array.from(document.querySelectorAll('#attachmentsContainer .attachment-inputs')).map(div => {
+        const inputs = div.querySelectorAll('input');
+        let attachmentName = inputs[0].value.trim().replace(/^📎\s*/g, '');
+        let downloadLink = inputs[1].value.trim().replace(/^🔗\s*/g, '');
+
+        return (attachmentName && downloadLink) ? { name: '📎 ' + attachmentName, link: downloadLink } : null;
+    }).filter(Boolean); // Remove empty entries
 
     try {
-        let lessonRef;
         const lessonData = {
             title,
             parts,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(), // Store creation timestamp
-            isNew: true // Flag to mark the lesson as new
+            attachments,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
+        let lessonRef;
+
         if (subCategory) {
-            // Save to subcategory
-            const subCatRef = db.collection(language)
+            // Save in Subcategory
+            lessonRef = db.collection(language)
                 .doc(category)
                 .collection('subCategories')
-                .doc(subCategory);
-
-            lessonRef = subCatRef.collection('lessons');
+                .doc(subCategory)
+                .collection('lessons');
         } else {
-            // Save to main category
+            // Save in Main Category
             lessonRef = db.collection(language)
                 .doc(category)
                 .collection('lessons');
         }
 
         if (lessonId) {
-            await lessonRef.doc(lessonId).update(lessonData); // Update existing lesson
-            showToast('Lesson updated successfully!');
+            await lessonRef.doc(lessonId).update(lessonData);
+            showToast("Lesson updated successfully!");
         } else {
-            await lessonRef.add(lessonData); // Create a new lesson
-            showToast('Lesson saved successfully!');
+            await lessonRef.add(lessonData);
+            showToast("Lesson saved successfully!");
         }
 
-        clearForm(); // Clear the form after saving the lesson
-        loadLessons(); // Load updated lessons
+        clearForm(); // Reset form fields
+        loadLessons(); // Refresh lesson list
     } catch (error) {
-        console.error('Error saving lesson:', error);
-        showToast('Error saving lesson. Please check console.', true);
+        console.error("Error saving lesson:", error);
+        showToast("Error saving lesson. Check the console for details.", true);
     }
 }
+
 
 
 
@@ -1102,7 +1341,11 @@ async function updateNewLessonStatus() {
     }
 }
 
-// Run this function periodically (e.g., once a day)
-// You can set this up in your admin panel or as a Firebase scheduled function
+document.getElementById('subCategorySelect').addEventListener('change', function() {
+    if (this.value === 'manage') {
+        addSubCategory();
+        this.value = ''; // Reset the selection
+    }
+});
 
 switchTab(1);

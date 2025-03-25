@@ -477,16 +477,29 @@ function renderLessons(lessons) {
             ${lesson.parts.map(part => `
                 <div class="lesson-part">
                     <p>${part.name}</p>
-                    <a href="${part.youtube}" class="button watch-video" data-title="${lesson.title}" target="_blank">
+                    <a href="${part.youtube.replace(/^🔗\s*/g, '')}" class="button watch-video" data-title="${lesson.title}" target="_blank">
                         Watch <i class="fas fa-external-link-alt"></i>
                     </a>
                 </div>
             `).join("")}
+            
+            ${lesson.attachments && lesson.attachments.length > 0 ? `
+                <div class="lesson-attachments">
+                    <h4>Downloads</h4>
+                    ${lesson.attachments.map(att => `
+                        <div class="attachment">
+                            <a href="${att.link}" target="_blank" class="download-button">
+                                ${att.name} <i class="fas fa-download"></i>
+                            </a>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : ''}
         </div>
         `;
     }).join("");
 
-    // Update watched status for videos
+    // Restore the missing watched status update
     document.querySelectorAll(".watch-video").forEach(button => {
         button.addEventListener("click", () => {
             const lessonTitle = button.dataset.title;
@@ -496,6 +509,7 @@ function renderLessons(lessons) {
         });
     });
 }
+
 
 // Helper function to check if lesson is new (less than 1 week old)
 function isLessonNew(createdAt) {

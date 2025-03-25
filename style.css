@@ -982,3 +982,19 @@ h1, h2 {
     50% { transform: scale(1.05); }
     100% { transform: scale(1); }
 }
+
+.download-button {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.download-button:hover {
+    background: var(--secondary-color);
+}

@@ -388,8 +388,8 @@ async function saveLessonEdit(language, category, lessonId, isSubcategory, subCa
             let attachmentName = inputs[0].value.trim();
             let downloadLink = inputs[1].value.trim();
         
-            if (attachmentName && !attachmentName.startsWith('📎 ')) {
-                attachmentName = '📎 ' + attachmentName;
+            if (attachmentName && !attachmentName.startsWith('📥 ')) {
+                attachmentName = '📥 ' + attachmentName;
             }
         
             return { name: attachmentName, link: downloadLink };

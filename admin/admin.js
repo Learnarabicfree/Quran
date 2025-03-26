@@ -1205,18 +1205,62 @@ async function saveSubCategory() {
     }
 }
 
-
 async function editSubCategory(oldName) {
     const newName = prompt("Enter new name for sub-category:", oldName);
-    
-    if (newName && newName.trim() && newName !== oldName) {
+    if (!newName || newName.trim() === '' || newName === oldName) return;
+
+    const language = document.getElementById('languageSelect').value;
+    const category = document.getElementById('categorySelect').value;
+    if (!language || !category) {
+        showToast("Please select language and category first.", true);
+        return;
+    }
+
+    try {
+        // Get reference to the sub-category
+        const subCatRef = db.collection(language)
+            .doc(category)
+            .collection('subCategories')
+            .doc(oldName);
+
+        // Update the document name and the name field
+        const batch = db.batch();
+        
+        // 1. Create new document with updated name and data
+        const newSubCatRef = db.collection(language)
+            .doc(category)
+            .collection('subCategories')
+            .doc(newName);
+        
+        const subCatData = (await subCatRef.get()).data();
+        batch.set(newSubCatRef, {
+            ...subCatData,
+            name: newName  // Update the name field
+        });
+
+        // 2. Move all lessons to new sub-category
+        const lessonsSnapshot = await subCatRef.collection('lessons').get();
+        lessonsSnapshot.docs.forEach(doc => {
+            const newLessonRef = newSubCatRef.collection('lessons').doc(doc.id);
+            batch.set(newLessonRef, doc.data());
+        });
+
+        // 3. Delete old sub-category
+        batch.delete(subCatRef);
+
+        await batch.commit();
+
+        // Update local state
         const index = currentSubCategories.indexOf(oldName);
         if (index !== -1) {
-            currentSubCategories[index] = newName.trim();
-            await updateSubCategoriesInDB();
-            renderSubCategoryList();
+            currentSubCategories[index] = newName;
             updateSubCategorySelect();
+            renderSubCategoryList();
+            showToast('Sub-category updated successfully!');
         }
+    } catch (error) {
+        console.error("Error updating sub-category:", error);
+        showToast("Error updating sub-category. Please check console.", true);
     }
 }
 

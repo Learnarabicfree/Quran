@@ -22,8 +22,8 @@
         }
 
         .login-header img {
-            height: 80px;
-            margin-bottom: 1rem;
+            height: 130px;
+            margin-bottom: -20px;
         }
 
         .input-group {
@@ -649,3 +649,61 @@ input:checked + .slider:before {
 .attachment {
     margin-bottom: 0.5rem;
 }
+
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #2B6D4F;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 4px;
+    z-index: 1000;
+    animation: slideIn 0.5s forwards;
+  }
+  
+  .toast.error {
+    background: #e74c3c;
+  }
+  
+  .toast.fade-out {
+    animation: fadeOut 0.5s forwards;
+  }
+  
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+
+  .forget-me-container {
+    text-align: left;
+    margin-top: 15px;
+  }
+  
+  .forget-me-btn {
+    background: linear-gradient(145deg, #ff5f6d, #ffc3a0); /* Gradient background */
+    border: 2px solid transparent;
+    color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 9px 12px;
+    border-radius: 30px; /* Rounded corners for a modern feel */
+    box-shadow: 0px 8px 15px rgba(255, 95, 109, 0.2);
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .forget-me-btn:hover {
+    background: linear-gradient(145deg, #563ce7, #9b59b6); /* Gradient on hover */
+    color: #ffffff;
+    border: 2px solid #563ce7;
+    transform: translateY(-4px); /* Slight lift on hover */
+    box-shadow: 0px 12px 20px rgba(86, 60, 231, 0.3);
+  }
+  

@@ -12,17 +12,23 @@ const loginForm = document.getElementById('login-form');
 const loginError = document.getElementById('login-error');
 const rememberMeCheckbox = document.getElementById('rememberMe');
 
-// Load saved username if "Remember Me" was checked previously
-const savedUsername = localStorage.getItem('savedUsername');
-const rememberMe = localStorage.getItem('rememberMe') === 'true';
-if (rememberMe && savedUsername) {
-  document.getElementById('username').value = savedUsername;
-  rememberMeCheckbox.checked = true;
-  
-  // Trigger the visual checked state
-  document.querySelector('.checkmark').style.backgroundColor = '#2B6D4F';
-  document.querySelector('.checkmark').style.borderColor = '#2B6D4F';
-  document.querySelector('.checkmark').style.display = 'after';
+// Load saved credentials if "Remember Me" was checked previously
+const savedCredentials = localStorage.getItem('savedCredentials');
+if (savedCredentials) {
+  try {
+    const credentials = JSON.parse(savedCredentials);
+    document.getElementById('username').value = credentials.username;
+    document.getElementById('password').value = credentials.password;
+    rememberMeCheckbox.checked = true;
+    
+    // Trigger the visual checked state
+    document.querySelector('.checkmark').style.backgroundColor = '#2B6D4F';
+    document.querySelector('.checkmark').style.borderColor = '#2B6D4F';
+    document.querySelector('.checkmark').style.display = 'after';
+  } catch (e) {
+    console.error('Error loading saved credentials:', e);
+    localStorage.removeItem('savedCredentials');
+  }
 }
 
 // Login form submission
@@ -47,11 +53,15 @@ loginForm.addEventListener('submit', function (event) {
     
     // Handle "Remember Me" functionality
     if (rememberMe) {
-      localStorage.setItem('rememberMe', 'true');
-      localStorage.setItem('savedUsername', username);
+      // WARNING: Storing passwords in localStorage is not secure
+      // This is for demonstration purposes only
+      const credentials = {
+        username: username,
+        password: password
+      };
+      localStorage.setItem('savedCredentials', JSON.stringify(credentials));
     } else {
-      localStorage.removeItem('rememberMe');
-      localStorage.removeItem('savedUsername');
+      localStorage.removeItem('savedCredentials');
     }
 
     // Update UI
@@ -63,18 +73,8 @@ loginForm.addEventListener('submit', function (event) {
     loginPage.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
 
     setTimeout(() => {
-      loginPage.style.display = 'none';
-      mainContent.style.display = 'block';
-      
-      // Additional animation for main content appearance
-      mainContent.style.opacity = '0';
-      mainContent.style.transform = 'translateY(20px)';
-      mainContent.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
-      
-      setTimeout(() => {
-        mainContent.style.opacity = '1';
-        mainContent.style.transform = 'translateY(0)';
-      }, 50);
+      // Reload the page after the animation completes
+      window.location.reload();
     }, 500);
   } else {
     // Shake animation for invalid login
@@ -85,3 +85,12 @@ loginForm.addEventListener('submit', function (event) {
     }, 500);
   }
 });
+
+// Add logout functionality to clear credentials
+function logout() {
+  sessionStorage.removeItem('loggedIn');
+  sessionStorage.removeItem('userRole');
+  sessionStorage.removeItem('username');
+  localStorage.removeItem('savedCredentials');
+  window.location.href = window.location.href;
+}

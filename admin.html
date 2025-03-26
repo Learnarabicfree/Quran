@@ -15,8 +15,8 @@
     <div id="login-page" class="login-page">
         <div class="login-container">
             <div class="login-header">
-                <img src="img/logo.png" alt="Logo">
-                <h1>Admin Login</h1>
+                <img src="img/logo-app.png" alt="Logo">
+                <h1>Quranic Wisdom</h1>
             </div>
             <form id="login-form">
                 <div class="input-group">
@@ -29,14 +29,22 @@
                     <label class="remember-me">
                       <input type="checkbox" id="rememberMe">
                       <span class="checkmark"></span>
-                      <span class="remember-text">Remember my username</span>
+                      <span class="remember-text">Remember Username & Password</span>
                     </label>
+                    <div class="forget-me-container">
+                        <button id="forgetMeBtn" class="forget-me-btn">Remove Username & Password</button>
+                      </div>
+                    <div class="security-warning" style="font-size: 12px; color: #ff6b6b; margin-top: 10px;">
+                        <i class="fas fa-exclamation-triangle"></i> 
+                        Do not use "Remember Me" on public or shared computers
+                      </div>
                   </div>
                 <button type="submit">Login</button>
                 <p id="login-error">Invalid username or password</p>
             </form>
         </div>
     </div>
+
     <div id="main-content" style="display: none;">
         <div id="toast" class="toast"></div>
         <div class="username-display" id="username-display"></div>
@@ -45,11 +53,8 @@
             Home
           </a>
     <div id="toast" class="toast"></div>
-
     <div class="container">
-        <h1 class="header">
-            Quranic Wisdom - Admin
-        </h1>
+        <h1 class="header">Quranic Wisdom - Admin</h1>
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab(1)">Submit New Lessons</button>
             <button class="tab-btn" onclick="switchTab(2)">සිංහල</button>

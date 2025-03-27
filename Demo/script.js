@@ -612,7 +612,7 @@ function displaySearchResults(results) {
 
 
 function updateNavigation() {
-    let path = 'Demo/Quran';
+    let path = '/Demo';
     if (currentState.language) {
         path += `/${currentState.language}`;
         if (currentState.category) {
@@ -775,7 +775,7 @@ function goHome() {
     };
 
     // Update URL to reflect home state
-    history.pushState(null, "", "Demo/Quran");
+    history.pushState(null, "", "/Demo");
 
     // Clear UI elements
     document.getElementById("language-selection").classList.remove("hidden");
@@ -854,7 +854,7 @@ function toggleWatchedStatus(lessonTitle) {
 // Update your service worker registration
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('Demo/Quran/sw.js')
+        navigator.serviceWorker.register('Demo/sw.js')
             .then(registration => {
                 console.log('SW registered:', registration);
                 // Optional: Check for updates
@@ -865,7 +865,7 @@ if ('serviceWorker' in navigator) {
 }
 
 function parseCurrentPath() {
-    const basePath = 'Demo/Quran/';
+    const basePath = '/Demo';
     const path = window.location.pathname.replace(basePath, '');
     const segments = path.split('/').filter(s => s);
     

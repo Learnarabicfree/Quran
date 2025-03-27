@@ -45,19 +45,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Toast function
+// Toast function - Fix and enhance this
 function showToast(message, isError = false) {
+    // Remove existing toasts
+    document.querySelectorAll('.toast').forEach(toast => toast.remove());
+
     const toast = document.createElement('div');
     toast.className = `toast ${isError ? 'error' : ''}`;
     toast.textContent = message;
     document.body.appendChild(toast);
-    
-    setTimeout(() => {
-      toast.classList.add('fade-out');
-      setTimeout(() => toast.remove(), 500);
-    }, 3000);
-  }
 
+    // Trigger animation
+    setTimeout(() => toast.classList.add('show'), 10);
+
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
+
+  
 // Tab switching function
 function switchTab(tabNumber) {
     // Clear existing dynamic content when switching to form tab
@@ -261,7 +269,7 @@ async function loadAllLessons(language) {
         const categories = ['Courses', 'Surah', 'Arabic'];
         let allLessons = [];
 
-        for(const category of categories) {
+        for (const category of categories) {
             // Get main category lessons
             const mainLessonsSnapshot = await db.collection(language)
                 .doc(category)
@@ -284,9 +292,9 @@ async function loadAllLessons(language) {
                 .collection('subCategories')
                 .get();
 
-            for(const subCatDoc of subCategoriesSnapshot.docs) {
+            for (const subCatDoc of subCategoriesSnapshot.docs) {
                 const subLessonsSnapshot = await subCatDoc.ref.collection('lessons').get();
-                
+
                 subLessonsSnapshot.forEach(doc => {
                     allLessons.push({
                         id: doc.id,
@@ -299,6 +307,9 @@ async function loadAllLessons(language) {
                 });
             }
         }
+
+        // Sort lessons by lesson number (same as home page)
+        allLessons.sort((a, b) => extractLessonNumber(a.title) - extractLessonNumber(b.title));
 
         renderLanguageLessons(language, allLessons);
     } catch (error) {
@@ -512,11 +523,4 @@ async function editLanguageLesson(language, category, lessonId, isSubcategory, s
 
                 <div id="parts-container-${lessonId}">
                     ${lesson.parts.map((part, index) => `
-                        <div class="part-inputs">
-                            <div class="form-group">
-                                <label>Part ${index + 1} Name:</label>
-                                <input value="${part.name.replace(/^📖\s*/g, '')}">
-                            </div>
-                            <div class="form-group">
-                                <label>YouTube URL:</label>
-                     
+                        <div class=

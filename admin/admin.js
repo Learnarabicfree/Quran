@@ -1434,4 +1434,47 @@ document.getElementById('subCategorySelect').addEventListener('change', function
     }
 });
 
+
+document.getElementById('createSubCategoryBtn').addEventListener('click', async function() {
+    const language = document.getElementById('languageSelect').value;
+    const category = document.getElementById('categorySelect').value;
+    const subCategoryName = document.getElementById('newSubCategoryName').value.trim();
+
+    if (!language || !category) {
+        showToast('Please select both language and category first', true);
+        return;
+    }
+
+    if (!subCategoryName) {
+        showToast('Sub-category name cannot be empty', true);
+        return;
+    }
+
+    try {
+        // Create new subcategory document
+        await db.collection(language)
+            .doc(category)
+            .collection('subCategories')
+            .doc()
+            .set({
+                name: subCategoryName,
+                lessonCount: 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+        showToast('Sub-category created successfully!');
+        document.getElementById('newSubCategoryName').value = ''; // Clear input
+        loadSubCategories(); // Refresh the list
+        closePopup(); // Close the popup window if needed
+    } catch (error) {
+        console.error('Error creating sub-category:', error);
+        showToast('Error creating sub-category', true);
+    }
+});
+
+function closePopup() {
+    const popup = document.getElementById('subCategoryPopup');
+    if (popup) popup.style.display = 'none';
+}
+
 switchTab(1);

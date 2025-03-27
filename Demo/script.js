@@ -108,26 +108,11 @@ let appData = null; // Stores fetched data from Firebase
 
 document.addEventListener("DOMContentLoaded", async () => {
     showLoading();
-    await fetchData();
-    
-    // Parse initial URL
-    const urlParams = parseCurrentPath();
-    if (urlParams.language && appData[urlParams.language]) {
-        currentState.language = urlParams.language;
-        if (urlParams.category && appData[urlParams.language][urlParams.category]) {
-            currentState.category = urlParams.category;
-            const categoryData = appData[currentState.language][currentState.category];
-            
-            if (urlParams.subcategory && categoryData.subCategories.some(sc => sc.id === urlParams.subcategory)) {
-                currentState.subcategory = urlParams.subcategory;
-            }
-        }
-    }
-    
-    loadState();
+    await fetchData(); // Ensure this is called
+    loadState(); // Restore the state
     setupEventListeners();
     hideLoading();
-    updateUI();
+    history.replaceState({}, document.title, window.location.pathname);
 });
   
 async function fetchData() {
@@ -612,33 +597,21 @@ function displaySearchResults(results) {
 
 
 function updateNavigation() {
-    let path = '/Demo';
-    if (currentState.language) {
-        path += `/${currentState.language}`;
-        if (currentState.category) {
-            path += `/${currentState.category}`;
-            if (currentState.subcategory) {
-                path += `/${currentState.subcategory}`;
-            }
-        }
-    }
-    
-    history.pushState(currentState, "", path);
+    navigationStack = navigationStack.slice(0, currentPosition + 1);
+    navigationStack.push({ ...currentState });
+    currentPosition++;
     saveState();
+    history.pushState({ state: currentState }, "", `#${currentState.language || "home"}`);
 }
+
 // Replace the existing popstate listener with this corrected version
 window.addEventListener("popstate", (event) => {
-    if (event.state) {
-        currentState = event.state;
+    if (event.state.state) { // Access nested state property
+        currentState = event.state.state;
+        updateUI();
     } else {
-        const urlParams = parseCurrentPath();
-        currentState = {
-            language: urlParams.language || null,
-            category: urlParams.category || null,
-            subcategory: urlParams.subcategory || null
-        };
+        goHome();
     }
-    updateUI();
 });
 
 function saveState() {
@@ -684,8 +657,6 @@ function loadState() {
 }
 
 function updateUI() {
-    if (!validateURLParams()) return;
-
     // Reset all containers first
     document.querySelectorAll(".selection-screen, #lesson-list")
            .forEach(el => el.classList.add("hidden"));
@@ -732,12 +703,11 @@ function updateUI() {
     }
 
     // Ensure lessons are only loaded if necessary
-    if (shouldLoadLessons) {
-        document.getElementById("lesson-list").dataset.loaded = "true";
+    if (shouldLoadLessons && !document.getElementById("lesson-list").dataset.loaded) {
         loadLessons();
+        document.getElementById("lesson-list").dataset.loaded = "true"; // Mark as loaded
     }
 }
-
 
 
 
@@ -765,17 +735,13 @@ function navigateBack() {
 
 
 function goHome() {
-    // Reset navigation and state
+    // Reset all states
     navigationStack = [];
     currentPosition = -1;
     currentState = { 
         language: null, 
-        category: null,
-        subcategory: null // Added from new code
+        category: null 
     };
-
-    // Update URL to reflect home state
-    history.pushState(null, "", "/Demo");
 
     // Clear UI elements
     document.getElementById("language-selection").classList.remove("hidden");
@@ -785,12 +751,11 @@ function goHome() {
     // Reset to initial state
     localStorage.removeItem("navigationState");
     populateLanguages(Object.keys(appData));
-
-    // Update UI and scroll to top
     updateUI();
+
+    // Optional: Scroll to top
     window.scrollTo(0, 0);
 }
-
 
 function debounce(func, wait) {
     let timeout;
@@ -854,7 +819,7 @@ function toggleWatchedStatus(lessonTitle) {
 // Update your service worker registration
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('Demo/sw.js')
+        navigator.serviceWorker.register('/Quran/sw.js')
             .then(registration => {
                 console.log('SW registered:', registration);
                 // Optional: Check for updates
@@ -864,33 +829,4 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-function parseCurrentPath() {
-    const basePath = '/Demo';
-    const path = window.location.pathname.replace(basePath, '');
-    const segments = path.split('/').filter(s => s);
-    
-    return {
-        language: segments[0],
-        category: segments[1],
-        subcategory: segments[2]
-    };
-}
 
-function validateURLParams() {
-    if (currentState.language && !appData[currentState.language]) {
-        goHome();
-        return false;
-    }
-    if (currentState.category && !appData[currentState.language][currentState.category]) {
-        currentState.category = null;
-        return false;
-    }
-    if (currentState.subcategory) {
-        const subCategories = appData[currentState.language][currentState.category].subCategories;
-        if (!subCategories.some(sc => sc.id === currentState.subcategory)) {
-            currentState.subcategory = null;
-            return false;
-        }
-    }
-    return true;
-}

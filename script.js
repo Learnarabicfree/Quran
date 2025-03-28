@@ -109,11 +109,22 @@ let appData = null; // Stores fetched data from Firebase
 document.addEventListener("DOMContentLoaded", async () => {
     showLoading();
     await fetchData(); // Ensure this is called
-    loadState(); // Restore the state
-    setupEventListeners();
+    
+    // Check URL hash first
+    if (window.location.hash) {
+        parseHash(); // Handle hash if present
+    } else {
+        loadState(); // Fallback to localStorage
+    }
+    
+    setupEventListeners(); // Set up event listeners
+    updateUI(); // Update UI based on the hash or state
     hideLoading();
-    history.replaceState({}, document.title, window.location.pathname);
+    
+    // Preserve initial hash in history
+    history.replaceState({}, document.title, window.location.pathname + window.location.hash);
 });
+
   
 async function fetchData() {
     try {
@@ -294,9 +305,9 @@ function setupEventListeners() {
             const card = e.target.closest(".language-card");
             currentState.language = card.dataset.language;
             currentState.category = null;
+            currentState.subcategory = null;
             updateNavigation();
-            loadCategories();
-            document.querySelector(".site-title").addEventListener("click", goHome);
+            updateUI(); // Updated to trigger UI changes after language selection
         }
     });
 
@@ -325,26 +336,22 @@ function setupEventListeners() {
             }
         }
     });
-    
 
-
-// Double-click handler for removing watched status
-document.addEventListener("dblclick", (e) => {
-    const card = e.target.closest('.lesson-card');
-    if (card) {
-        const title = card.dataset.title;
-        const watched = getWatchedLessons();
-        
-        if (watched[title]) {
-            delete watched[title];
-            localStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(watched));
-            card.classList.remove('watched');
-            card.querySelector('.watched-marker')?.remove();
+    // Double-click handler for removing watched status
+    document.addEventListener("dblclick", (e) => {
+        const card = e.target.closest('.lesson-card');
+        if (card) {
+            const title = card.dataset.title;
+            const watched = getWatchedLessons();
+            
+            if (watched[title]) {
+                delete watched[title];
+                localStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(watched));
+                card.classList.remove('watched');
+                card.querySelector('.watched-marker')?.remove();
+            }
         }
-    }
-});
-
-    
+    });
 
     // Category selection
     document.addEventListener("click", (e) => {
@@ -373,8 +380,6 @@ document.addEventListener("dblclick", (e) => {
             loadLessons();
         }
     });
-
-
 
     // Navigation buttons
     document.getElementById("back-button").addEventListener("click", navigateBack);
@@ -451,6 +456,7 @@ async function loadLessons() {
         showToast("Error loading lessons. Please try again.", true);
     }
 }
+
 
 
 function renderLessons(lessons) {
@@ -597,22 +603,23 @@ function displaySearchResults(results) {
 
 
 function updateNavigation() {
-    navigationStack = navigationStack.slice(0, currentPosition + 1);
-    navigationStack.push({ ...currentState });
-    currentPosition++;
+    // Build hash from current state
+    const parts = [];
+    if (currentState.language) parts.push(encodeURIComponent(currentState.language));
+    if (currentState.category) parts.push(encodeURIComponent(currentState.category));
+    if (currentState.subcategory) parts.push(encodeURIComponent(currentState.subcategory));
+    
+    const newHash = parts.length ? `#${parts.join('/')}` : '';
+    history.pushState({}, document.title, newHash);
     saveState();
-    history.pushState({ state: currentState }, "", `#${currentState.language || "home"}`);
 }
 
 // Replace the existing popstate listener with this corrected version
-window.addEventListener("popstate", (event) => {
-    if (event.state.state) { // Access nested state property
-        currentState = event.state.state;
-        updateUI();
-    } else {
-        goHome();
-    }
+window.addEventListener('popstate', () => {
+    parseHash();  // Handle the hash in the URL
+    updateUI();   // Update the UI based on the parsed state
 });
+
 
 function saveState() {
     localStorage.setItem("navigationState", JSON.stringify({
@@ -657,6 +664,14 @@ function loadState() {
 }
 
 function updateUI() {
+    // Add validation for loaded data
+    if (currentState.language && !appData[currentState.language]) {
+        // If language is set but invalid, reset state
+        currentState.language = null;
+        currentState.category = null;
+        currentState.subcategory = null;
+    }
+
     // Reset all containers first
     document.querySelectorAll(".selection-screen, #lesson-list")
            .forEach(el => el.classList.add("hidden"));
@@ -718,6 +733,7 @@ function updateUI() {
 
 
 
+
 function navigateBack() {
     if (currentState.subcategory) {
         // Back from lessons to subcategories
@@ -740,7 +756,8 @@ function goHome() {
     currentPosition = -1;
     currentState = { 
         language: null, 
-        category: null 
+        category: null,
+        subcategory: null
     };
 
     // Clear UI elements
@@ -751,6 +768,10 @@ function goHome() {
     // Reset to initial state
     localStorage.removeItem("navigationState");
     populateLanguages(Object.keys(appData));
+    
+    // Update URL to remove hash
+    history.pushState({}, document.title, window.location.pathname);
+    
     updateUI();
 
     // Optional: Scroll to top
@@ -829,4 +850,10 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-
+function parseHash() {
+    const hash = window.location.hash.substring(1);
+    const parts = hash.split('/').map(part => decodeURIComponent(part));
+    currentState.language = parts[0] || null;
+    currentState.category = parts[1] || null;
+    currentState.subcategory = parts[2] || null;
+}

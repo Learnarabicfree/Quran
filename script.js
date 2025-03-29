@@ -851,9 +851,39 @@ if ('serviceWorker' in navigator) {
 }
 
 function parseHash() {
-    const hash = window.location.hash.substring(1);
-    const parts = hash.split('/').map(part => decodeURIComponent(part));
-    currentState.language = parts[0] || null;
-    currentState.category = parts[1] || null;
-    currentState.subcategory = parts[2] || null;
+    const params = new URLSearchParams(window.location.hash.substring(1));
+    const language = params.get('language');
+    const category = params.get('category');
+    const subcategory = params.get('subcategory');
+
+    // Reset invalid state
+    currentState = { language: null, category: null, subcategory: null };
+
+    if (language && appData[language]) {
+        currentState.language = language;
+        
+        if (category && appData[language][category]) {
+            currentState.category = category;
+            
+            if (subcategory) {
+                const isValidSub = appData[language][category].subCategories.some(
+                    sc => sc.id === subcategory
+                );
+                if (isValidSub) currentState.subcategory = subcategory;
+            }
+        }
+    }
+
+    // Update URL if invalid parameters
+    if (window.location.hash !== generateStateHash()) {
+        window.location.hash = generateStateHash();
+    }
+}
+
+function generateStateHash() {
+    const params = new URLSearchParams();
+    if (currentState.language) params.set('language', currentState.language);
+    if (currentState.category) params.set('category', currentState.category);
+    if (currentState.subcategory) params.set('subcategory', currentState.subcategory);
+    return params.toString();
 }

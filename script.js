@@ -851,84 +851,9 @@ if ('serviceWorker' in navigator) {
 }
 
 function parseHash() {
-    const params = new URLSearchParams(window.location.hash.substring(1));
-    let language = params.get('language');
-    let category = params.get('category');
-    let subcategory = params.get('subcategory');
-    let needsRedirect = false;
-
-    // 1. Validate or reset language
-    if (!language || !appData[language]) {
-        language = currentState.language || 'English';
-        needsRedirect = true;
-    }
-
-    // 2. Handle category redirects (including renamed categories)
-    if (category) {
-        // Check if category exists in current language
-        if (!appData[language][category]) {
-            // Try to find category by case-insensitive match or similar
-            const foundCategory = findRenamedCategory(language, category);
-            if (foundCategory) {
-                category = foundCategory;
-                needsRedirect = true;
-            } else {
-                // Category doesn't exist - reset to home
-                category = null;
-                subcategory = null;
-                needsRedirect = true;
-            }
-        }
-    }
-
-    // 3. Validate subcategory
-    if (subcategory && category) {
-        const isValidSub = appData[language][category].subCategories?.some(
-            sc => sc.id === subcategory
-        );
-        if (!isValidSub) {
-            subcategory = null;
-            needsRedirect = true;
-        }
-    }
-
-    // Update current state
-    currentState = {
-        language,
-        category,
-        subcategory
-    };
-
-    // Update URL if any redirects were needed
-    if (needsRedirect) {
-        window.location.hash = generateStateHash();
-        return; // Let the new hash trigger a re-parse
-    }
-
-    // Finally update UI
-    updateUI();
-}
-
-// Helper function to find renamed categories
-function findRenamedCategory(language, oldCategoryName) {
-    const categories = Object.keys(appData[language] || {});
-    
-    // 1. Check for exact match first
-    if (categories.includes(oldCategoryName)) {
-        return oldCategoryName;
-    }
-    
-    // 2. Check case-insensitive match
-    const lowerOld = oldCategoryName.toLowerCase();
-    const found = categories.find(c => c.toLowerCase() === lowerOld);
-    if (found) return found;
-    
-    // 3. Check if this was a renamed category (you would need to maintain a mapping)
-    const renamedMap = {
-        'OldCategoryName': 'NewCategoryName',
-        'PreviousName': 'CurrentName'
-        // Add your specific renamed categories here
-    };
-    
-    return renamedMap[oldCategoryName] || null;
+    const hash = window.location.hash.substring(1);
+    const parts = hash.split('/').map(part => decodeURIComponent(part));
+    currentState.language = parts[0] || null;
+    currentState.category = parts[1] || null;
+    currentState.subcategory = parts[2] || null;
 }

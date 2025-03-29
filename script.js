@@ -856,34 +856,35 @@ function parseHash() {
     const category = params.get('category');
     const subcategory = params.get('subcategory');
 
-    // Reset invalid state
-    currentState = { language: null, category: null, subcategory: null };
-
+    // Reset state only if language is invalid
     if (language && appData[language]) {
         currentState.language = language;
         
+        // Proceed only if category exists
         if (category && appData[language][category]) {
             currentState.category = category;
             
+            // Check subcategory only if provided
             if (subcategory) {
-                const isValidSub = appData[language][category].subCategories.some(
+                const isValidSub = appData[language][category].subCategories?.some(
                     sc => sc.id === subcategory
                 );
                 if (isValidSub) currentState.subcategory = subcategory;
+                else currentState.subcategory = null; // Ignore invalid subcategory
+            } else {
+                currentState.subcategory = null;
             }
+        } else {
+            currentState.category = null;
+            currentState.subcategory = null;
         }
+    } else {
+        // Fallback: Keep current language if invalid (or set default)
+        currentState.language = currentState.language || 'English'; // Default fallback
+        currentState.category = null;
+        currentState.subcategory = null;
     }
 
-    // Update URL if invalid parameters
-    if (window.location.hash !== generateStateHash()) {
-        window.location.hash = generateStateHash();
-    }
-}
-
-function generateStateHash() {
-    const params = new URLSearchParams();
-    if (currentState.language) params.set('language', currentState.language);
-    if (currentState.category) params.set('category', currentState.category);
-    if (currentState.subcategory) params.set('subcategory', currentState.subcategory);
-    return params.toString();
+    // Update UI based on validated state
+    updateUI();
 }

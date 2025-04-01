@@ -386,6 +386,19 @@ function setupEventListeners() {
     document.getElementById("home-button").addEventListener("click", goHome);
     document.getElementById("mobile-back-button").addEventListener("click", navigateBack);
     document.getElementById("mobile-home-button").addEventListener("click", goHome);
+
+    // Share button event listeners
+    document.getElementById("floating-share").addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleShareMenu();
+    });
+
+    document.querySelectorAll('.share-option').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleShare(button.dataset.platform);
+        });
+    });
 }
 
 async function loadCategories() {
@@ -857,3 +870,110 @@ function parseHash() {
     currentState.category = parts[1] || null;
     currentState.subcategory = parts[2] || null;
 }
+
+function showToast(message, isError = false) {
+    // Remove any existing toast first
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast ${isError ? 'error' : ''}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    // Auto-remove after delay with fade-out effect
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 2500);
+}
+
+
+// Replace previous share functions with these
+function toggleShareMenu() {
+    const shareMenu = document.querySelector('.share-menu');
+    shareMenu.classList.toggle('active');
+    
+    // Close when clicking outside
+    if (shareMenu.classList.contains('active')) {
+        document.addEventListener('click', closeShareMenuOnClickOutside);
+    } else {
+        document.removeEventListener('click', closeShareMenuOnClickOutside);
+    }
+}
+
+function closeShareMenuOnClickOutside(e) {
+    const shareMenu = document.querySelector('.share-menu');
+    if (!shareMenu.contains(e.target)) {
+        shareMenu.classList.remove('active');
+        document.removeEventListener('click', closeShareMenuOnClickOutside);
+    }
+}
+
+function handleShare(platform) {
+    const currentUrl = window.location.href;
+    const encodedUrl = encodeURIComponent(currentUrl);
+    const message = "Check out this Quranic resource: ";
+
+    switch(platform) {
+        case 'whatsapp':
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}\n\n${encodedUrl}`);
+            break;
+        case 'facebook':
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`);
+            break;
+        case 'twitter':
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodedUrl}`);
+            break;
+        case 'email':
+            window.open(`mailto:?subject=${encodeURIComponent('Quranic Resource')}&body=${encodeURIComponent(message + '\n\n' + currentUrl)}`);
+            break;
+        case 'copy':
+            copyToClipboard(currentUrl);
+            break;
+    }
+    
+    document.querySelector('.share-menu').classList.remove('active');
+}
+
+function copyToClipboard(text) {
+    // Modern clipboard API
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text)
+            .then(() => showToast('Link copied to clipboard!'))
+            .catch(() => fallbackCopy(text));
+    } else {
+        fallbackCopy(text);
+    }
+}
+
+function fallbackCopy(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    
+    try {
+        document.execCommand('copy');
+        showToast('Link copied to clipboard!');
+    } catch (err) {
+        showToast('Failed to copy link', true);
+    }
+    
+    document.body.removeChild(textarea);
+}
+
+// Update event listener in setupEventListeners
+document.getElementById("floating-share").addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleShareMenu();
+});
+
+document.querySelectorAll('.share-option').forEach(button => {
+    button.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleShare(button.dataset.platform);
+    });
+});

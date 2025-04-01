@@ -30,6 +30,31 @@
         </div>
     </div>
 
+    <!-- Share Popup -->
+<div id="sharePopup" class="share-popup hidden">
+    <div class="share-content">
+        <h2>Share via</h2>
+        <div class="share-options">
+            <button class="share-option" data-platform="whatsapp">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </button>
+            <button class="share-option" data-platform="facebook">
+                <i class="fab fa-facebook"></i> Facebook
+            </button>
+            <button class="share-option" data-platform="twitter">
+                <i class="fab fa-twitter"></i> Twitter
+            </button>
+            <button class="share-option" data-platform="email">
+                <i class="fas fa-envelope"></i> Email
+            </button>
+            <button class="share-option" data-platform="copy">
+                <i class="fas fa-link"></i> Copy Link
+            </button>
+        </div>
+        <button class="share-cancel">Cancel</button>
+    </div>
+</div>
+
     <nav class="app-bar">
         <div class="app-bar-content">
             <div class="site-title">
@@ -104,6 +129,32 @@
             <div class="lesson-grid" id="lessons-container"></div>
         </div>
     </div>
+
+    <!-- Replace floating share button with this -->
+<div id="floating-share" class="floating-share">
+    <div class="share-menu">
+        <div class="share-options">
+            <button class="share-option" data-platform="whatsapp">
+                <i class="fab fa-whatsapp"></i>
+            </button>
+            <button class="share-option" data-platform="facebook">
+                <i class="fab fa-facebook"></i>
+            </button>
+            <button class="share-option" data-platform="twitter">
+                <i class="fab fa-twitter"></i>
+            </button>
+            <button class="share-option" data-platform="email">
+                <i class="fas fa-envelope"></i>
+            </button>
+            <button class="share-option" data-platform="copy">
+                <i class="fas fa-link"></i>
+            </button>
+        </div>
+        <button class="share-fab">
+            <i class="fas fa-share-alt"></i>
+        </button>
+    </div>
+</div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>

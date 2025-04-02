@@ -915,7 +915,7 @@ function closeShareMenuOnClickOutside(e) {
 function handleShare(platform) {
     const currentUrl = window.location.href;
     const encodedUrl = encodeURIComponent(currentUrl);
-    const message = "Check out this Quranic resource: ";
+    const message = "Unlock the beauty of the Quran! 📚 Learn Arabic, explore lessons, and deepen your understanding—all for free. Start your journey today! 🌍💙 ";
 
     switch(platform) {
         case 'whatsapp':
@@ -928,7 +928,7 @@ function handleShare(platform) {
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodedUrl}`);
             break;
         case 'email':
-            window.open(`mailto:?subject=${encodeURIComponent('Quranic Resource')}&body=${encodeURIComponent(message + '\n\n' + currentUrl)}`);
+            window.open(`mailto:?subject=${encodeURIComponent('✨ Learn Quran Arabic for Free with Quranic Wisdom! 📖✨')}&body=${encodeURIComponent(message + '\n\n' + currentUrl)}`);
             break;
         case 'copy':
             copyToClipboard(currentUrl);

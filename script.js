@@ -915,7 +915,9 @@ function closeShareMenuOnClickOutside(e) {
 function handleShare(platform) {
     const currentUrl = window.location.href;
     const encodedUrl = encodeURIComponent(currentUrl);
-    const message = "Unlock the beauty of the Quran! 📚 Learn Arabic, explore lessons, and deepen your understanding—all for free. Start your journey today! 🌍💙 ";
+    const message = "Unlock the beauty of the Quran! 📚 Learn Arabic, explore lessons, and deepen your understanding—all for free. Start your journey today! 🌍💙 
+
+🔗 Join now:";
 
     switch(platform) {
         case 'whatsapp':

@@ -928,7 +928,7 @@ function handleShare(platform) {
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodedUrl}`);
             break;
         case 'email':
-            window.open(`mailto:?subject=${encodeURIComponent('✨ Learn Basic Quranic Arabic in Less than 6 Hours! 📖✨')}&body=${encodeURIComponent(message + '\n\n' + currentUrl)}`);
+            window.open(`mailto:?subject=${encodeURIComponent('📖 𝐋𝐞𝐚𝐫𝐧 𝐁𝐚𝐬𝐢𝐜 𝐐𝐮𝐫𝐚𝐧𝐢𝐜 𝐀𝐫𝐚𝐛𝐢𝐜 𝐢𝐧 𝐋𝐞𝐬𝐬 𝐭𝐡𝐚𝐧 𝟔 𝐇𝐨𝐮𝐫𝐬!🕔')}&body=${encodeURIComponent(message + '\n\n' + currentUrl)}`);
             break;
         case 'copy':
             copyToClipboard(currentUrl);

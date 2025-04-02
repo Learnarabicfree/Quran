@@ -915,7 +915,7 @@ function closeShareMenuOnClickOutside(e) {
 function handleShare(platform) {
     const currentUrl = window.location.href;
     const encodedUrl = encodeURIComponent(currentUrl);
-    const message = "`Quranic Wisdom`\n\nUnlock the beauty of the Quran! 📚 Learn Arabic, explore lessons, and deepen your understanding—all for free.\n\nStart your journey today! 🌍💙\n\n🔗 Join now: ";
+    const message = "`Quranic Wisdom`\n\nLearn Basic Quranic Arabic in Less than 6 Hours!\n\n 📚 Dedicate your time to learning the most valuable knowledge-understanding the Quran in Arabic. Deepen your connection with ALLAH S.W.T by comprehending His words as you recite in Salah.\n\nUpon completion, we can discuss verses of the Quran, In Shaa ALLAH S.W.T.\n\n🔗 Join now: ";
 
     switch(platform) {
         case 'whatsapp':
@@ -928,7 +928,7 @@ function handleShare(platform) {
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodedUrl}`);
             break;
         case 'email':
-            window.open(`mailto:?subject=${encodeURIComponent('✨ Learn Quran Arabic for Free with Quranic Wisdom! 📖✨')}&body=${encodeURIComponent(message + '\n\n' + currentUrl)}`);
+            window.open(`mailto:?subject=${encodeURIComponent('✨ Learn Basic Quranic Arabic in Less than 6 Hours! 📖✨')}&body=${encodeURIComponent(message + '\n\n' + currentUrl)}`);
             break;
         case 'copy':
             copyToClipboard(currentUrl);

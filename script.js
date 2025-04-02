@@ -915,7 +915,7 @@ function closeShareMenuOnClickOutside(e) {
 function handleShare(platform) {
     const currentUrl = window.location.href;
     const encodedUrl = encodeURIComponent(currentUrl);
-    const message = "`𝐐𝐮𝐫𝐚𝐧𝐢𝐜 𝐖𝐢𝐬𝐝𝐨𝐦`\𝐧\𝐧📖 𝐋𝐞𝐚𝐫𝐧 𝐁𝐚𝐬𝐢𝐜 𝐐𝐮𝐫𝐚𝐧𝐢𝐜 𝐀𝐫𝐚𝐛𝐢𝐜 𝐢𝐧 𝐋𝐞𝐬𝐬 𝐭𝐡𝐚𝐧 𝟔 𝐇𝐨𝐮𝐫𝐬!🕔\n\n 📚 Dedicate your time to learning the most valuable knowledge—understanding the Quran in Arabic. Deepen your connection with ALLAH S.W.T by comprehending His words as you recite in Salah.\n\nUpon completion, we can discuss verses of the Quran, In Shaa ALLAH S.W.T.\n\n🔗 Join now: ";
+    const message = "'𝐐𝐮𝐫𝐚𝐧𝐢𝐜 𝐖𝐢𝐬𝐝𝐨𝐦'\n\n📖 𝐋𝐞𝐚𝐫𝐧 𝐁𝐚𝐬𝐢𝐜 𝐐𝐮𝐫𝐚𝐧𝐢𝐜 𝐀𝐫𝐚𝐛𝐢𝐜 𝐢𝐧 𝐋𝐞𝐬𝐬 𝐭𝐡𝐚𝐧 𝟔 𝐇𝐨𝐮𝐫𝐬!🕔\n\n 📚 Dedicate your time to learning the most valuable knowledge—understanding the Quran in Arabic. Deepen your connection with ALLAH S.W.T by comprehending His words as you recite in Salah.\n\nUpon completion, we can discuss verses of the Quran, In Shaa ALLAH S.W.T.\n\n🔗 Join now: ";
 
     switch(platform) {
         case 'whatsapp':

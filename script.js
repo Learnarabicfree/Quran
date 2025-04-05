@@ -105,25 +105,93 @@ let currentState = {
 
 let appData = null; // Stores fetched data from Firebase
 
+// Update initializeNotifications function
+function initializeNotifications() {
+    const marqueeContent = document.querySelector('.notice-text');
+    const marqueeContainer = document.querySelector('.app-notification-marquee');
+
+    db.collection('notifications')
+        .orderBy('timestamp', 'desc')
+        .limit(1)
+        .onSnapshot(snapshot => {
+            if (!snapshot.empty && !sessionStorage.getItem('notificationDismissed')) {
+                const doc = snapshot.docs[0];
+                const notification = doc.data();
+
+                let notificationHTML = `<strong>${notification.title}</strong> - ${notification.body}`;
+                
+                if (notification.link) {
+                    let safeLink = notification.link.startsWith('http') ? notification.link : 'https://' + notification.link;
+                    notificationHTML += ` <a href="${safeLink}" class="notification-link" rel="noopener noreferrer">Click here</a>`;
+                }
+
+                marqueeContent.innerHTML = notificationHTML;
+                marqueeContainer.style.display = 'flex';
+
+                // Optional: Smooth scroll animation restart
+                const content = document.querySelector('.marquee-content');
+                content.style.animation = 'none';
+                void content.offsetWidth; // Trigger reflow
+                content.style.animation = 'marquee 15s linear infinite';
+            } else {
+                marqueeContainer.style.display = 'none';
+            }
+        });
+}
+
+
+
+
+function showAppNotification(notification) {
+    const notificationElement = document.createElement('div');
+    notificationElement.className = 'notification-card';
+    notificationElement.innerHTML = `
+        <h4>${notification.title}</h4>
+        <p>${notification.body}</p>
+        <small>${new Date(notification.timestamp?.toDate()).toLocaleString()}</small>
+    `;
+    
+    // Prepend to notifications container
+    const container = document.getElementById('notifications-container');
+    container.insertBefore(notificationElement, container.firstChild);
+    
+    // Auto-remove after 1 hour
+    setTimeout(() => notificationElement.remove(), 3600000);
+}
+
+function showSystemNotification(notification) {
+    if (Notification.permission === 'granted') {
+        new Notification(notification.title, {
+            body: notification.body,
+            icon: 'img/logo-app.png'
+        });
+    }
+}
+
 
 document.addEventListener("DOMContentLoaded", async () => {
     showLoading();
     await fetchData(); // Ensure this is called
-    
+
     // Check URL hash first
     if (window.location.hash) {
         parseHash(); // Handle hash if present
     } else {
         loadState(); // Fallback to localStorage
     }
-    
+
     setupEventListeners(); // Set up event listeners
     updateUI(); // Update UI based on the hash or state
+
+    // ✅ Initialize push notifications
+    initializeNotifications();
+
     hideLoading();
-    
+
     // Preserve initial hash in history
     history.replaceState({}, document.title, window.location.pathname + window.location.hash);
 });
+
 
   
 async function fetchData() {

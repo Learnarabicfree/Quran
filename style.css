@@ -8,6 +8,7 @@
     --gradient-primary: linear-gradient(135deg, #2B6D4F 0%, #4CAF84 100%);
     --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
     --border-radius: 16px;
+    --notice-height: 0px;
 }
 
 * {
@@ -24,7 +25,10 @@ body {
     padding-bottom: 60px;
 }
 
+/* App Bar with Notification */
 .app-bar {
+    display: flex;
+    flex-direction: column;
     background: var(--gradient-primary);
     box-shadow: var(--shadow);
     position: fixed;
@@ -34,12 +38,80 @@ body {
 }
 
 .app-bar-content {
-    max-width: 1200px;
-    margin: 0 auto;
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 1rem;
+    padding: 0.8rem 1rem;
+    position: relative;
+}
+
+/* Green-themed Notification Marquee */
+/* Stunning Green Notification Marquee */
+.app-notification-marquee {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2B6D4F; /* Your main brand green */
+    background: linear-gradient(135deg, #2B6D4F, #1b5b40); /* Gradient for a dynamic feel */
+    backdrop-filter: blur(8px);
+    border-top: 2px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    z-index: 999;
+    border-radius: 0px 0px 0 0; /* Rounded corners for a smoother look */
+}
+
+/* Marquee Content with a refined glow effect */
+.marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    padding-left: 100%;
+    animation: marquee 12s linear infinite;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #e0f9f0; /* Light greenish text */
+    text-shadow: 0 0 8px #00ff83, 0 0 15px #00ff83;
+    letter-spacing: 1px;
+}
+
+/* Notification Icon */
+.notice-icon {
+    margin-right: 12px;
+    font-size: 1.3rem;
+    color: #ffeb3b; /* Subtle yellow-green for the icon */
+    text-shadow: 0 0 10px #ffeb3b, 0 0 20px #ffeb3b;
+}
+
+/* Marquee Animation */
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+
+/* Make room for the notification */
+.container {
+    margin-top: 100px; /* App bar height + notification height */
+}
+
+@media (max-width: 768px) {
+    .container {
+        margin-top: 90px;
+    }
+    
+    .marquee-content {
+        font-size: 0.8rem;
+        animation-duration: 12s;
+    }
 }
 
 .nav-button {
@@ -56,9 +128,17 @@ body {
 /* Container */
 .container {
     max-width: 1200px;
-    margin: 70px auto 0;
+    margin: calc(70px + var(--notice-height)) auto 0;
     padding: 2rem;
     margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+        margin-top: calc(70px + var(--notice-height));
+        padding-bottom: 80px;
+    }
 }
 
 /* Button Grid */
@@ -334,7 +414,7 @@ body {
     max-width: 180px; /* Adjusted size to make the logo larger */
     height: auto; /* Keep the aspect ratio intact */
     margin-right: 15px; /* Space between logo and the heading */
-    margin-top: 30px;
+    margin-top: 100px;
 }
 
 h1, h2 {
@@ -1209,3 +1289,49 @@ h1, h2 {
         font-size: 1rem;
     }
 }
+
+/* Compact Notification Link (styled like a mini button) */
+.notification-link {
+    background-color: #00c28b;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-left: 6px;
+    font-size: 13px;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+}
+
+.notification-link:hover {
+    background-color: #00956a;
+}
+
+/* Compact Marquee Container without top and bottom borders */
+.app-notification-marquee {
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    padding: 6px 12px;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.4;
+}
+
+/* Scrolling Content */
+.marquee-content {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 30s linear infinite;  /* Slower speed */
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+

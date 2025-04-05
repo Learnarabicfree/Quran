@@ -714,3 +714,149 @@ input:checked + .slider:before {
     transform: translateY(-4px); /* Slight lift on hover */
     box-shadow: 0px 12px 20px rgba(86, 60, 231, 0.3);
   }
+
+  .notification-link {
+    display: block;
+    color: #2B6D4F;
+    text-decoration: none;
+    margin: 5px 0;
+    word-break: break-all;
+}
+
+.notification-link:hover {
+    text-decoration: underline;
+}
+
+/* Notification Tab Styles */
+.notification-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.notification-form,
+.current-notification {
+    background: #fff;
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.notification-form h2,
+.current-notification h3 {
+    margin-top: 0;
+    color: #2B6D4F;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.form-row {
+    margin-bottom: 20px;
+}
+
+.form-group.wide {
+    width: 100%;
+}
+
+.form-group.wide label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+}
+
+.form-group.wide input,
+.form-group.wide textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-group.wide input:focus,
+.form-group.wide textarea:focus {
+    border-color: #2B6D4F;
+    outline: none;
+}
+
+.form-group.wide textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-actions,
+.notification-actions {
+    margin-top: 25px;
+    text-align: right;
+}
+
+.active-notification-card {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    min-height: 200px;
+}
+
+.notification-placeholder {
+    color: #999;
+    text-align: center;
+    padding: 40px 0;
+}
+
+.notification-content h4 {
+    margin-top: 0;
+    color: #333;
+    font-size: 18px;
+}
+
+.notification-content p {
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.notification-content .notification-link {
+    display: inline-block;
+    color: #2B6D4F;
+    text-decoration: none;
+    word-break: break-all;
+    margin: 10px 0;
+    padding: 8px 12px;
+    background: #f0f7f4;
+    border-radius: 4px;
+}
+
+.notification-content .notification-link:hover {
+    text-decoration: underline;
+}
+
+.notification-content small {
+    display: block;
+    color: #888;
+    font-size: 12px;
+    margin-top: 15px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .notification-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .notification-form,
+    .current-notification {
+        padding: 15px;
+    }
+    
+    .form-actions,
+    .notification-actions {
+        text-align: center;
+    }
+}

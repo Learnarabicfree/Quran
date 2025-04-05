@@ -61,6 +61,7 @@
             <button class="tab-btn" onclick="switchTab(3)">தமிழ்</button>
             <button class="tab-btn" onclick="switchTab(4)">English</button>
             <button class="tab-btn" onclick="switchTab(5)">Subcategories</button>
+            <button class="tab-btn" onclick="switchTab(6)">Notifications</button>
         </div>
 
         <!-- Tab 1: Submit New Lessons -->
@@ -221,6 +222,49 @@
         </div>
         <div id="subcategoriesList" class="lesson-list"></div>
     </div>
+
+<!-- Update the notifications tab -->
+<!-- Update the notifications tab section -->
+<div id="tab6" class="tab-content">
+    <div class="notification-container">
+        <div class="notification-form">
+            <h2>Send New Notification</h2>
+            <div class="form-row">
+                <div class="form-group wide">
+                    <label>Heading:</label>
+                    <input type="text" id="notificationTitle" maxlength="60" placeholder="Enter notification title">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group wide">
+                    <label>Description:</label>
+                    <textarea id="notificationBody" maxlength="140" placeholder="Enter notification message"></textarea>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group wide">
+                    <label>Link URL:</label>
+                    <input type="url" id="notificationLink" placeholder="https://example.com">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button onclick="sendNotification()" class="send-btn">📨 Send Notification</button>
+            </div>
+        </div>
+
+        <div class="current-notification">
+            <h3>Current Active Notification</h3>
+            <div id="activeNotification" class="active-notification-card">
+                <div class="notification-placeholder">
+                    <p>No active notifications</p>
+                </div>
+            </div>
+            <div class="notification-actions">
+                <button onclick="clearNotifications()" class="danger">🗑 Clear All Notifications</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <script src="admin/admin.js"></script>
     <script src="src/users.js"></script>

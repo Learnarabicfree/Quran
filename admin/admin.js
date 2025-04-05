@@ -30,20 +30,45 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 let currentSubCategories = [];
+let notificationFormShown = false;
 
 const forgetMeBtn = document.getElementById('forgetMeBtn');
 
 document.addEventListener('DOMContentLoaded', () => {
+    // ✅ Show main content if logged in
     if (sessionStorage.getItem('loggedIn') === 'true') {
         document.getElementById('login-page').style.display = 'none';
         document.getElementById('main-content').style.display = 'block';
         document.getElementById('username-display').textContent = 'Hello, ' + sessionStorage.getItem('username');
-        
-        // Load sub-categories when page loads
+
+        // ✅ Initialize category dropdowns
         document.getElementById('languageSelect').addEventListener('change', loadCategories);
         document.getElementById('categorySelect').addEventListener('change', loadSubCategories);
     }
+
+    // ✅ Restore notification form values from sessionStorage if available
+    if (sessionStorage.getItem('notificationTitle')) {
+        document.getElementById('notificationTitle').value = sessionStorage.getItem('notificationTitle');
+    }
+    if (sessionStorage.getItem('notificationBody')) {
+        document.getElementById('notificationBody').value = sessionStorage.getItem('notificationBody');
+    }
+    if (sessionStorage.getItem('notificationLink')) {
+        document.getElementById('notificationLink').value = sessionStorage.getItem('notificationLink');
+    }
+
+    // ✅ Save form values on input
+    document.getElementById('notificationTitle').addEventListener('input', (e) => {
+        sessionStorage.setItem('notificationTitle', e.target.value);
+    });
+    document.getElementById('notificationBody').addEventListener('input', (e) => {
+        sessionStorage.setItem('notificationBody', e.target.value);
+    });
+    document.getElementById('notificationLink').addEventListener('input', (e) => {
+        sessionStorage.setItem('notificationLink', e.target.value);
+    });
 });
+
 
 // Toast function - Fix and enhance this
 function showToast(message, isError = false) {
@@ -68,6 +93,29 @@ function showToast(message, isError = false) {
   
 // Tab switching function
 function switchTab(tabNumber) {
+    // Remove 'active' class from all tab contents and buttons
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // Handle notifications tab (tab 6) specifically
+    if (tabNumber === 6) {
+        document.getElementById('tab6').classList.add('active');
+        document.querySelectorAll('.tab-btn')[5].classList.add('active');
+        loadNotificationsTab();
+
+        // Always show form when switching to notifications tab
+        document.querySelector('.notification-form').style.display = 'block';
+        sessionStorage.setItem('notificationFormVisible', 'true');
+    } else {
+        // Hide form when switching away from notifications tab
+        document.querySelector('.notification-form').style.display = 'none';
+        sessionStorage.setItem('notificationFormVisible', 'false');
+    }
+
     // Clear existing dynamic content when switching to form tab
     if(tabNumber === 1) {
         const partsContainer = document.getElementById('partsContainer');
@@ -146,6 +194,7 @@ function switchTab(tabNumber) {
         }
     }
 }
+
 
 async function loadSubcategoriesTab() {
     const language = document.getElementById('subcatLanguageSelect').value;
@@ -1467,5 +1516,117 @@ document.getElementById('subCategorySelect').addEventListener('change', function
         this.value = ''; // Reset the selection
     }
 });
+
+// In admin.js
+async function sendNotification() {
+    const title = document.getElementById('notificationTitle').value.trim();
+    const body = document.getElementById('notificationBody').value.trim();
+    const link = document.getElementById('notificationLink').value.trim();
+    
+    if (!title || !body) {
+      showToast('Please fill both fields', true);
+      return;
+    }
+  
+    try {
+      // Clear existing notifications
+      const snapshot = await db.collection('notifications').get();
+      const batch = db.batch();
+      snapshot.docs.forEach(doc => batch.delete(doc.ref));
+      await batch.commit();
+  
+      // Add new notification
+      await db.collection('notifications').add({
+        title,
+        body,
+        link,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        shown: false
+    });
+      
+    showToast('Notification sent!');
+    // Clear form but keep it visible
+    document.getElementById('notificationTitle').value = '';
+    document.getElementById('notificationBody').value = '';
+    document.getElementById('notificationLink').value = '';
+    
+    // Don't hide the form after sending
+    // sessionStorage.setItem('notificationFormVisible', 'true');
+} catch (error) {
+    console.error('Error sending notification:', error);
+    showToast('Error sending notification', true);
+}
+  }
+  
+  async function clearNotifications() {
+    if (!confirm('Clear all notifications?')) return;
+    
+    const snapshot = await db.collection('notifications').get();
+    const batch = db.batch();
+    snapshot.docs.forEach(doc => batch.delete(doc.ref));
+    await batch.commit();
+    showToast('All notifications cleared');
+  }
+  
+  // Load current notification
+  db.collection('notifications')
+    .orderBy('timestamp', 'desc')
+    .limit(1)
+    .onSnapshot(snapshot => {
+      const container = document.getElementById('activeNotification');
+      if (snapshot.empty) {
+        container.innerHTML = '<p>No active notifications</p>';
+        return;
+      }
+      
+      const notification = snapshot.docs[0].data();
+      container.innerHTML = `
+    <h4>${notification.title}</h4>
+    <p>${notification.body}</p>
+    ${notification.link ? `<a href="${notification.link}" target="_blank" class="notification-link">${notification.link}</a>` : ''}
+    <small>Posted: ${new Date(notification.timestamp?.toDate()).toLocaleString()}</small>
+`;
+    });
+
+    function loadNotificationsTab() {
+        // Listen to changes in notifications from Firestore
+        db.collection('notifications')
+            .orderBy('timestamp', 'desc')
+            .onSnapshot(snapshot => {
+                const container = document.getElementById('activeNotification');
+                
+                // Check if there are no notifications
+                if (snapshot.empty) {
+                    container.innerHTML = `
+                        <div class="notification-placeholder">
+                            <p>No active notifications</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Display the first notification
+                const notification = snapshot.docs[0].data();
+                container.innerHTML = `
+                    <div class="notification-content">
+                        <h4>${notification.title}</h4>
+                        <p>${notification.body}</p>
+                        ${notification.link ? `
+                            <a href="${notification.link}" class="notification-link">
+                                ${notification.link}
+                            </a>
+                        ` : ''}
+                        <small>Posted: ${new Date(notification.timestamp?.toDate()).toLocaleString()}</small>
+                    </div>
+                `;
+            });
+    }
+    
+
+async function deleteNotification(id) {
+    if(confirm('Are you sure you want to delete this notification?')) {
+        await db.collection('notifications').doc(id).delete();
+    }
+}
 
 switchTab(1);

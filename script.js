@@ -127,20 +127,11 @@ function initializeNotifications() {
 
                 marqueeContent.innerHTML = notificationHTML;
                 marqueeContainer.style.display = 'flex';
-
-                // Optional: Smooth scroll animation restart
-                const content = document.querySelector('.marquee-content');
-                content.style.animation = 'none';
-                void content.offsetWidth; // Trigger reflow
-                content.style.animation = 'marquee 15s linear infinite';
             } else {
                 marqueeContainer.style.display = 'none';
             }
         });
 }
-
-
-
 
 function showAppNotification(notification) {
     const notificationElement = document.createElement('div');

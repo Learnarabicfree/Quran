@@ -359,9 +359,97 @@ function showMainCategories() {
     updateUI();
 }
 
+// YouTube Player Variables
+let youtubePlayer = null;
+let isModalOpen = false;
+
+// YouTube API Ready Callback
+function onYouTubeIframeAPIReady() {
+    console.log('YouTube API ready');
+}
+
+// Initialize Video Player
+function initializeVideoPlayer(videoId) {
+    if (!videoId) {
+        showToast('Invalid video URL', true);
+        return;
+    }
+
+    try {
+        if (!youtubePlayer) {
+            youtubePlayer = new YT.Player('player', {
+                height: '100%',
+                width: '100%',
+                videoId: videoId,
+                playerVars: {
+                    autoplay: 1,
+                    modestbranding: 1,
+                    rel: 0,
+                    controls: 1
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        } else {
+            youtubePlayer.loadVideoById(videoId);
+            youtubePlayer.playVideo();
+        }
+    } catch (error) {
+        console.error('YouTube player error:', error);
+        showToast('Error loading video', true);
+    }
+}
+
+// Player Event Handlers
+function onPlayerReady(event) {
+    event.target.playVideo();
+}
+
+function onPlayerStateChange(event) {
+    // Optional: Handle player state changes
+}
+
+// Open Video Modal
+function openVideoPlayer(videoId) {
+    const modal = document.getElementById('videoModal');
+    modal.classList.add('modal-show');
+    isModalOpen = true;
+    initializeVideoPlayer(videoId);
+}
+
+// Close Video Modal
+function closeVideoPlayer() {
+    const modal = document.getElementById('videoModal');
+    modal.classList.remove('modal-show');
+    isModalOpen = false;
+    
+    if (youtubePlayer) {
+        youtubePlayer.stopVideo();
+    }
+}
+
+// YouTube URL Parser
+function getYouTubeId(url) {
+    try {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+    } catch (error) {
+        console.error('URL parsing error:', error);
+        return null;
+    }
+}
+
+// Handle ESC Key Press
+function handleKeyDown(event) {
+    if (event.key === 'Escape' && isModalOpen) {
+        closeVideoPlayer();
+    }
+}
 
 function setupEventListeners() {
-    // Language selection
     document.addEventListener("click", (e) => {
         if (e.target.closest(".language-card")) {
             const card = e.target.closest(".language-card");
@@ -378,16 +466,16 @@ function setupEventListeners() {
 
     document.addEventListener("click", (e) => {
         if (!allowMarking) return; // Prevent marking if the flag is false
-    
+
         const card = e.target.closest('.lesson-card');
         if (card) {
             const title = card.dataset.title;
             const isNowWatched = toggleWatchedStatus(title);
-            
+
             // Update UI
             card.classList.toggle('watched', isNowWatched);
             const marker = card.querySelector('.watched-marker');
-            
+
             if (isNowWatched && !marker) {
                 const newMarker = document.createElement('div');
                 newMarker.className = 'watched-marker';
@@ -405,7 +493,7 @@ function setupEventListeners() {
         if (card) {
             const title = card.dataset.title;
             const watched = getWatchedLessons();
-            
+
             if (watched[title]) {
                 delete watched[title];
                 localStorage.setItem(WATCHED_STORAGE_KEY, JSON.stringify(watched));
@@ -419,11 +507,11 @@ function setupEventListeners() {
     document.addEventListener("click", (e) => {
         const categoryCard = e.target.closest(".category-card");
         const subcategoryCard = e.target.closest(".subcategory-card");
-    
+
         if (categoryCard) {
             currentState.category = categoryCard.dataset.category;
             const categoryData = appData[currentState.language][currentState.category];
-    
+
             // If the category has no subcategories, load lessons directly
             if (categoryCard.hasAttribute('data-direct-lessons')) {
                 currentState.subcategory = null;
@@ -461,7 +549,19 @@ function setupEventListeners() {
             handleShare(button.dataset.platform);
         });
     });
+
+    // 🔽 New: Video Modal Events
+    document.querySelector('.close').addEventListener('click', closeVideoPlayer);
+    document.getElementById('videoModal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('videoModal')) {
+            closeVideoPlayer();
+        }
+    });
+
+    // 🔽 New: ESC Key Listener
+    document.addEventListener('keydown', handleKeyDown);
 }
+
 
 async function loadCategories() {
     try {
@@ -555,15 +655,30 @@ function renderLessons(lessons) {
                 ${categoryTranslations[currentState.language][currentState.category]}
                 ${currentState.subcategory ? ` / ${currentState.subcategory}` : ''}
             </small>
-            ${lesson.parts.map(part => `
-                <div class="lesson-part">
-                    <p>${part.name}</p>
-                    <a href="${part.youtube.replace(/^🔗\s*/g, '')}" class="button watch-video" data-title="${lesson.title}" target="_blank">
-                        Watch <i class="fas fa-external-link-alt"></i>
-                    </a>
-                </div>
-            `).join("")}
-            
+            ${lesson.parts.map(part => {
+                const youtubeUrl = part.youtube.replace(/^🔗\s*/g, '');
+                const videoId = getYouTubeId(youtubeUrl);
+                return `
+                    <div class="lesson-part">
+                        <p>${part.name}</p>
+                        ${videoId ? `
+                            <button class="button watch-video" 
+                                    data-video="${videoId}" 
+                                    data-title="${lesson.title}">
+                                <i class="fas fa-play"></i> Watch
+                            </button>
+                        ` : `
+                            <a href="${youtubeUrl}" 
+                               class="button" 
+                               target="_blank" 
+                               data-title="${lesson.title}">
+                                <i class="fas fa-external-link-alt"></i> Watch
+                            </a>
+                        `}
+                    </div>
+                `;
+            }).join("")}
+
             ${lesson.attachments && lesson.attachments.length > 0 ? `
                 <div class="lesson-attachments">
                     <h4>Downloads</h4>
@@ -580,16 +695,23 @@ function renderLessons(lessons) {
         `;
     }).join("");
 
-    // Restore the missing watched status update
+    // Restore the watched status update + modal player
     document.querySelectorAll(".watch-video").forEach(button => {
         button.addEventListener("click", () => {
             const lessonTitle = button.dataset.title;
             let recentLessons = JSON.parse(localStorage.getItem("recentlyViewed")) || {};
             recentLessons[lessonTitle] = Date.now();
             localStorage.setItem("recentlyViewed", JSON.stringify(recentLessons));
+
+            // If there's a video ID, open modal player
+            const videoId = button.dataset.video;
+            if (videoId) {
+                openVideoPlayer(videoId);
+            }
         });
     });
 }
+
 
 
 // Helper function to check if lesson is new (less than 1 week old)

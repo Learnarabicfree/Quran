@@ -195,7 +195,7 @@ async function fetchData() {
         // Fetch fresh data
         appData = {};
         const languages = ['English', 'Sinhala', 'Tamil'];
-        const categories = ['Courses', 'Surah', 'Arabic', 'Tafsir'];
+        const categories = ['Arabic', 'Tafsir', 'Courses', 'Surah'];
 
         // Parallel fetch for all languages
         await Promise.all(languages.map(async (language) => {
@@ -281,7 +281,7 @@ function populateCategories() {
     const container = document.getElementById("categories-container");
     const subContainer = document.getElementById("subcategories-container");
     const currentLang = currentState.language;
-    const categories = ['Courses', 'Surah', 'Arabic', 'Tafsir'];
+    const categories = ['Arabic', 'Tafsir', 'Courses', 'Surah'];
 
     // Show categories container and hide subcategories
     container.style.display = 'grid';

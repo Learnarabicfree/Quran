@@ -72,7 +72,6 @@ const WATCHED_STORAGE_KEY = 'watchedLessons';
 const languageTranslations = {
     'Sinhala': 'සිංහල',
     'Tamil': 'தமிழ்',
-    'Tafsir': 'අරාබි',
     'English': 'English'
 };
 

@@ -72,6 +72,7 @@ const WATCHED_STORAGE_KEY = 'watchedLessons';
 const languageTranslations = {
     'Sinhala': 'සිංහල',
     'Tamil': 'தமிழ்',
+    'Tafsir': 'අරාබි',
     'English': 'English'
 };
 
@@ -80,18 +81,21 @@ const categoryTranslations = {
         'Courses': 'පාඨමාලා',
         'Surah': 'සූරා',
         'Arabic': 'අරාබි',
+        'Tafsir': 'තෆ්සීර්',
         'Main Lessons': 'ප්රධාන පාඩම්'
     },
     'Tamil': {
         'Courses': 'பாடநெறிகள்',
         'Surah': 'ஸூரா',
         'Arabic': 'அரபு',
+        'Tafsir': 'தஃப்சீர்',
         'Main Lessons': 'முக்கிய பாடங்கள்' // Added translation
     },
     'English': {
         'Courses': 'Courses',
         'Surah': 'Surah',
         'Arabic': 'Arabic',
+        'Tafsir': 'Tafsir',
         'Main Lessons': 'Main Lessons' // Added translation
     }
 };
@@ -192,7 +196,7 @@ async function fetchData() {
         // Fetch fresh data
         appData = {};
         const languages = ['English', 'Sinhala', 'Tamil'];
-        const categories = ['Courses', 'Surah', 'Arabic', 'The Quran (Tafsir)'];
+        const categories = ['Courses', 'Surah', 'Arabic', 'Tafsir'];
 
         // Parallel fetch for all languages
         await Promise.all(languages.map(async (language) => {
@@ -278,7 +282,7 @@ function populateCategories() {
     const container = document.getElementById("categories-container");
     const subContainer = document.getElementById("subcategories-container");
     const currentLang = currentState.language;
-    const categories = ['Courses', 'Surah', 'Arabic', 'The Quran (Tafsir)'];
+    const categories = ['Courses', 'Surah', 'Arabic', 'Tafsir'];
 
     // Show categories container and hide subcategories
     container.style.display = 'grid';

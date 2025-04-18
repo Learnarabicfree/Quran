@@ -8,16 +8,19 @@ const categoryTranslations = {
     'Sinhala': {
         'Courses': 'පාඨමාලා',
         'Surah': 'සූරා',
+        'Tafsir': 'තෆ්සීර්',
         'Arabic': 'අරාබි'
     },
     'Tamil': {
         'Courses': 'பாடநெறிகள்',
         'Surah': 'ஸூரா',
+        'Tafsir': 'தஃப்சீர்',
         'Arabic': 'அரபு'
     },
     'English': {
         'Courses': 'Courses',
         'Surah': 'Surah',
+        'Tafsir': 'Tafsir',
         'Arabic': 'Arabic'
     }
 };
@@ -315,7 +318,7 @@ document.getElementById('subcatCategorySelect').addEventListener('change', () =>
 // In admin.js, update the loadAllLessons function
 async function loadAllLessons(language) {
     try {
-        const categories = ['Courses', 'Surah', 'Arabic'];
+        const categories = ['Courses', 'Surah', 'Arabic', 'Tafsir'];
         let allLessons = [];
 
         for (const category of categories) {
@@ -1470,7 +1473,7 @@ async function updateNewLessonStatus() {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     
     const languages = ['Sinhala', 'Tamil', 'English'];
-    const categories = ['Courses', 'Surah', 'Arabic'];
+    const categories = ['Courses', 'Surah', 'Arabic', 'Tafsir'];
     
     for (const language of languages) {
         for (const category of categories) {

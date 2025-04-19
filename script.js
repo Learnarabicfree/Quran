@@ -449,7 +449,70 @@ function handleKeyDown(event) {
     }
 }
 
+// Attachment handling
+const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
+let currentAttachmentUrl = '';
+
+function showAttachmentModal(url) {
+    const modal = document.getElementById('attachmentModal');
+    const previewImg = document.getElementById('attachmentPreview');
+    
+    currentAttachmentUrl = url;
+    
+    // Check if it's an image
+    const isImage = imageExtensions.some(ext => url.toLowerCase().endsWith(ext));
+    
+    if (isImage) {
+        previewImg.src = url;
+        previewImg.style.display = 'block';
+        modal.classList.add('modal-show');
+    } else {
+        // For non-image files, force download immediately
+        forceDownload(url);
+    }
+}
+
+function closeAttachmentModal() {
+    document.getElementById('attachmentModal').classList.remove('modal-show');
+}
+
+function forceDownload(url) {
+    // Extract filename from URL
+    const filename = url.split('/').pop().split('?')[0] || 'download';
+    
+    // Fetch the file and create a download link
+    fetch(url, {
+        mode: 'cors',
+        headers: new Headers({
+            'Origin': window.location.origin
+        }),
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(blobUrl);
+        document.body.removeChild(a);
+    })
+    .catch(() => {
+        // Fallback to normal download if fetch fails
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+    
+    closeAttachmentModal();
+}
+
 function setupEventListeners() {
+    // Language selection
     document.addEventListener("click", (e) => {
         if (e.target.closest(".language-card")) {
             const card = e.target.closest(".language-card");
@@ -457,22 +520,20 @@ function setupEventListeners() {
             currentState.category = null;
             currentState.subcategory = null;
             updateNavigation();
-            updateUI(); // Updated to trigger UI changes after language selection
+            updateUI();
         }
     });
 
     // Click handler for marking as watched
-    let allowMarking = false; // Flag to control marking
-
+    let allowMarking = false;
     document.addEventListener("click", (e) => {
-        if (!allowMarking) return; // Prevent marking if the flag is false
+        if (!allowMarking) return;
 
         const card = e.target.closest('.lesson-card');
         if (card) {
             const title = card.dataset.title;
             const isNowWatched = toggleWatchedStatus(title);
 
-            // Update UI
             card.classList.toggle('watched', isNowWatched);
             const marker = card.querySelector('.watched-marker');
 
@@ -503,22 +564,19 @@ function setupEventListeners() {
         }
     });
 
-    // Category selection
+    // Category and subcategory selection
     document.addEventListener("click", (e) => {
         const categoryCard = e.target.closest(".category-card");
         const subcategoryCard = e.target.closest(".subcategory-card");
 
         if (categoryCard) {
             currentState.category = categoryCard.dataset.category;
-            const categoryData = appData[currentState.language][currentState.category];
 
-            // If the category has no subcategories, load lessons directly
             if (categoryCard.hasAttribute('data-direct-lessons')) {
                 currentState.subcategory = null;
                 updateNavigation();
                 loadLessons();
             } else {
-                // Otherwise, show subcategories
                 currentState.subcategory = null;
                 updateNavigation();
                 populateSubCategories(currentState.category);
@@ -537,7 +595,7 @@ function setupEventListeners() {
     document.getElementById("mobile-back-button").addEventListener("click", navigateBack);
     document.getElementById("mobile-home-button").addEventListener("click", goHome);
 
-    // Share button event listeners
+    // Share button toggle
     document.getElementById("floating-share").addEventListener("click", (e) => {
         e.stopPropagation();
         toggleShareMenu();
@@ -550,7 +608,7 @@ function setupEventListeners() {
         });
     });
 
-    // 🔽 New: Video Modal Events
+    // Video Modal Events
     document.querySelector('.close').addEventListener('click', closeVideoPlayer);
     document.getElementById('videoModal').addEventListener('click', (e) => {
         if (e.target === document.getElementById('videoModal')) {
@@ -558,9 +616,33 @@ function setupEventListeners() {
         }
     });
 
-    // 🔽 New: ESC Key Listener
+    // ESC Key to close modals
     document.addEventListener('keydown', handleKeyDown);
+
+    // Attachment Modal Events
+    const attachmentModal = document.getElementById('attachmentModal');
+
+    document.querySelector('.attachment-modal-close')?.addEventListener('click', closeAttachmentModal);
+    document.querySelector('.attachment-modal-close-btn')?.addEventListener('click', closeAttachmentModal);
+
+    attachmentModal?.addEventListener('click', (e) => {
+        if (e.target === attachmentModal) {
+            closeAttachmentModal();
+        }
+    });
+
+    document.querySelector('.attachment-modal-download')?.addEventListener('click', () => {
+        forceDownload(currentAttachmentUrl);
+    });
+
+    document.querySelector('.attachment-modal-view')?.addEventListener('click', () => {
+        window.open(currentAttachmentUrl, '_blank');
+        closeAttachmentModal();
+    });
 }
+
+
+
 
 
 async function loadCategories() {
@@ -638,23 +720,23 @@ function renderLessons(lessons) {
     const container = document.getElementById("lessons-container");
     container.innerHTML = lessons.map(lesson => {
         const isNew = isLessonNew(lesson.createdAt?.toDate());
+        const isWatched = getWatchedLessons()[lesson.title];
 
         return `
-        <div class="lesson-card ${getWatchedLessons()[lesson.title] ? 'watched' : ''}" 
-             data-title="${lesson.title}">
-            ${getWatchedLessons()[lesson.title] ? `
+        <div class="lesson-card ${isWatched ? 'watched' : ''}" data-title="${lesson.title}">
+            ${isWatched ? `
                 <div class="watched-marker">
-                    <i class="fas fa-check"></i>
-                    Watched
+                    <i class="fas fa-check"></i> Watched
                 </div>
             ` : ''}
             <h3>${lesson.title}</h3>
             ${isNew ? '<span class="new-lesson-badge">✨New Lesson</span>' : ''}
             <small class="search-meta">
-                ${languageTranslations[currentState.language]} / 
+                ${languageTranslations[currentState.language]} /
                 ${categoryTranslations[currentState.language][currentState.category]}
                 ${currentState.subcategory ? ` / ${currentState.subcategory}` : ''}
             </small>
+
             ${lesson.parts.map(part => {
                 const youtubeUrl = part.youtube.replace(/^🔗\s*/g, '');
                 const videoId = getYouTubeId(youtubeUrl);
@@ -662,15 +744,13 @@ function renderLessons(lessons) {
                     <div class="lesson-part">
                         <p>${part.name}</p>
                         ${videoId ? `
-                            <button class="button watch-video" 
-                                    data-video="${videoId}" 
+                            <button class="button watch-video"
+                                    data-video="${videoId}"
                                     data-title="${lesson.title}">
                                 <i class="fas fa-play"></i> Watch
                             </button>
                         ` : `
-                            <a href="${youtubeUrl}" 
-                               class="button" 
-                               target="_blank" 
+                            <a href="${youtubeUrl}" class="button" target="_blank"
                                data-title="${lesson.title}">
                                 <i class="fas fa-external-link-alt"></i> Watch
                             </a>
@@ -684,18 +764,18 @@ function renderLessons(lessons) {
                     <h4>Downloads</h4>
                     ${lesson.attachments.map(att => `
                         <div class="attachment">
-                            <a href="${att.link}" target="_blank" class="download-button">
+                            <a href="#" class="download-button" data-url="${att.link}">
                                 ${att.name} <i class="fas fa-download"></i>
                             </a>
                         </div>
-                    `).join('')}
+                    `).join("")}
                 </div>
             ` : ''}
         </div>
         `;
     }).join("");
 
-    // Restore the watched status update + modal player
+    // Watch button logic
     document.querySelectorAll(".watch-video").forEach(button => {
         button.addEventListener("click", () => {
             const lessonTitle = button.dataset.title;
@@ -703,14 +783,23 @@ function renderLessons(lessons) {
             recentLessons[lessonTitle] = Date.now();
             localStorage.setItem("recentlyViewed", JSON.stringify(recentLessons));
 
-            // If there's a video ID, open modal player
             const videoId = button.dataset.video;
             if (videoId) {
                 openVideoPlayer(videoId);
             }
         });
     });
+
+    // Download button logic
+    document.querySelectorAll('.download-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const url = button.dataset.url;
+            showAttachmentModal(url);
+        });
+    });
 }
+
 
 
 

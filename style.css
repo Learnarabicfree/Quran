@@ -168,6 +168,19 @@ body {
     overflow: hidden;
     margin-top: 15px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.lesson-parts-container {
+    flex-grow: 1;
+}
+
+.lesson-attachments {
+    margin-top: auto; /* Pushes attachments to bottom */
+    padding-top: 15px;
+    border-top: 1px solid rgba(0,0,0,0.1);
 }
 
 /* Smooth hover effect */

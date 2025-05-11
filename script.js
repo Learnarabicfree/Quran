@@ -99,6 +99,24 @@ const categoryTranslations = {
     }
 };
 
+const shareMessages = {
+    'English': {
+        message: "𝐐𝐮𝐫𝐚𝐧𝐢𝐜 𝐖𝐢𝐬𝐝𝐨𝐦\n\n𝐋𝐞𝐚𝐫𝐧 𝐁𝐚𝐬𝐢𝐜 𝐐𝐮𝐫𝐚𝐧𝐢𝐜 𝐀𝐫𝐚𝐛𝐢𝐜 𝐢𝐧 𝐋𝐞𝐬𝐬 𝐭𝐡𝐚𝐧 𝟔 𝐇𝐨𝐮𝐫𝐬! 🕔\n\n📚 Dedicate your time to learning the most valuable knowledge—understanding the Quran in Arabic. Deepen your connection with ALLAH S.W.T by comprehending His words as you recite in Salah.\n\nUpon completion, we can discuss verses of the Quran, In Shaa ALLAH S.W.T.\n\n🔗 Join now: ",
+        subject: "📖 Learn Basic Quranic Arabic in Less than 6 Hours! 🕔",
+        copied: "Link copied to clipboard!"
+    },
+    'Sinhala': {
+        message: "කුර්ආනික ඥානය\n\nපැය 6 ට අඩු කාලයකින් මූලික කුර්ආනික අරාබි භාෂාව ඉගෙන ගන්න! 🕔\n\n📖 කුර්ආනය අරාබියෙන් තේරුම් ගැනීමට ඔබේ කාලය කැප කරන්න. සලාත් පැවැත්වීමේදී අල්ලාහ් සුබ්හානහු ව තඅාලාගේ වචන තේරුම් ගැනීමෙන් ඔබේ සම්බන්ධතාව ගැඹුරු කර ගන්න.\n\nසම්පූර්ණ කිරීමෙන් පසු, අන්ශල්ලාහ් සුබ්හානහු ව තඅාලා අපට කුර්ආනයේ පාඨ සාකච්ඡා කළ හැකිය.\n\n🔗 දැන් එකතු වන්න: ",
+        subject: "📖 පැය 6 ට අඩු කාලයකින් මූලික කුර්ආනික අරාබි ඉගෙන ගන්න! 🕔",
+        copied: "සබැඳිය පසුරු පුවරුවට පිටපත් කරන ලදී!"
+    },
+    'Tamil': {
+        message: "குர்ஆனிக ஞானம்\n\n6 மணி நேரத்திற்குள் அடிப்படை குர்ஆனிக அரபு மொழியைக் கற்றுக்கொள்ளுங்கள்! 🕔\n\n📖 குர்ஆனை அரபு மொழியில் புரிந்துகொள்வதற்கு உங்கள் நேரத்தை அர்ப்பணிக்கவும். தொழுகையில் அல்லாஹ் சுப்ஹானஹு வ தஆலாவின் வார்த்தைகளைப் புரிந்துகொள்வதன் மூலம் உங்கள் தொடர்பை ஆழப்படுத்துங்கள்.\n\nமுடிந்தவுடன், இன்ஷா அல்லாஹ் சுப்ஹானஹு வ தஆலா நாம் குர்ஆனின் வசனங்களைப் பற்றி விவாதிக்கலாம்.\n\n🔗 இப்போது சேரவும்: ",
+        subject: "📖 6 மணி நேரத்திற்குள் அடிப்படை குர்ஆனிக அரபு மொழியைக் கற்றுக்கொள்ளுங்கள்! 🕔",
+        copied: "இணைப்பு நகலெடுக்கப்பட்டது!"
+    }
+};
+
 let navigationStack = [];
 let currentPosition = -1;
 let currentState = {
@@ -714,95 +732,6 @@ async function loadLessons() {
     }
 }
 
-
-
-function renderLessons(lessons) {
-    const container = document.getElementById("lessons-container");
-    container.innerHTML = lessons.map(lesson => {
-        const isNew = isLessonNew(lesson.createdAt?.toDate());
-        const isWatched = getWatchedLessons()[lesson.title];
-
-        return `
-        <div class="lesson-card ${isWatched ? 'watched' : ''}" data-title="${lesson.title}">
-            ${isWatched ? `
-                <div class="watched-marker">
-                    <i class="fas fa-check"></i> Watched
-                </div>
-            ` : ''}
-            <h3>${lesson.title}</h3>
-            ${isNew ? '<span class="new-lesson-badge">✨New Lesson</span>' : ''}
-            <small class="search-meta">
-                ${languageTranslations[currentState.language]} /
-                ${categoryTranslations[currentState.language][currentState.category]}
-                ${currentState.subcategory ? ` / ${currentState.subcategory}` : ''}
-            </small>
-
-            ${lesson.parts.map(part => {
-                const youtubeUrl = part.youtube.replace(/^🔗\s*/g, '');
-                const videoId = getYouTubeId(youtubeUrl);
-                return `
-                    <div class="lesson-part">
-                        <p>${part.name}</p>
-                        ${videoId ? `
-                            <button class="button watch-video"
-                                    data-video="${videoId}"
-                                    data-title="${lesson.title}">
-                                <i class="fas fa-play"></i> Watch
-                            </button>
-                        ` : `
-                            <a href="${youtubeUrl}" class="button" target="_blank"
-                               data-title="${lesson.title}">
-                                <i class="fas fa-external-link-alt"></i> Watch
-                            </a>
-                        `}
-                    </div>
-                `;
-            }).join("")}
-
-            ${lesson.attachments && lesson.attachments.length > 0 ? `
-                <div class="lesson-attachments">
-                    <h4>Downloads</h4>
-                    ${lesson.attachments.map(att => `
-                        <div class="attachment">
-                            <a href="#" class="download-button" data-url="${att.link}">
-                                ${att.name} <i class="fas fa-download"></i>
-                            </a>
-                        </div>
-                    `).join("")}
-                </div>
-            ` : ''}
-        </div>
-        `;
-    }).join("");
-
-    // Watch button logic
-    document.querySelectorAll(".watch-video").forEach(button => {
-        button.addEventListener("click", () => {
-            const lessonTitle = button.dataset.title;
-            let recentLessons = JSON.parse(localStorage.getItem("recentlyViewed")) || {};
-            recentLessons[lessonTitle] = Date.now();
-            localStorage.setItem("recentlyViewed", JSON.stringify(recentLessons));
-
-            const videoId = button.dataset.video;
-            if (videoId) {
-                openVideoPlayer(videoId);
-            }
-        });
-    });
-
-    // Download button logic
-    document.querySelectorAll('.download-button').forEach(button => {
-        button.addEventListener('click', (e) => {
-            e.preventDefault();
-            const url = button.dataset.url;
-            showAttachmentModal(url);
-        });
-    });
-}
-
-
-
-
 // Helper function to check if lesson is new (less than 1 week old)
 function isLessonNew(createdAt) {
     if (!createdAt) return false;
@@ -810,11 +739,6 @@ function isLessonNew(createdAt) {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     return createdAt > oneWeekAgo;
 }
-
-
-
-
-
 
 document.addEventListener("click", (e) => {
     const categoryCard = e.target.closest(".category-card");
@@ -888,17 +812,6 @@ function displaySearchResults(results) {
 }
 
 
-function updateNavigation() {
-    // Build hash from current state
-    const parts = [];
-    if (currentState.language) parts.push(encodeURIComponent(currentState.language));
-    if (currentState.category) parts.push(encodeURIComponent(currentState.category));
-    if (currentState.subcategory) parts.push(encodeURIComponent(currentState.subcategory));
-    
-    const newHash = parts.length ? `#${parts.join('/')}` : '';
-    history.pushState({}, document.title, newHash);
-    saveState();
-}
 
 // Replace the existing popstate listener with this corrected version
 window.addEventListener('popstate', () => {
@@ -1009,15 +922,6 @@ function updateUI() {
         document.getElementById("lesson-list").dataset.loaded = "true"; // Mark as loaded
     }
 }
-
-
-
-
-
-
-
-
-
 
 
 function navigateBack() {
@@ -1136,21 +1040,26 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-function parseHash() {
-    const hash = window.location.hash.substring(1);
-    const parts = hash.split('/').map(part => decodeURIComponent(part));
-    currentState.language = parts[0] || null;
-    currentState.category = parts[1] || null;
-    currentState.subcategory = parts[2] || null;
-}
+
 
 function showToast(message, isError = false) {
+    // If message is a boolean (for backward compatibility), use default messages
+    if (typeof message === 'boolean') {
+        message = currentState.language === 'Sinhala' ? 
+            (message ? 'සාර්ථකව සම්පූර්ණයි!' : 'දෝෂයක් ඇතිවිය') :
+            currentState.language === 'Tamil' ? 
+            (message ? 'வெற்றிகரமாக முடிந்தது!' : 'பிழை ஏற்பட்டது') :
+            (message ? 'Completed successfully!' : 'An error occurred');
+        isError = !message;
+    }
+    
     // Remove any existing toast first
     const existingToast = document.querySelector('.toast');
     if (existingToast) {
         existingToast.remove();
     }
     
+    // Create the new toast
     const toast = document.createElement('div');
     toast.className = `toast ${isError ? 'error' : ''}`;
     toast.textContent = message;
@@ -1162,6 +1071,7 @@ function showToast(message, isError = false) {
         setTimeout(() => toast.remove(), 300);
     }, 2500);
 }
+
 
 
 // Replace previous share functions with these
@@ -1183,32 +1093,6 @@ function closeShareMenuOnClickOutside(e) {
         shareMenu.classList.remove('active');
         document.removeEventListener('click', closeShareMenuOnClickOutside);
     }
-}
-
-function handleShare(platform) {
-    const currentUrl = window.location.href;
-    const encodedUrl = encodeURIComponent(currentUrl);
-    const message = "`𝐐𝐮𝐫𝐚𝐧𝐢𝐜 𝐖𝐢𝐬𝐝𝐨𝐦`\n\n𝐋𝐞𝐚𝐫𝐧 𝐁𝐚𝐬𝐢𝐜 𝐐𝐮𝐫𝐚𝐧𝐢𝐜 𝐀𝐫𝐚𝐛𝐢𝐜 𝐢𝐧 𝐋𝐞𝐬𝐬 𝐭𝐡𝐚𝐧 𝟔 𝐇𝐨𝐮𝐫𝐬! 🕔\n\n 📚 Dedicate your time to learning the most valuable knowledge—understanding the Quran in Arabic. Deepen your connection with ALLAH S.W.T by comprehending His words as you recite in Salah.\n\nUpon completion, we can discuss verses of the Quran, In Shaa ALLAH S.W.T.\n\n🔗 Join now: ";
-
-    switch(platform) {
-        case 'whatsapp':
-            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}\n\n${encodedUrl}`);
-            break;
-        case 'facebook':
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`);
-            break;
-        case 'twitter':
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodedUrl}`);
-            break;
-        case 'email':
-            window.open(`mailto:?subject=${encodeURIComponent('📖 𝐋𝐞𝐚𝐫𝐧 𝐁𝐚𝐬𝐢𝐜 𝐐𝐮𝐫𝐚𝐧𝐢𝐜 𝐀𝐫𝐚𝐛𝐢𝐜 𝐢𝐧 𝐋𝐞𝐬𝐬 𝐭𝐡𝐚𝐧 𝟔 𝐇𝐨𝐮𝐫𝐬! 🕔')}&body=${encodeURIComponent(message + '\n\n' + currentUrl)}`);
-            break;
-        case 'copy':
-            copyToClipboard(currentUrl);
-            break;
-    }
-    
-    document.querySelector('.share-menu').classList.remove('active');
 }
 
 function copyToClipboard(text) {

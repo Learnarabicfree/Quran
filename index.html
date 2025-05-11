@@ -9,6 +9,8 @@
     <link rel="manifest" href="/Quran/manifest.json">
     <meta name="theme-color" content="#2B6D4F">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="src/home/Lessons.css">
+    <link rel="stylesheet" href="src/home/Download Module.css">
     <link rel="icon" href="img/logo-app.png" type="image/png">
 
 <!-- Open Graph / Social Media Meta Tags -->
@@ -176,6 +178,18 @@
         </div>
     </div>
 
+    <!-- Download Modal -->
+<div id="downloadModal" class="download-modal">
+    <div class="download-modal-content">
+        <span class="close-download-modal">&times;</span>
+        <h3>Download Video</h3>
+        <p>Choose download service:</p>
+        <button class="download-option" data-service="youpak">YouPak</button>
+        <button class="download-option" data-service="y2mate">Y2Mate</button>
+        <button class="download-option" data-service="ssyoutube">SSYouTube</button>
+    </div>
+</div>
+
     <!-- Replace floating share button with this -->
 <div id="floating-share" class="floating-share">
     <div class="share-menu">
@@ -206,5 +220,8 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="script.js"></script>
+    <script src="src/home/RenderLessons.js"></script>
+    <script src="src/home/sharing.js"></script>
+    <script src="src/home/Download Module.js"></script>
 </body>
 </html>

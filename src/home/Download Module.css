@@ -1,0 +1,145 @@
+/* Download Modal Styles */
+.download-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+}
+
+.download-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.download-option {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+.download-option:hover {
+    background: var(--secondary-color);
+}
+
+.close-download-modal {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.video-actions {
+    display: flex;
+    flex-direction: column; /* Change this line */
+    gap: 10px;
+    margin-top: 8px;
+    align-items: flex-start; /* Optional: align buttons to the left */
+}
+
+.download-video {
+    background: #6c757d;
+    color: white;
+}
+
+.download-video:hover {
+    background: #5a6268;
+}
+
+/* Attachment Modal Styles */
+#attachmentModal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 9998;
+    justify-content: center;
+    align-items: center;
+}
+
+#attachmentModal.modal-show {
+    display: flex;
+}
+
+.attachment-modal-content {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 90%;
+    max-height: 90vh;
+    text-align: center;
+}
+
+.attachment-modal-img {
+    max-width: 100%;
+    max-height: 80vh;
+    margin-bottom: 15px;
+}
+
+.attachment-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.attachment-modal-btn {
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    font-weight: bold;
+}
+
+.attachment-modal-download {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.attachment-modal-close {
+    position: absolute;
+    top: -30px;
+    right: 0;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.download-button {
+    background: var(--primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.download-button:hover {
+    background: var(--secondary-color);
+}
+

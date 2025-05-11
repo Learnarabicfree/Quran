@@ -1,8 +1,8 @@
 function updateNavigation() {
     const parts = [];
     if (currentState.language) parts.push(currentState.language);
-    if (currentState.category) parts.push(currentState.category);
-    if (currentState.subcategory) parts.push(currentState.subcategory);
+    if (currentState.category) parts.push(cleanUrlText(currentState.category));
+    if (currentState.subcategory) parts.push(cleanUrlText(currentState.subcategory));
     
     const newHash = parts.length ? `#${parts.join('/')}` : '';
     history.pushState({}, document.title, newHash);
@@ -10,32 +10,20 @@ function updateNavigation() {
 }
 
 function parseHash() {
-    try {
-        const hash = window.location.hash.substring(1);
-        if (!hash) return;
+    const hash = window.location.hash.substring(1);
+    const parts = hash.split('/').map(part => {
+        // Replace hyphens with spaces for display
+        return part.replace(/-/g, ' ');
+    });
 
-        // Split and decode components
-        const parts = hash.split('/').map(part => {
-            try {
-                return decodeURIComponent(part);
-            } catch (e) {
-                return part;
-            }
-        });
+    const languageMatch = Object.keys(languageTranslations).find(
+        lang => lang.toLowerCase() === parts[0]?.toLowerCase()
+    );
 
-        // Find matching language (case insensitive)
-        const languageMatch = Object.keys(languageTranslations).find(
-            lang => lang.toLowerCase() === parts[0]?.toLowerCase()
-        );
-
-        if (languageMatch) {
-            currentState.language = languageMatch;
-            currentState.category = parts[1] || null;
-            currentState.subcategory = parts[2] || null;
-            loadContentBasedOnState();
-        }
-    } catch (error) {
-        console.error("Error parsing hash:", error);
+    if (languageMatch) {
+        currentState.language = languageMatch;
+        currentState.category = parts[1] || null;
+        currentState.subcategory = parts[2] || null;
     }
 }
 
@@ -80,35 +68,30 @@ function handleShare(platform) {
         const currentLang = currentState.language || 'English';
         const langMessages = shareMessages[currentLang] || shareMessages['English'];
         
-        // Build clean URL components
-        const cleanParts = [];
-        if (currentState.language) cleanParts.push(currentState.language);
-        if (currentState.category) cleanParts.push(currentState.category);
-        if (currentState.subcategory) cleanParts.push(currentState.subcategory);
+        // Build clean URL with hyphens
+        const parts = [];
+        if (currentState.language) parts.push(currentState.language);
+        if (currentState.category) parts.push(cleanUrlText(currentState.category));
+        if (currentState.subcategory) parts.push(cleanUrlText(currentState.subcategory));
         
-        const cleanHash = cleanParts.length ? `#${cleanParts.join('/')}` : '';
+        const cleanHash = parts.length ? `#${parts.join('/')}` : '';
         const cleanUrl = `${window.location.origin}${window.location.pathname}${cleanHash}`;
-
-        // Create encoded version for proper URL handling
-        const encodedUrl = encodeURI(cleanUrl);
 
         switch(platform) {
             case 'whatsapp':
                 window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(langMessages.message + cleanUrl)}`);
                 break;
             case 'facebook':
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`);
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURI(cleanUrl)}`);
                 break;
             case 'twitter':
-                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(langMessages.message)}&url=${encodedUrl}`);
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(langMessages.message)}&url=${encodeURI(cleanUrl)}`);
                 break;
             case 'email':
                 const englishMessages = shareMessages['English'];
                 const mailtoLink = `mailto:?subject=${encodeMailtoText(englishMessages.subject)}&body=${encodeMailtoText(englishMessages.message + '\n\n' + cleanUrl)}`;
                 const mailWindow = window.open(mailtoLink, '_blank');
-                if (!mailWindow) {
-                    showToast("Please allow popups for email sharing", true);
-                }
+                if (!mailWindow) showToast("Please allow popups", true);
                 break;
             case 'copy':
                 copyToClipboard(cleanUrl);
@@ -119,7 +102,7 @@ function handleShare(platform) {
         document.querySelector('.share-menu').classList.remove('active');
     } catch (error) {
         console.error("Sharing error:", error);
-        showToast("Error while sharing. Please try again.", true);
+        showToast("Error while sharing", true);
     }
 }
 
@@ -151,4 +134,11 @@ function encodeMailtoText(text) {
         .replace(/'/g, '%27')
         .replace(/\(/g, '%28')
         .replace(/\)/g, '%29');
+}
+
+function cleanUrlText(text) {
+    return text
+        .replace(/\s+/g, '-')  // Replace spaces with hyphens
+        .replace(/[^\w\-]/g, '') // Remove special chars except hyphens
+        .replace(/-+/g, '-');   // Remove consecutive hyphens
 }

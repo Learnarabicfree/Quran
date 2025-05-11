@@ -15,8 +15,8 @@ function downloadVideo(service) {
     
     let url;
     switch(service) {
-        case 'youpak':
-            url = `https://youpak.com/watch?v=${currentVideoId}`;
+        case 'yout':
+            url = `https://yout.com/watch?v=${currentVideoId}`;
             break;
         case 'y2mate':
             url = `https://www.y2mate.com/youtube/${currentVideoId}`;

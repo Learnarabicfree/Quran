@@ -1,8 +1,8 @@
 function updateNavigation() {
     const parts = [];
     if (currentState.language) parts.push(currentState.language);
-    if (currentState.category) parts.push(cleanUrlText(currentState.category));
-    if (currentState.subcategory) parts.push(cleanUrlText(currentState.subcategory));
+    if (currentState.category) parts.push(formatUrlPart(currentState.category));
+    if (currentState.subcategory) parts.push(formatUrlPart(currentState.subcategory));
     
     const newHash = parts.length ? `#${parts.join('/')}` : '';
     history.pushState({}, document.title, newHash);
@@ -11,11 +11,18 @@ function updateNavigation() {
 
 function parseHash() {
     const hash = window.location.hash.substring(1);
+    if (!hash) return;
+
+    // Split and decode components
     const parts = hash.split('/').map(part => {
-        // Replace hyphens with spaces for display
-        return part.replace(/-/g, ' ');
+        try {
+            return decodeURIComponent(part).replace(/-/g, ' ');
+        } catch (e) {
+            return part.replace(/-/g, ' ');
+        }
     });
 
+    // Find matching language (case insensitive)
     const languageMatch = Object.keys(languageTranslations).find(
         lang => lang.toLowerCase() === parts[0]?.toLowerCase()
     );
@@ -24,6 +31,7 @@ function parseHash() {
         currentState.language = languageMatch;
         currentState.category = parts[1] || null;
         currentState.subcategory = parts[2] || null;
+        loadContentBasedOnState();
     }
 }
 
@@ -68,13 +76,13 @@ function handleShare(platform) {
         const currentLang = currentState.language || 'English';
         const langMessages = shareMessages[currentLang] || shareMessages['English'];
         
-        // Build clean URL with hyphens
-        const parts = [];
-        if (currentState.language) parts.push(currentState.language);
-        if (currentState.category) parts.push(cleanUrlText(currentState.category));
-        if (currentState.subcategory) parts.push(cleanUrlText(currentState.subcategory));
+        // Build URL parts with hyphens instead of spaces
+        const urlParts = [];
+        if (currentState.language) urlParts.push(currentState.language);
+        if (currentState.category) urlParts.push(formatUrlPart(currentState.category));
+        if (currentState.subcategory) urlParts.push(formatUrlPart(currentState.subcategory));
         
-        const cleanHash = parts.length ? `#${parts.join('/')}` : '';
+        const cleanHash = urlParts.length ? `#${urlParts.join('/')}` : '';
         const cleanUrl = `${window.location.origin}${window.location.pathname}${cleanHash}`;
 
         switch(platform) {
@@ -91,7 +99,9 @@ function handleShare(platform) {
                 const englishMessages = shareMessages['English'];
                 const mailtoLink = `mailto:?subject=${encodeMailtoText(englishMessages.subject)}&body=${encodeMailtoText(englishMessages.message + '\n\n' + cleanUrl)}`;
                 const mailWindow = window.open(mailtoLink, '_blank');
-                if (!mailWindow) showToast("Please allow popups", true);
+                if (!mailWindow) {
+                    showToast("Please allow popups for email sharing", true);
+                }
                 break;
             case 'copy':
                 copyToClipboard(cleanUrl);
@@ -102,7 +112,7 @@ function handleShare(platform) {
         document.querySelector('.share-menu').classList.remove('active');
     } catch (error) {
         console.error("Sharing error:", error);
-        showToast("Error while sharing", true);
+        showToast("Error while sharing. Please try again.", true);
     }
 }
 
@@ -136,9 +146,6 @@ function encodeMailtoText(text) {
         .replace(/\)/g, '%29');
 }
 
-function cleanUrlText(text) {
-    return text
-        .replace(/\s+/g, '-')  // Replace spaces with hyphens
-        .replace(/[^\w\-]/g, '') // Remove special chars except hyphens
-        .replace(/-+/g, '-');   // Remove consecutive hyphens
+function formatUrlPart(part) {
+    return part.replace(/\s+/g, '-');
 }

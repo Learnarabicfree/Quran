@@ -22,7 +22,7 @@ function parseHash() {
         }
     });
 
-    // Find matching language (case insensitive)
+    // Find matching language
     const languageMatch = Object.keys(languageTranslations).find(
         lang => lang.toLowerCase() === parts[0]?.toLowerCase()
     );
@@ -71,12 +71,12 @@ function safeEncodeURIComponent(str) {
     }
 }
 
-function handleShare(platform) {
+async function handleShare(platform) {
     try {
         const currentLang = currentState.language || 'English';
         const langMessages = shareMessages[currentLang] || shareMessages['English'];
         
-        // Build URL parts with hyphens instead of spaces
+        // Build URL parts with hyphens
         const urlParts = [];
         if (currentState.language) urlParts.push(currentState.language);
         if (currentState.category) urlParts.push(formatUrlPart(currentState.category));
@@ -85,26 +85,44 @@ function handleShare(platform) {
         const cleanHash = urlParts.length ? `#${urlParts.join('/')}` : '';
         const cleanUrl = `${window.location.origin}${window.location.pathname}${cleanHash}`;
 
+        // Get the title based on current state
+        let contentTitle = '';
+        if (currentState.subcategory) {
+            contentTitle = await getContentTitle(currentState.language, currentState.category, currentState.subcategory);
+        } else if (currentState.category) {
+            contentTitle = currentState.category;
+        }
+
+        // Create enhanced message with title
+        let enhancedMessage = langMessages.message;
+        if (contentTitle) {
+            enhancedMessage = `📖 ${contentTitle}\n\n${enhancedMessage}`;
+        }
+
         switch(platform) {
             case 'whatsapp':
-                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(langMessages.message + cleanUrl)}`);
+                window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(enhancedMessage + cleanUrl)}`);
                 break;
             case 'facebook':
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURI(cleanUrl)}`);
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURI(cleanUrl)}&quote=${encodeURIComponent(enhancedMessage)}`);
                 break;
             case 'twitter':
-                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(langMessages.message)}&url=${encodeURI(cleanUrl)}`);
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(enhancedMessage)}&url=${encodeURI(cleanUrl)}`);
                 break;
             case 'email':
                 const englishMessages = shareMessages['English'];
-                const mailtoLink = `mailto:?subject=${encodeMailtoText(englishMessages.subject)}&body=${encodeMailtoText(englishMessages.message + '\n\n' + cleanUrl)}`;
+                let englishEnhancedMessage = englishMessages.message;
+                if (contentTitle) {
+                    englishEnhancedMessage = `📖 ${contentTitle}\n\n${englishEnhancedMessage}`;
+                }
+                const mailtoLink = `mailto:?subject=${encodeMailtoText(contentTitle || englishMessages.subject)}&body=${encodeMailtoText(englishEnhancedMessage + '\n\n' + cleanUrl)}`;
                 const mailWindow = window.open(mailtoLink, '_blank');
                 if (!mailWindow) {
                     showToast("Please allow popups for email sharing", true);
                 }
                 break;
             case 'copy':
-                copyToClipboard(cleanUrl);
+                copyToClipboard(`${enhancedMessage}\n\n${cleanUrl}`);
                 showToast(langMessages.copied);
                 break;
         }
@@ -113,6 +131,29 @@ function handleShare(platform) {
     } catch (error) {
         console.error("Sharing error:", error);
         showToast("Error while sharing. Please try again.", true);
+    }
+}
+
+async function getContentTitle(language, category, subcategory) {
+    try {
+        if (!subcategory) return category;
+        
+        // Try to fetch from Firestore
+        const docRef = db.collection(language)
+            .doc(category)
+            .collection('subCategories')
+            .doc(subcategory);
+        
+        const doc = await docRef.get();
+        if (doc.exists) {
+            return doc.data().name || subcategory;
+        }
+        
+        // Fallback to the subcategory ID with hyphens replaced by spaces
+        return subcategory.replace(/-/g, ' ');
+    } catch (error) {
+        console.error("Error fetching title:", error);
+        return subcategory.replace(/-/g, ' ');
     }
 }
 

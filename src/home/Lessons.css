@@ -205,6 +205,13 @@
     opacity: 1;
 }
 
+@media (max-width: 768px) {
+  .button-grid{
+    grid-template-columns: 1fr;
+  }
+
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .lesson-card {

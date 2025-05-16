@@ -54,11 +54,11 @@
     </div>
 
     <div id="videoModal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <div id="player"></div>
-        </div>
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div id="player"></div>
     </div>
+</div>
 
 <!-- Attachment Modal -->
 <div id="attachmentModal">
@@ -218,7 +218,12 @@
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+</script>
     <script src="script.js"></script>
     <script src="src/home/RenderLessons.js"></script>
     <script src="src/home/sharing.js"></script>

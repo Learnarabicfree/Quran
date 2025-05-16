@@ -399,11 +399,13 @@ function initializeVideoPlayer(videoId) {
                 height: '100%',
                 width: '100%',
                 videoId: videoId,
+                host: 'https://www.youtube-nocookie.com', // Add this line
                 playerVars: {
                     autoplay: 1,
                     modestbranding: 1,
                     rel: 0,
-                    controls: 1
+                    controls: 1,
+                    origin: window.location.origin // Important for security
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -738,6 +740,11 @@ function isLessonNew(createdAt) {
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
     return createdAt > oneWeekAgo;
+
+    function getNoCookieYouTubeUrl(url) {
+    const videoId = getYouTubeId(url);
+    return videoId ? `https://www.youtube-nocookie.com/embed/${videoId}` : url;
+}
 }
 
 document.addEventListener("click", (e) => {

@@ -84,22 +84,28 @@ function renderLessons(lessons) {
 function renderLessonPart(part, lessonTitle) {
     const youtubeUrl = part.youtube.replace(/^🔗\s*/g, '');
     const videoId = getYouTubeId(youtubeUrl);
-
+    
     return `
         <div class="lesson-part">
             <p>${part.name}</p>
-            ${videoId ? `
-                <button class="button watch-video"
-                        data-video="${videoId}"
-                        data-title="${lessonTitle}">
-                    <i class="fas fa-play"></i> Watch
-                </button>
-            ` : `
-                <a href="${youtubeUrl}" class="button" target="_blank"
-                   data-title="${lessonTitle}">
-                    <i class="fas fa-external-link-alt"></i> Watch
-                </a>
-            `}
+            <div class="video-actions">
+                ${videoId ? `
+                    <button class="button watch-video"
+                            data-video="${videoId}"
+                            data-title="${lessonTitle}">
+                        <i class="fas fa-play"></i> Watch
+                    </button>
+                    <button class="button download-video"
+                            data-video="${videoId}">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                ` : `
+                    <a href="${youtubeUrl}" class="button" target="_blank"
+                       data-title="${lessonTitle}">
+                        <i class="fas fa-external-link-alt"></i> Watch
+                    </a>
+                `}
+            </div>
         </div>
     `;
 }

@@ -183,21 +183,18 @@ function showSystemNotification(notification) {
 
 document.addEventListener("DOMContentLoaded", async () => {
     showLoading();
-    await fetchData(); // Ensure this is called
+    await fetchData(); // Make sure data is loaded first
 
-    // Check URL hash first
+    // Check URL hash if present
     if (window.location.hash) {
-        parseHash(); // Handle hash if present
+        parseHash();
     } else {
-        loadState(); // Fallback to localStorage
+        loadState();
     }
 
-    setupEventListeners(); // Set up event listeners
-    updateUI(); // Update UI based on the hash or state
-
-    // ✅ Initialize push notifications
+    setupEventListeners();
+    updateUI();
     initializeNotifications();
-
     hideLoading();
 
     // Preserve initial hash in history
@@ -683,36 +680,49 @@ function extractLessonNumber(title) {
 
 async function loadLessons() {
     try {
+        showLoading(); // Start loading indicator
+
+        // Validate required state
+        if (!currentState.language || !currentState.category) {
+            throw new Error("Invalid state for loading lessons");
+        }
+
         console.log("Loading lessons for:", currentState); // Debug log
 
         let lessonRef;
+        const language = currentState.language;
+        const category = currentState.category;
+        const subcategory = currentState.subcategory;
 
         // Determine Firestore path
-        if (currentState.subcategory) {
-            // Load lessons from subcategory
-            lessonRef = db.collection(currentState.language)
-                .doc(currentState.category)
+        if (subcategory) {
+            lessonRef = db.collection(language)
+                .doc(category)
                 .collection('subCategories')
-                .doc(currentState.subcategory)
+                .doc(subcategory)
                 .collection('lessons');
         } else {
-            // Load direct lessons from category
-            lessonRef = db.collection(currentState.language)
-                .doc(currentState.category)
+            lessonRef = db.collection(language)
+                .doc(category)
                 .collection('lessons');
         }
 
         const snapshot = await lessonRef.get();
         console.log("Lessons fetched:", snapshot.size); // Debug log
 
+        if (snapshot.empty) {
+            showToast("No lessons found in this category", true);
+            return;
+        }
+
         let lessons = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-        // Get selected sort order safely
-        const sortOrder = document.getElementById("lesson-sort")?.value || "lessonOrder";
+        // Get selected sort order
+        const sortOrder = document.getElementById("lesson-sort")?.value || "lessonNumber";
 
-        // Apply sorting logic
+        // Apply sorting
         if (sortOrder === "newest") {
-            lessons.reverse(); // Reverse for newest first
+            lessons.reverse();
         } else if (sortOrder === "lessonNumber") {
             lessons.sort((a, b) => extractLessonNumber(a.title) - extractLessonNumber(b.title));
         } else if (sortOrder === "recentlyViewed") {
@@ -720,19 +730,23 @@ async function loadLessons() {
             lessons.sort((a, b) => (recentLessons[b.id] || 0) - (recentLessons[a.id] || 0));
         }
 
-        // Update lesson title dynamically
-        const subCatText = currentState.subcategory ? ` - ${currentState.subcategory}` : '';
+        // Update lesson title
+        const subCatText = subcategory ? ` - ${subcategory}` : '';
         document.getElementById("lesson-title").textContent =
-            `${languageTranslations[currentState.language]} - ${categoryTranslations[currentState.language][currentState.category]}${subCatText}`;
+            `${languageTranslations[language]} - ${categoryTranslations[language][category]}${subCatText}`;
 
-        // Render sorted lessons
         renderLessons(lessons);
         updateUI();
+
     } catch (error) {
         console.error("Error loading lessons:", error);
         showToast("Error loading lessons. Please try again.", true);
+        navigateBack(); // Return if error
+    } finally {
+        hideLoading(); // Always hide loading at the end
     }
 }
+
 
 // Helper function to check if lesson is new (less than 1 week old)
 function isLessonNew(createdAt) {

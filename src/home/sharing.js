@@ -22,6 +22,13 @@ function parseHash() {
         }
     });
 
+    // Reset state
+    currentState = {
+        language: null,
+        category: null,
+        subcategory: null
+    };
+
     // Find matching language
     const languageMatch = Object.keys(languageTranslations).find(
         lang => lang.toLowerCase() === parts[0]?.toLowerCase()
@@ -29,33 +36,67 @@ function parseHash() {
 
     if (languageMatch) {
         currentState.language = languageMatch;
-        currentState.category = parts[1] || null;
-        currentState.subcategory = parts[2] || null;
-        loadContentBasedOnState();
+        
+        // Only proceed if we have app data for this language
+        if (appData[currentState.language]) {
+            // Find matching category (case insensitive)
+            const categoryMatch = Object.keys(appData[currentState.language]).find(
+                cat => cat.toLowerCase() === parts[1]?.toLowerCase()
+            );
+            
+            if (categoryMatch) {
+                currentState.category = categoryMatch;
+                
+                // Check if this category has subcategories
+                const categoryData = appData[currentState.language][currentState.category];
+                
+                if (parts[2] && categoryData.subCategories.length > 0) {
+                    // Find matching subcategory (case insensitive)
+                    const subCatMatch = categoryData.subCategories.find(
+                        sub => sub.id.toLowerCase() === parts[2].toLowerCase()
+                    );
+                    
+                    if (subCatMatch) {
+                        currentState.subcategory = subCatMatch.id;
+                    }
+                }
+            }
+        }
     }
+
+    loadContentBasedOnState();
 }
 
 function loadContentBasedOnState() {
-    if (!currentState.language) return;
-    
-    // Load categories if we have a language but no category
-    if (!currentState.category) {
-        populateCategories();
-    } 
-    // Load subcategories if we have a category but no subcategory
-    else if (!currentState.subcategory) {
-        const categoryData = appData[currentState.language]?.[currentState.category];
-        if (categoryData?.subCategories?.length > 0) {
-            populateSubCategories(currentState.category);
-        } else {
-            loadLessons();
-        }
-    } 
-    // Load lessons if we have all three
-    else {
-        loadLessons();
+    if (!currentState.language || !appData[currentState.language]) {
+        return;
     }
-    updateUI();
+
+    // Show loading indicator
+    showLoading();
+
+    // Load content based on current state
+    if (currentState.category) {
+        const categoryData = appData[currentState.language][currentState.category];
+        
+        if (currentState.subcategory) {
+            // Directly load lessons if we have a subcategory
+            loadLessons().finally(hideLoading);
+        } else if (categoryData.subCategories.length > 0) {
+            // Show subcategories if they exist
+            populateSubCategories(currentState.category);
+            updateUI();
+            hideLoading();
+        } else {
+            // Directly load lessons if no subcategories
+            loadLessons().finally(hideLoading);
+        }
+    } else {
+        // Show categories if we only have language
+        populateCategories();
+        updateUI();
+        hideLoading();
+    }
 }
 
 function safeEncodeURIComponent(str) {

@@ -450,9 +450,19 @@ function closeVideoPlayer() {
 // YouTube URL Parser
 function getYouTubeId(url) {
     try {
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        // Clean up whitespace and emojis
+        url = url.trim().replace(/^🔗\s*/, '');
+
+        // Handle Shorts URLs
+        if (url.includes("youtube.com/shorts/")) {
+            const id = url.split("/shorts/")[1].split("?")[0];
+            return id;
+        }
+
+        // Regular expressions for all other formats
+        const regExp = /^.*(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]{11}).*/;
         const match = url.match(regExp);
-        return (match && match[2].length === 11) ? match[2] : null;
+        return (match && match[1]) ? match[1] : null;
     } catch (error) {
         console.error('URL parsing error:', error);
         return null;

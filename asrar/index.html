@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asrar | Secrets Of Quran</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <link href="img/favicon.ico" rel="icon">
+    <style>
+        /* ... (CSS Styles remain the same) ... */
+        :root {
+            --color-primary: #047857;
+            --color-secondary: #FBBF24;
+            --color-text: #1F2937;
+            --color-bg: #F9FAFB;
+        }
+        .bg-primary { background-color: var(--color-primary); }
+        .text-primary { color: var(--color-primary); }
+        .border-primary { border-color: var(--color-primary); }
+        .bg-secondary { background-color: var(--color-secondary); }
+        .text-secondary { color: var(--color-secondary); }
+        body { font-family: 'Inter', sans-serif; background-color: var(--color-bg); color: var(--color-text); }
+        html { scroll-behavior: smooth; }
+
+        .wave-divider {
+            fill: var(--color-bg);
+        }
+        
+        .textured-bg {
+            background-image: linear-gradient(135deg, #eeeeee 10%, #f9f9f9 10%, #f9f9f9 50%, #eeeeee 50%, #eeeeee 60%, #f9f9f9 60%, #f9f9f9 100%);
+            background-size: 8px 8px; 
+        }
+
+        .logo-ring-container {
+            position: relative;
+            display: inline-block;
+        }
+        .logo-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: var(--color-secondary);
+            border-right-color: var(--color-secondary);
+            animation: spin 3s linear infinite;
+            opacity: 0.7;
+            z-index: 0; 
+        }
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .animate-on-scroll {
+            opacity: 0;
+        }
+
+        .animate-on-scroll.is-visible {
+            animation-duration: 0.8s;
+            animation-fill-mode: both;
+        }
+
+        .animate-on-scroll.is-visible[data-animation="fadeInUp"] {
+            animation-name: fadeInUp;
+        }
+
+        .animate-on-scroll.is-visible[data-animation="fadeIn"] {
+            animation-name: fadeIn;
+        }
+        
+        header {
+            animation: fadeIn 0.7s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="sticky top-0 z-50 bg-primary shadow-lg">
+         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-5 flex justify-between items-center">
+            <a href="#hero" class="flex items-center space-x-3">
+                <div class="logo-ring-container relative">
+                    <div class="logo-ring"></div> 
+                    <img 
+                        src="img/Asrar-logo-round.png" 
+                        onerror="this.onerror=null;this.src='https://placehold.co/80x80/047857/FBBF24?text=ASRAR'" 
+                        alt="Asrar Logo" 
+                        class="w-20 h-20 rounded-full border-2 border-secondary shadow-lg hover:scale-110 transition duration-300 relative z-10">
+                </div>
+                <span class="text-3xl font-extrabold tracking-tight text-white hidden sm:inline">
+                    <span class="text-secondary">Asrar</span>.
+                </span>
+            </a>
+
+            <nav class="hidden md:flex space-x-8 text-lg font-medium">
+                <a href="#resources" class="text-white hover:text-secondary transition duration-300">Resources</a>
+                <a href="#about" class="text-white hover:text-secondary transition duration-300">About</a>
+                <a href="#courses" class="text-white hover:text-secondary transition duration-300">Programs</a>
+            </nav>
+
+            <button id="mobile-menu-button" class="md:hidden text-white focus:outline-none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-primary w-full shadow-xl">
+            <a href="#resources" class="block py-3 px-6 text-white hover:bg-teal-700 transition duration-300 border-t border-teal-700" onclick="toggleMenu()">Resources</a>
+            <a href="#about" class="block py-3 px-6 text-white hover:bg-teal-700 transition duration-300 border-t border-teal-700" onclick="toggleMenu()">About</a>
+            <a href="#courses" class="block py-3 px-6 text-white hover:bg-teal-700 transition duration-300 border-t border-teal-700" onclick="toggleMenu()">Programs</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="bg-primary text-white pt-20 pb-32 relative overflow-hidden">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+                <div class="absolute inset-0 flex items-center justify-center opacity-10">
+                    <svg class="w-72 h-72 lg:w-96 lg:h-96" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" stroke="var(--color-secondary)" stroke-width="2" />
+                        <path d="M50 5L55.8779 17.6536H44.1221L50 5Z" fill="var(--color-secondary)" />
+                    </svg>
+                </div>
+
+                <h1 
+                    id="hero-title"
+                    class="text-5xl sm:text-6xl lg:text-7xl font-extrabold mb-4 pt-10 relative animate-on-scroll"
+                    data-animation="fadeInUp"
+                >
+                    Loading...
+                </h1>
+                <p 
+                    id="hero-subtitle"
+                    class="text-xl sm:text-2xl font-light max-w-3xl mx-auto mb-10 animate-on-scroll"
+                    data-animation="fadeInUp" data-delay="300"
+                >
+                    Loading...
+                </p>
+                <a 
+                    id="hero-cta"
+                    href="#" 
+                    class="inline-block bg-secondary text-primary font-bold py-3 px-8 rounded-full text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition transform duration-300 ease-in-out animate-on-scroll"
+                    data-animation="fadeInUp" data-delay="600"
+                >
+                    Loading...
+                </a>
+            </div>
+
+            <svg class="absolute bottom-0 left-0 w-full h-auto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                <path class="wave-divider" fill="var(--color-bg)" fill-opacity="1" d="M0,192L48,181.3C96,171,192,149,288,149.3C384,149,480,171,576,170.7C672,171,768,149,864,160C960,171,1056,213,1152,224C1248,235,1344,213,1392,202.7L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+        </section>
+
+        <section id="resources" class="py-20 lg:py-32 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 
+                    class="text-4xl lg:text-5xl font-extrabold mb-4 text-primary animate-on-scroll"
+                    data-animation="fadeInUp"
+                >
+                    Our Digital Resources
+                </h2>
+                <p 
+                    class="text-xl font-light max-w-3xl mx-auto mb-12 text-gray-600 animate-on-scroll"
+                    data-animation="fadeInUp" data-delay="100"
+                >
+                    Access essential tools and recommended applications to enhance your study journey and connect with the community.
+                </p>
+
+                <div id="resources-container" class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <p class="text-center text-lg text-gray-500 col-span-full">Loading resources...</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="about" class="py-20 lg:py-32 bg-gray-50 textured-bg">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 
+                    id="mission-heading"
+                    class="text-4xl lg:text-5xl font-extrabold text-center mb-16 text-primary animate-on-scroll"
+                    data-animation="fadeInUp"
+                >
+                    Loading Mission...
+                </h2>
+                <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-10 items-start">
+                    <div 
+                        class="space-y-6 animate-on-scroll" 
+                        data-animation="fadeIn" data-delay="300"
+                    >
+                        <h3 class="text-3xl font-bold text-gray-800">
+                            The Light of Understanding
+                        </h3>
+                        <p id="mission-p1" class="text-lg text-gray-600 leading-relaxed">
+                            Loading paragraph 1...
+                        </p>
+                        <p id="mission-p2" class="text-lg text-gray-600 leading-relaxed">
+                            Loading paragraph 2...
+                        </p>
+                    </div>
+
+                    <div id="mission-features-container"
+                        class="bg-white p-8 rounded-xl shadow-2xl border-t-4 border-secondary space-y-4 animate-on-scroll"
+                        data-animation="fadeInUp" data-delay="500"
+                    >
+                        <p class="text-gray-500">Loading features...</p>
+                        </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="courses" class="py-20 lg:py-32 bg-white">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 
+                    class="text-4xl lg:text-5xl font-extrabold text-center mb-16 text-primary animate-on-scroll"
+                    data-animation="fadeInUp"
+                >
+                    Our Educational Programs
+                </h2>
+
+                <div id="courses-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <p class="text-center text-lg text-gray-500 col-span-full">Loading programs...</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="mb-6 animate-on-scroll" data-animation="fadeIn" data-delay="100">
+                <a href="#hero" class="text-2xl font-extrabold tracking-tight text-white">
+                    <span class="text-secondary">Asrar</span>. Secrets Of Quran
+                </a>
+            </div>
+
+            <nav class="space-x-4 mb-6 animate-on-scroll" data-animation="fadeIn" data-delay="200">
+                <a href="#resources" class="text-gray-400 hover:text-secondary transition duration-300">Resources</a>
+                <a href="#about" class="text-gray-400 hover:text-secondary transition duration-300">About</a>
+                <a href="#courses" class="text-gray-400 hover:text-secondary transition duration-300">Programs</a>
+            </nav>
+
+            <div id="social-media-container" class="flex justify-center space-x-6 mb-6 animate-on-scroll" data-animation="fadeIn" data-delay="300">
+                <p class="text-gray-500">Loading social links...</p>
+                </div>
+
+            <p class="text-sm text-gray-500">
+                &copy; <span id="year"></span> Asrar. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { db, doc, getDoc, collection, getDocs, query, orderBy } from './script/firebase-config.js';
+
+        // Helper function to render Lucide Icons dynamically
+        const renderLucideIcons = () => {
+             lucide.createIcons();
+        };
+
+        // 1. Fetch Hero Data (Same as before)
+        const fetchHeroData = async () => {
+            try {
+                const docSnap = await getDoc(doc(db, "siteData", "hero"));
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('hero-title').innerHTML = `<span class="block text-secondary">${data.title.split(' ')[0]}</span> ${data.title.split(' ').slice(1).join(' ')}`;
+                    document.getElementById('hero-subtitle').textContent = data.subtitle;
+                    const cta = document.getElementById('hero-cta');
+                    cta.textContent = data.ctaText;
+                    cta.href = data.ctaLink; // This is now a text field and accepts '#'
+                } else {
+                    console.log("No 'hero' document found!");
+                }
+            } catch (error) {
+                console.error("Error fetching hero data:", error);
+                document.getElementById('hero-title').textContent = "Content Error";
+            }
+        };
+
+        // 2. Fetch Resources Data (Now fetches from a collection 'resources')
+const fetchResources = async () => {
+    const container = document.getElementById('resources-container');
+    container.innerHTML = ''; 
+
+    try {
+        // Change this line to use orderBy("order", "asc") instead of orderBy("title", "asc")
+        const q = query(collection(db, "resources"), orderBy("order", "asc"));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            container.innerHTML = '<p class="text-center text-lg text-gray-500 col-span-full">No resources found.</p>';
+            return;
+        }
+
+        querySnapshot.forEach((doc, index) => {
+            const item = doc.data();
+            const html = `
+                <div 
+                    class="bg-primary p-8 rounded-xl shadow-2xl transition duration-300 hover:bg-teal-700 border-b-4 border-secondary text-white animate-on-scroll"
+                    data-animation="fadeInUp" data-delay="${300 + index * 200}"
+                >
+                    <i data-lucide="${item.icon}" class="w-10 h-10 mb-4 text-secondary mx-auto"></i>
+                    <h3 class="text-2xl font-bold mb-3">${item.title}</h3>
+                    <p class="text-teal-200 mb-6">${item.description}</p>
+                    <a href="${item.url}" ${item.url.startsWith('#') ? '' : 'target="_blank" rel="noopener noreferrer"'} class="inline-block bg-secondary text-primary font-bold py-3 px-6 rounded-full text-lg shadow-xl hover:shadow-2xl transition transform duration-300 ease-in-out">
+                        ${item.ctaText}
+                    </a>
+                    <p class="text-xs mt-3 text-teal-400">${item.url.startsWith('#') ? '(Internal Resource)' : '(Opens in a new tab)'}</p>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        });
+    } catch (error) {
+        console.error("Error fetching resources:", error);
+        container.innerHTML = '<p class="text-center text-lg text-red-500 col-span-full">Failed to load resources.</p>';
+    }
+};
+        
+        // 3. Fetch Mission/About Data
+        const fetchMissionData = async () => {
+            const featuresContainer = document.getElementById('mission-features-container');
+            featuresContainer.innerHTML = ''; // Clear loading message
+
+            try {
+                const docSnap = await getDoc(doc(db, "siteData", "mission"));
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('mission-heading').textContent = data.heading || 'Our Mission';
+                    document.getElementById('mission-p1').textContent = data.paragraph1 || 'Default paragraph 1.';
+                    document.getElementById('mission-p2').textContent = data.paragraph2 || 'Default paragraph 2.';
+
+                    // Dynamically build features list
+                    const features = data.features || [];
+                    features.forEach((feature) => {
+                        const html = `
+                            <div class="flex items-start space-x-4">
+                                <i data-lucide="${feature.icon}" class="text-primary w-8 h-8 flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <h4 class="font-semibold text-xl text-gray-800">${feature.title}</h4>
+                                    <p class="text-gray-500">${feature.subtitle}</p>
+                                </div>
+                            </div>
+                        `;
+                        featuresContainer.insertAdjacentHTML('beforeend', html);
+                    });
+                } else {
+                    document.getElementById('mission-p1').textContent = "Mission content unavailable. Please check Firestore.";
+                }
+            } catch (error) {
+                console.error("Error fetching mission data:", error);
+            }
+        };
+
+        // 4. Fetch Courses Data (Same as before)
+const fetchCourses = async () => {
+    const container = document.getElementById('courses-container');
+    container.innerHTML = ''; 
+
+    try {
+        // This line ensures courses are sorted by order field
+        const q = query(collection(db, "courses"), orderBy("order", "asc"));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            container.innerHTML = '<p class="text-center text-lg text-gray-500 col-span-full">No courses available yet.</p>';
+            return;
+        }
+
+        querySnapshot.forEach((doc, index) => {
+            const data = doc.data();
+            const ctaLink = data.ctaLink || '#';
+            const ctaText = data.ctaText || 'Start Learning Now';
+
+            const html = `
+                <div 
+                    class="bg-gray-50 p-6 rounded-xl shadow-lg hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 animate-on-scroll"
+                    data-animation="fadeInUp" data-delay="${100 + index * 200}"
+                >
+                    <i data-lucide="${data.icon}" class="text-secondary w-12 h-12 mb-4"></i>
+                    <h3 class="text-2xl font-bold mb-3 text-gray-800">${data.title}</h3>
+                    <p class="text-gray-600 mb-4">${data.description}</p>
+                    <a href="${ctaLink}" ${ctaLink.startsWith('#') ? '' : 'target="_blank" rel="noopener noreferrer"'} class="text-primary font-semibold hover:text-secondary flex items-center">
+                        ${ctaText}
+                        <i data-lucide="chevron-right" class="w-4 h-4 ml-1"></i>
+                    </a>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', html);
+        });
+    } catch (error) {
+        console.error("Error fetching courses:", error);
+        container.innerHTML = '<p class="text-center text-lg text-red-500 col-span-full">Failed to load courses.</p>';
+    }
+};
+
+        // 5. Fetch Footer Social Links
+        const fetchSocialLinks = async () => {
+            const container = document.getElementById('social-media-container');
+            container.innerHTML = ''; 
+
+            try {
+                const docSnap = await getDoc(doc(db, "siteData", "footer"));
+                const socialLinks = docSnap.exists() ? docSnap.data().socialLinks || [] : [];
+                
+                if (socialLinks.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500">No social links configured.</p>';
+                    return;
+                }
+
+                socialLinks.forEach(link => {
+                    const html = `
+                        <a href="${link.url}" target="_blank" class="text-gray-400 hover:text-secondary transition duration-300 animate-on-scroll" data-animation="fadeIn" data-delay="300">
+                            <i data-lucide="${link.icon}" class="w-6 h-6"></i>
+                        </a>
+                    `;
+                    container.insertAdjacentHTML('beforeend', html);
+                });
+
+            } catch (error) {
+                console.error("Error fetching social links:", error);
+                container.innerHTML = '<p class="text-gray-500">Error loading social links.</p>';
+            }
+        };
+
+
+        // Main execution function
+        const initializeDynamicContent = async () => {
+            await fetchHeroData();
+            await fetchMissionData();
+            await fetchResources();
+            await fetchCourses();
+            await fetchSocialLinks();
+            renderLucideIcons(); 
+            initScrollAnimations(); 
+        };
+
+        // --- Existing Static/Utility Scripts ---
+
+        // Initialize Lucide Icons (initial load)
+        lucide.createIcons();
+
+        // Mobile Menu Toggle
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+        document.getElementById('mobile-menu-button').addEventListener('click', toggleMenu);
+
+        // Set current year in footer
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // Optional: Close mobile menu when a link is clicked
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.add('hidden');
+            });
+        });
+
+        // --- Intersection Observer for Scroll Animations (Scroll Reveal) ---
+        function initScrollAnimations() {
+            const animateElements = document.querySelectorAll('.animate-on-scroll');
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target;
+                        const delay = target.getAttribute('data-delay') || 0;
+
+                        setTimeout(() => {
+                            target.classList.add('is-visible');
+                            observer.unobserve(target);
+                        }, parseInt(delay, 10));
+                    }
+                });
+            }, {
+                rootMargin: '0px', 
+                threshold: 0.1 
+            });
+
+            animateElements.forEach(element => {
+                observer.observe(element);
+            });
+        }
+        
+        // Start the process
+        initializeDynamicContent();
+
+    </script>
+</body>
+</html>

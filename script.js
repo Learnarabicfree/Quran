@@ -87,7 +87,7 @@ const categoryTranslations = {
         'Courses': 'பாடநெறிகள்',
         'Surah': 'ஸூரா',
         'Arabic': 'அரபு',
-        'Tafsir': 'தஃப்சீர்',
+        'Tafsir': 'தப்ஸீர்',
         'Main Lessons': 'முக்கிய பாடங்கள்' // Added translation
     },
     'English': {

@@ -6,12 +6,14 @@
     <title>Quranic Wisdom Admin</title>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-analytics.js"></script>
     <link rel="stylesheet" href="admin/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link rel="icon" href="img/logo-app.png" type="image/png">
 </head>
 <body>
+
+    <div id="toast-container"></div>
+
     <div id="login-page" class="login-page">
         <div class="login-container">
             <div class="login-header">
@@ -20,256 +22,193 @@
             </div>
             <form id="login-form">
                 <div class="input-group">
-                    <input type="text" id="username" name="username" placeholder="Username" required>
+                    <input type="text" id="username" placeholder="Username" required>
                 </div>
                 <div class="input-group">
-                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <input type="password" id="password" placeholder="Password" required>
                 </div>
                 <div class="remember-me-container">
                     <label class="remember-me">
-                      <input type="checkbox" id="rememberMe">
-                      <span class="checkmark"></span>
-                      <span class="remember-text">Remember Username & Password</span>
+                        <input type="checkbox" id="rememberMe">
+                        <span class="checkmark"></span>
+                        <span class="remember-text">Remember Me</span>
                     </label>
-                    <div class="forget-me-container">
-                        <button id="forgetMeBtn" class="forget-me-btn">Remove Username & Password</button>
-                      </div>
-                    <div class="security-warning" style="font-size: 12px; color: #ff6b6b; margin-top: 10px;">
-                        <i class="fas fa-exclamation-triangle"></i> 
-                        Do not use "Remember Me" on public or shared computers
-                      </div>
-                  </div>
-                <button type="submit">Login</button>
+                    <button type="button" id="forgetMeBtn" class="forget-me-btn">Forget Me</button>
+                </div>
+                <div class="security-warning">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    Do not use "Remember Me" on public computers.
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Login</button>
                 <p id="login-error">Invalid username or password</p>
             </form>
         </div>
     </div>
 
-    <div id="main-content" style="display: none;">
-        <div id="toast" class="toast"></div>
-        <div class="username-display" id="username-display"></div>
-        <a href="https://learnarabicfree.github.io/Quran" target="_blank" class="home-button">
-            <i class="fas fa-home"></i>
-            Home
-          </a>
-    <div id="toast" class="toast"></div>
-    <div class="container">
-        <h1 class="header">Quranic Wisdom - Admin</h1>
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab(1)">Submit New Lessons</button>
-            <button class="tab-btn" onclick="switchTab(2)">සිංහල</button>
-            <button class="tab-btn" onclick="switchTab(3)">தமிழ்</button>
-            <button class="tab-btn" onclick="switchTab(4)">English</button>
-            <button class="tab-btn" onclick="switchTab(5)">Subcategories</button>
-            <button class="tab-btn" onclick="switchTab(6)">Notifications</button>
-        </div>
+    <div id="main-content" class="main-content" style="display: none;">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="img/logo-app.png" alt="Logo">
+                <h2>Admin Panel</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#lessons" data-lang="Sinhala" class="nav-link"><i class="fa-solid fa-book-open"></i> Sinhala Lessons</a>
+                <a href="#lessons" data-lang="Tamil" class="nav-link"><i class="fa-solid fa-book-open"></i> Tamil Lessons</a>
+                <a href="#lessons" data-lang="English" class="nav-link"><i class="fa-solid fa-book-open"></i> English Lessons</a>
+                <a href="#subcategories" class="nav-link"><i class="fa-solid fa-folder-tree"></i> Subcategories</a>
+                <a href="#notifications" class="nav-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+            </nav>
+            <div class="sidebar-footer">
+                <span id="username-display"></span>
+                <a href="https://learnarabicfree.github.io/Quran" target="_blank" class="home-button">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <button id="logout-btn" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+            </div>
+        </aside>
 
-        <!-- Tab 1: Submit New Lessons -->
-        <div id="tab1" class="tab-content active">
-            <div class="controls">
-                <select id="languageSelect">
-                    <option value="">Select Language</option>
-                    <option value="Sinhala">සිංහල</option>
-                    <option value="Tamil">தமிழ்</option>
-                    <option value="English">English</option>
-                </select>
-        
-                <select id="categorySelect">
-                    <option value="">Select Category</option>
-                    <option value="Courses">Courses</option>
-                    <option value="Surah">Surah</option>
-                    <option value="Arabic">Arabic</option>
-                    <option value="Tafsir">Tafsir</option>
-                </select>
+        <main class="page-content">
+            <div id="view-lessons" class="view">
+                <header class="view-header">
+                    <h1 id="lessons-view-title">Lessons</h1>
+                    <button id="add-new-lesson-btn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add New Lesson</button>
+                </header>
+                <div class="filter-controls">
+                    <select id="filter-category">
+                        <option value="">All Categories</option>
+                        <option value="Courses">Courses</option>
+                        <option value="Surah">Surah</option>
+                        <option value="Arabic">Arabic</option>
+                        <option value="Tafsir">Tafsir</option>
+                    </select>
+                    <input type="text" id="search-lessons" placeholder="Search lessons by title...">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="filter-new-only">
+                        <span class="slider"></span>
+                        New Only
+                    </label>
+                </div>
+                <div id="lessons-list" class="lesson-list">
+                    </div>
             </div>
-        
-            <!-- New sub-category select and add button -->
-            <div class="controls">
-                <select id="subCategorySelect">
-                    <option value="">Select Sub-Category</option>
-                </select>
-                <button onclick="addSubCategory()">Add New Sub-Category</button>
-            </div>
-        
-            <!-- Modal for sub-category management -->
-            <div id="subCategoryModal" class="modal">
-                <div class="modal-content">
-                    <span class="close" onclick="closeSubCategoryModal()">&times;</span>
-                    <h3>Manage Sub-Categories</h3>
-                    <div id="subCategoryList"></div>
+
+            <div id="view-subcategories" class="view">
+                <header class="view-header">
+                    <h1>Manage Subcategories</h1>
+                </header>
+                <div class="controls">
+                    <select id="subcat-lang-select">
+                        <option value="Sinhala">Sinhala</option>
+                        <option value="Tamil">Tamil</option>
+                        <option value="English">English</option>
+                    </select>
+                    <select id="subcat-cat-select">
+                        <option value="Courses">Courses</option>
+                        <option value="Surah">Surah</option>
+                        <option value="Arabic">Arabic</option>
+                        <option value="Tafsir">Tafsir</option>
+                    </select>
+                </div>
+                 <div class="form-card">
+                    <h3>Add New Subcategory</h3>
                     <div class="form-group">
-                        <input type="text" id="newSubCategory" placeholder="New Sub-Category Name">
-                        <button onclick="saveSubCategory()">Add</button>
+                        <input type="text" id="new-subcategory-name" placeholder="Enter new subcategory name">
+                        <button id="add-subcategory-btn" class="btn btn-secondary">Add</button>
                     </div>
                 </div>
-            </div>
-        
-            <div id="lessonList" class="lesson-list">
-                <!-- Persistent form -->
-                <div class="lesson-card">
-                    <h3>Add New Lesson</h3>
-                    <div class="form-group">
-                        <label>Title:</label>
-                        <input id="editTitle">
+                <div id="subcategories-list" class="subcategories-list">
                     </div>
-        
-                    <div id="partsContainer">
-                        <div class="part-inputs">
-                            <div class="form-group">
-                                <label>Part Name:</label>
-                                <input>
-                            </div>
-                            <div class="form-group">
-                                <label>YouTube URL:</label>
-                                <input>
-                            </div>
-                            <button onclick="removePart(this)" class="remove-part danger">Remove Part</button>
+            </div>
+
+            <div id="view-notifications" class="view">
+                <header class="view-header">
+                    <h1>Send Notifications</h1>
+                </header>
+                <div class="notification-container">
+                    <div class="form-card">
+                        <h2>Send New Notification</h2>
+                        <div class="form-group">
+                            <label for="notification-title">Title</label>
+                            <input type="text" id="notification-title" maxlength="60">
+                        </div>
+                        <div class="form-group">
+                            <label for="notification-body">Message</label>
+                            <textarea id="notification-body" maxlength="140"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="notification-link">Link (Optional)</label>
+                            <input type="url" id="notification-link" placeholder="https://example.com">
+                        </div>
+                        <div class="form-actions">
+                            <button id="send-notification-btn" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Send Notification</button>
                         </div>
                     </div>
-
-                    <div id="attachmentsContainer">
-                        <div class="attachment-inputs" style="display: none;">
-                            <div class="form-group">
-                                <label>Attachment Name:</label>
-                                <input>
-                            </div>
-                            <div class="form-group">
-                                <label>Download Link:</label>
-                                <input>
-                            </div>
-                            <button onclick="removeAttachment(this)" class="remove-attachment danger">Remove Attachment</button>
+                    <div class="current-notification-card">
+                        <h3><i class="fa-solid fa-bell"></i> Current Active Notification</h3>
+                        <div id="active-notification">
+                            <p class="placeholder">No active notifications.</p>
+                        </div>
+                        <div class="form-actions">
+                            <button id="clear-notifications-btn" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Clear Notification</button>
                         </div>
                     </div>
-        
-                    <div class="actions">
-                        <button onclick="addPart()">Add Part</button>
-                        <button onclick="addAttachment()">Add Attachment</button>
-                        <button onclick="clearForm()">Clear Form</button>
-                        <button onclick="saveLesson()">Submit Lesson</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="lesson-modal" class="modal">
+        <div class="modal-content">
+            <header class="modal-header">
+                <h2 id="lesson-modal-title">Add New Lesson</h2>
+                <button class="close-btn" id="close-lesson-modal">&times;</button>
+            </header>
+            <form id="lesson-form">
+                <input type="hidden" id="lesson-id">
+                <input type="hidden" id="is-subcategory-lesson">
+                
+                <div class="form-group">
+                    <label for="lesson-title">Lesson Title</label>
+                    <input type="text" id="lesson-title" required>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="lesson-language">Language</label>
+                        <select id="lesson-language" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lesson-category">Category</label>
+                        <select id="lesson-category" required></select>
                     </div>
                 </div>
-            </div>
-        </div>        
+                <div class="form-group">
+                    <label for="lesson-subcategory">Subcategory (Optional)</label>
+                    <select id="lesson-subcategory"></select>
+                </div>
+                
+                <hr>
+                
+                <h4>Lesson Parts</h4>
+                <div id="lesson-parts-container">
+                    </div>
+                <button type="button" id="add-part-btn" class="btn btn-secondary btn-small"><i class="fa-solid fa-plus"></i> Add Part</button>
+                
+                <hr>
 
-        <!-- Tab 2: Sinhala Lessons -->
-        <div id="tab2" class="tab-content">
-            <div class="filter-controls">
-                <select id="filterCategorySinhala" onchange="filterLessons('Sinhala')">
-                    <option value="">All Categories</option>
-                    <option value="Courses">Courses</option>
-                    <option value="Surah">Surah</option>
-                    <option value="Arabic">Arabic</option>
-                    <option value="Tafsir">Tafsir</option>
-                </select>
-                <input type="text" id="searchSinhala" placeholder="Search..." onkeyup="filterLessons('Sinhala')">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="newOnlyEnglish" onchange="filterLessons('English')">
-                    <span class="slider"></span>
-                    <span>New Only</span>
-                </label>
-            </div>
-            <div id="sinhalaLessons" class="lesson-list"></div>
-        </div>
-
-        <!-- Tab 3: Tamil Lessons -->
-        <div id="tab3" class="tab-content">
-            <div class="filter-controls">
-                <select id="filterCategoryTamil" onchange="filterLessons('Tamil')">
-                    <option value="">All Categories</option>
-                    <option value="Courses">Courses</option>
-                    <option value="Surah">Surah</option>
-                    <option value="Arabic">Arabic</option>
-                    <option value="Tafsir">Tafsir</option>
-                </select>
-                <input type="text" id="searchTamil" placeholder="Search..." onkeyup="filterLessons('Tamil')">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="newOnlyEnglish" onchange="filterLessons('English')">
-                    <span class="slider"></span>
-                    <span>New Only</span>
-                </label>
-            </div>
-            <div id="tamilLessons" class="lesson-list"></div>
-        </div>
-
-        <!-- Tab 4: English Lessons -->
-        <div id="tab4" class="tab-content">
-            <div class="filter-controls">
-                <select id="filterCategoryEnglish" onchange="filterLessons('English')">
-                    <option value="">All Categories</option>
-                    <option value="Courses">Courses</option>
-                    <option value="Surah">Surah</option>
-                    <option value="Arabic">Arabic</option>
-                    <option value="Tafsir">Tafsir</option>
-                </select>
-                <input type="text" id="searchEnglish" placeholder="Search..." onkeyup="filterLessons('English')">
-                <label class="toggle-switch">
-                    <input type="checkbox" id="newOnlyEnglish" onchange="filterLessons('English')">
-                    <span class="slider"></span>
-                    <span>New Only</span>
-                </label>
-            </div>
-            <div id="englishLessons" class="lesson-list"></div>
+                <h4>Attachments</h4>
+                <div id="lesson-attachments-container">
+                    </div>
+                <button type="button" id="add-attachment-btn" class="btn btn-secondary btn-small"><i class="fa-solid fa-paperclip"></i> Add Attachment</button>
+                
+                <footer class="modal-footer">
+                    <button type="button" id="cancel-lesson-save" class="btn btn-light">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Lesson</button>
+                </footer>
+            </form>
         </div>
     </div>
-
-    <div id="tab5" class="tab-content">
-        <div class="controls">
-            <select id="subcatLanguageSelect">
-                <option value="">Select Language</option>
-                <option value="Sinhala">සිංහල</option>
-                <option value="Tamil">தமிழ்</option>
-                <option value="English">English</option>
-            </select>
-            <select id="subcatCategorySelect">
-                <option value="">Select Category</option>
-            </select>
-        </div>
-        <div id="subcategoriesList" class="lesson-list"></div>
-    </div>
-
-<!-- Update the notifications tab -->
-<!-- Update the notifications tab section -->
-<div id="tab6" class="tab-content">
-    <div class="notification-container">
-        <div class="notification-form">
-            <h2>Send New Notification</h2>
-            <div class="form-row">
-                <div class="form-group wide">
-                    <label>Heading:</label>
-                    <input type="text" id="notificationTitle" maxlength="60" placeholder="Enter notification title">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group wide">
-                    <label>Description:</label>
-                    <textarea id="notificationBody" maxlength="140" placeholder="Enter notification message"></textarea>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group wide">
-                    <label>Link URL:</label>
-                    <input type="url" id="notificationLink" placeholder="https://example.com">
-                </div>
-            </div>
-            <div class="form-actions">
-                <button onclick="sendNotification()" class="send-btn">📨 Send Notification</button>
-            </div>
-        </div>
-
-        <div class="current-notification">
-            <h3>Current Active Notification</h3>
-            <div id="activeNotification" class="active-notification-card">
-                <div class="notification-placeholder">
-                    <p>No active notifications</p>
-                </div>
-            </div>
-            <div class="notification-actions">
-                <button onclick="clearNotifications()" class="danger">🗑 Clear All Notifications</button>
-            </div>
-        </div>
-    </div>
-</div>
-
+    
     <script src="admin/admin.js"></script>
     <script src="src/users.js"></script>
     <script src="src/login.js"></script>
